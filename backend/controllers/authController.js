@@ -143,5 +143,31 @@ exports.postSignUp = [
      
   },
 ];
-exports.postDeleteAccount = (req, res, next) => {};
-exports.postLogOut = (req, res, next) => {};
+exports.postDeleteAccount = (req, res, next) => { };
+
+
+exports.postLogOut = (req, res, next) => {
+  
+  req.session.destroy((err) => {
+    
+    if (err) {
+      console.error("Session destroy error:", err);
+      return res.status(500).json({
+        success: false,
+        errors: ["An error occurred while logging out."],
+      });
+    }
+    
+
+   res.clearCookie("connect.sid", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Logged out successfully.",
+    });
+  });
+};

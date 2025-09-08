@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import SignUp from "./pages/auth/SignUp";
 import Login from "./pages/auth/Login";
+import Header from "./compo/header";
 
 function App() {
 
@@ -16,7 +17,10 @@ function App() {
   ]);
 
 
-  return <RouterProvider router={route}></RouterProvider>
+  return <>
+    <Header/>
+  <RouterProvider router={route}></RouterProvider>
+  </>
 }
 
 export default App
