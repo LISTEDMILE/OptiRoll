@@ -13,21 +13,20 @@ exports.getLogin = async (req, res, next) => {
         errors: ["Invalid Credentials."],
         oldInputs: {
           email: email,
-          password: password
-        }
-      })
-    
+          password: password,
+        },
+      });
     }
 
     const isMatch = await bcrypt.compare(password, adminUser.password);
-      if (!isMatch){
-        return res.status(401).json({
-          errors: ["Invalid Credentials."],
-          oldInputs: {
-            email: email,
-            password:password
-          }
-        })
+    if (!isMatch) {
+      return res.status(401).json({
+        errors: ["Invalid Credentials."],
+        oldInputs: {
+          email: email,
+          password: password,
+        },
+      });
     }
     req.session.isLoggedIn = true;
     req.session.AdminUser = adminUser;
@@ -39,24 +38,21 @@ exports.getLogin = async (req, res, next) => {
           errors: ["An error occured."],
         });
       }
-    })
+    });
 
     res.status(200).json({
       message: "Login Successful",
-    })
-
-  
+    });
   } catch (err) {
     console.error("Error finding User:", err);
     res.status(500).json({
       errors: ["An error occured."],
       oldInputs: {
         email: email,
-        password:password
-      }
-    })
+        password: password,
+      },
+    });
   }
-
 };
 exports.postSignUp = [
   check("name")
@@ -101,55 +97,50 @@ exports.postSignUp = [
           password: password,
         },
       });
-      }
-      bcrypt.hash(password, 12).then((hashedPassword) => {
-          const adminUser = new AdminUser({
+    }
+    bcrypt.hash(password, 12).then((hashedPassword) => {
+      const adminUser = new AdminUser({
+        name: name,
+        email: email,
+        password: hashedPassword,
+      });
+
+      adminUser
+        .save()
+        .then((adminUser) => {
+          req.session.isLoggedIn = true;
+          req.session.AdminUser = adminUser;
+          req.session.loginType = "normal";
+          req.session.save((err) => {
+            if (err) {
+              console.error("Session save error: ", err);
+              return res.status(500).json({
+                errors: ["Error saving session."],
+              });
+            }
+          });
+          res.status(201).json({
+            message: "Signed Up Success",
+          });
+        })
+        .catch((err) => {
+          console.error("Error Signing In:", err);
+          res.status(500).json({
+            errors: ["An error Occured:"],
+            oldInputs: {
               name: name,
               email: email,
-              password: hashedPassword
+              password: password,
+            },
           });
-
-          adminUser.save().then((adminUser) => {
-               req.session.isLoggedIn = true;
-              req.session.AdminUser = adminUser;
-              req.session.loginType = "normal";
-              req.session.save((err) => {
-                  
-                  if (err) {
-                      console.error("Session save error: ", err);
-                       return res.status(500).json({
-                      errors: ["Error saving session."]
-                  })
-                  }
-                 
-              });
-              res.status(201).json({
-                  message: "Signed Up Success",
-              
-              })
-          }).catch((err) => {
-              console.error("Error Signing In:", err);
-              res.status(500).json({
-                  errors: ["An error Occured:"],
-                  oldInputs: {
-                      name: name,
-                      email: email,
-                      password: password
-                  }
-              })
-          })
-      });
-     
-     
+        });
+    });
   },
 ];
-exports.postDeleteAccount = (req, res, next) => { };
-
+exports.postDeleteAccount = (req, res, next) => {};
 
 exports.postLogOut = (req, res, next) => {
-  
   req.session.destroy((err) => {
-    
     if (err) {
       console.error("Session destroy error:", err);
       return res.status(500).json({
@@ -157,9 +148,8 @@ exports.postLogOut = (req, res, next) => {
         errors: ["An error occurred while logging out."],
       });
     }
-    
 
-   res.clearCookie("connect.sid", {
+    res.clearCookie("connect.sid", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",

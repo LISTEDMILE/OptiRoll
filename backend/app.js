@@ -69,7 +69,7 @@ app.use("/admin", adminRouter);
 
 app.use(express.static(path.join(rootDir, "../frontend/OptiRoll")));
 
-app.get( (req, res) => {
+app.get((req, res) => {
   res.sendFile(path.join(rootDir, "../frontend/OptiRoll/index.html"));
 });
 
