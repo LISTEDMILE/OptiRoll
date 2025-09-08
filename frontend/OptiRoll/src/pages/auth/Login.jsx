@@ -36,7 +36,6 @@ export default function Login() {
         body: JSON.stringify({
           email: form.email,
           password: form.password,
-          remember: form.remember,
         }),
         credentials: "include",
       });
@@ -47,7 +46,7 @@ export default function Login() {
         setErrors(res.errors);
       } else {
         setMessage(res.message || "Login successful!");
-        setForm({ email: "", password: "", remember: false });
+        setForm({ email: "", password: "" });
       }
     } catch (err) {
       setErrors([err.message || "Something went wrong."]);
@@ -141,17 +140,7 @@ export default function Login() {
                 />
               </div>
 
-              {/* Remember Me */}
-              <label className="mt-3 flex items-center gap-3 text-sm text-white/70">
-                <input
-                  type="checkbox"
-                  name="remember"
-                  checked={form.remember}
-                  onChange={onChange}
-                  className="h-5 w-5 rounded-md border-white/20 bg-white/10 text-cyan-400 focus:ring-cyan-400"
-                />
-                Remember me
-              </label>
+            
 
               {/* Submit */}
               <button
