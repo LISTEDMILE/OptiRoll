@@ -5,6 +5,7 @@ import LandingPage from "./pages/LandingPage";
 import SignUp from "./pages/auth/SignUp";
 import Login from "./pages/auth/Login";
 import Header from "./compo/header";
+import AdminAddStudent from "./pages/admin/addStudent";
 
 function Layout() {
   return (
@@ -21,7 +22,9 @@ function App() {
       element: <Layout />,
       children: [{ path: "/", element: <LandingPage /> },
     { path: "/auth/signUp", element: <SignUp /> },
-    { path: "/auth/login", element: <Login /> },]
+        { path: "/auth/login", element: <Login /> },
+        {path:"/admin/addStudent", element:<AdminAddStudent/>}
+      ]
     }
    
   ]);

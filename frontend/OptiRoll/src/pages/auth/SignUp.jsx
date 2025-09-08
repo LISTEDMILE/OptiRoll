@@ -8,7 +8,6 @@ export default function SignUp() {
     email: "",
     password: "",
     confirm: "",
-    role: "student",
     agree: false,
   });
   const [showPwd, setShowPwd] = useState(false);
@@ -77,7 +76,6 @@ export default function SignUp() {
           name: form.name,
           email: form.email,
           password: form.password,
-          role: form.role,
         }),
         credentials: "include",
       });
@@ -91,7 +89,6 @@ export default function SignUp() {
           email: "",
           password: "",
           confirm: "",
-          role: "student",
           agree: false,
         });
         if (res.message) {
@@ -289,26 +286,7 @@ export default function SignUp() {
                 </div>
               </div>
 
-              {/* Role */}
-              <div>
-                <label className="mb-1 block text-sm text-white/80">Role</label>
-                <select
-                  name="role"
-                  value={form.role}
-                  onChange={onChange}
-                  className="w-full appearance-none rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-cyan-400/60 focus:bg-white/10"
-                >
-                  <option value="student" className="bg-slate-900">
-                    Student
-                  </option>
-                  <option value="teacher" className="bg-slate-900">
-                    Teacher
-                  </option>
-                  <option value="admin" className="bg-slate-900">
-                    Admin
-                  </option>
-                </select>
-              </div>
+             
 
               {/* Password */}
               <div>

@@ -14,6 +14,7 @@ const cors = require("cors");
 const authRouter = require("../backend/routes/authRouter");
 const hostRouter = require("../backend/routes/hostRouter");
 const adminRouter = require("../backend/routes/adminRouter");
+const studentRouter = require("../backend/routes/studentRouter");
 
 const app = express();
 
@@ -66,6 +67,7 @@ app.use(
 app.use("/auth", authRouter);
 app.use("/host", hostRouter);
 app.use("/admin", adminRouter);
+app.use("/student", studentRouter);
 
 app.use(express.static(path.join(rootDir, "../frontend/OptiRoll")));
 

@@ -1,36 +1,44 @@
 const { check, validationResult } = require("express-validator");
 const AdminUser = require("../models/adminModel");
+const StudentUser = require("../models/studentModel");
 const bcrypt = require("bcryptjs");
 const path = require("path");
 const fs = require("fs");
 
 exports.getLogin = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, loginType } = req.body;
   try {
-    const adminUser = await AdminUser.findOne({ email: email });
-    if (!adminUser) {
+
+
+    if (loginType === "student") {
+
+      
+      const studentUser = await StudentUser.findOne({ email: email });
+    if (!studentUser) {
       return res.status(401).json({
         errors: ["Invalid Credentials."],
         oldInputs: {
           email: email,
           password: password,
+          loginType:loginType
         },
       });
     }
 
-    const isMatch = await bcrypt.compare(password, adminUser.password);
+    const isMatch = await bcrypt.compare(password, studentUser.password);
     if (!isMatch) {
       return res.status(401).json({
         errors: ["Invalid Credentials."],
         oldInputs: {
           email: email,
           password: password,
+          loginType:loginType
         },
       });
     }
     req.session.isLoggedIn = true;
-    req.session.AdminUser = adminUser;
-    req.session.loginType = "normal";
+    req.session.StudentUser = studentUser;
+    req.session.loginType = loginType;
     req.session.save((err) => {
       if (err) {
         console.error("Session save error : ", err);
@@ -39,6 +47,48 @@ exports.getLogin = async (req, res, next) => {
         });
       }
     });
+   
+      
+      
+    }
+
+    else {
+      
+      const adminUser = await AdminUser.findOne({ email: email });
+      if (!adminUser) {
+        return res.status(401).json({
+          errors: ["Invalid Credentials."],
+          oldInputs: {
+            email: email,
+            password: password,
+            loginType: loginType
+          },
+        });
+      }
+
+      const isMatch = await bcrypt.compare(password, adminUser.password);
+      if (!isMatch) {
+        return res.status(401).json({
+          errors: ["Invalid Credentials."],
+          oldInputs: {
+            email: email,
+            password: password,
+            loginType: loginType
+          },
+        });
+      }
+      req.session.isLoggedIn = true;
+      req.session.AdminUser = adminUser;
+      req.session.loginType = loginType;
+      req.session.save((err) => {
+        if (err) {
+          console.error("Session save error : ", err);
+          return res.status(500).json({
+            errors: ["An error occured."],
+          });
+        }
+      });
+     }
 
     res.status(200).json({
       message: "Login Successful",
@@ -50,6 +100,7 @@ exports.getLogin = async (req, res, next) => {
       oldInputs: {
         email: email,
         password: password,
+        loginType:loginType
       },
     });
   }
@@ -110,7 +161,7 @@ exports.postSignUp = [
         .then((adminUser) => {
           req.session.isLoggedIn = true;
           req.session.AdminUser = adminUser;
-          req.session.loginType = "normal";
+          req.session.loginType = "teacher";
           req.session.save((err) => {
             if (err) {
               console.error("Session save error: ", err);

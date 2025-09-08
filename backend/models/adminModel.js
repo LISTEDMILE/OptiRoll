@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const StudentUser = require("../models/studentModel");
 
 const adminSchema = new mongoose.Schema({
   name: {
@@ -12,6 +13,16 @@ const adminSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, "Password is required"],
+  },
+  students: {
+    type: Array,
+    default: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "StudentUser",
+      required:true
+    }
+    ],
+    
   },
 });
 
