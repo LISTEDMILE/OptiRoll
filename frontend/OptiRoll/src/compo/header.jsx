@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ApiUrl } from "../../ApiUrl";
+import { Link } from "react-router";
 
 export default function Header() {
 
@@ -58,7 +59,13 @@ export default function Header() {
     }
   }
   return (
-   <header className="flex justify-end p-4 bg-gray-800 text-white shadow-md">
+    <header className="flex justify-end p-4 bg-gray-800 text-white shadow-md">
+      <Link to={"/"}
+    
+    className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition"
+  >
+    Home
+  </Link>
   <button
     onClick={logout}
     className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium mr-3 transition"

@@ -24,15 +24,15 @@ export default function LandingPage() {
     },
   ];
 
-  useEffect(() => {
-    gsap.from(heroRef.current, { opacity: 0, y: -50, duration: 1 });
-    gsap.from(featureRefs.current, {
-      opacity: 0,
-      y: 50,
-      duration: 0.8,
-      stagger: 0.3,
-    });
-  }, []);
+  // useEffect(() => {
+  //   gsap.from(heroRef.current, { opacity: 0, y: -50, duration: 1 });
+  //   gsap.from(featureRefs.current, {
+  //     opacity: 0,
+  //     y: 50,
+  //     duration: 0.8,
+  //     stagger: 0.3,
+  //   });
+  // }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
@@ -46,7 +46,7 @@ export default function LandingPage() {
           Revolutionize attendance management with our AI-powered, real-time platform.
         </p>
         <Link
-          to="/signup"
+          to="/auth/signup"
           className="px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-200 transition"
         >
           Get Started
@@ -77,7 +77,7 @@ export default function LandingPage() {
           Start saving time and increasing accuracy today with our simple and efficient solution.
         </p>
         <Link
-          to="/signup"
+          to="/auth/signup"
           className="px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-200 transition"
         >
           Sign Up Now
