@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { ApiUrl } from "../../../ApiUrl";
+import { useNavigate } from "react-router";
 
 export default function SignUp() {
   const [form, setForm] = useState({
@@ -14,6 +15,8 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState([]);
+
+  const navigate = useNavigate();
 
   const strength = useMemo(() => {
     const p = form.password;
@@ -47,6 +50,10 @@ export default function SignUp() {
       setErrors(["Passwords do not match."]);
       return;
     }
+    if (strength < 5) {
+      setErrors(["Use a strong password with mix of Upper Case and Lower Case , use numbers and symbols(only legal)."]);
+      return;
+    }
     if (!form.agree) {
       setErrors(["Please accept the Terms & Privacy Policy."]);
       return;
@@ -70,12 +77,14 @@ export default function SignUp() {
       const res = await ress.json();
       if (res.errors) {
          setErrors(res.errors);
-      setForm({ name: res.oldInputs.name, email: res.oldInputs.email, password: res.oldInputs.password});
+     
       }
       else {
         setForm({ name: "", email: "", password: "", confirm: "", role: "student", agree: false });
+        if (res.message) { setMessage(res.message); }
+        navigate("/");
       }
-if(res.message){ setMessage(res.message);}
+
      
       
     } catch (err) {

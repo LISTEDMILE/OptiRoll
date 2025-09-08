@@ -52,7 +52,7 @@ app.use(
 
 app.use((req, res, next) => {
   req.isLoggedIn = req.session.isLoggedIn;
-  req.userId = req.session.userId;
+  req.AdminUser = req.session.AdminUser;
   req.loginType = req.session.loginType;
   next();
 });

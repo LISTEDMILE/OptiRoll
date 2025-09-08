@@ -56,23 +56,37 @@ exports.postSignUp = [
               password: hashedPassword
           });
 
-           adminUser.save().then(() => {
-          res.status(201).json({
-              message: "Signed Up Success",
+          adminUser.save().then((adminUser) => {
+               req.session.isLoggedIn = true;
+              req.session.AdminUser = adminUser;
+              req.session.loginType = "normal";
+              req.session.save((err) => {
+                  
+                  if (err) {
+                      console.error("Session save error: ", err);
+                       return res.status(500).json({
+                      errors: ["Error saving session."]
+                  })
+                  }
+                 
+              });
+              res.status(201).json({
+                  message: "Signed Up Success",
               
+              })
+          }).catch((err) => {
+              console.error("Error Signing In:", err);
+              res.status(500).json({
+                  errors: ["An error Occured:"],
+                  oldInputs: {
+                      name: name,
+                      email: email,
+                      password: password
+                  }
+              })
           })
-      }).catch((err) => {
-          console.error("Error Signing In:", err);
-          res.status(500).json({
-              errors: ["An error Occured:"],
-              oldInputs: {
-                  name: name,
-                  email: email,
-                  password:password
-              }
-          })
-      })
-      })
+      });
+     
      
   },
 ];
