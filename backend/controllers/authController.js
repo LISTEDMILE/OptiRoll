@@ -1,12 +1,80 @@
-exports.getLogin = (req, res, next) => {
-    
-};
-exports.postSignUp = (req, res,next) => {
-    
-};
-exports.postDeleteAccount = (req, res, next) => {
-    
-};
-exports.postLogOut = (req, res, next) => {
-    
-};
+const { check, validationResult } = require("express-validator");
+const AdminUser = require("../models/adminModel");
+const bcrypt = require("bcryptjs");
+const path = require("path");
+const fs = require("fs");
+
+exports.getLogin = (req, res, next) => {};
+exports.postSignUp = [
+  check("name")
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage("Enter your name")
+    .matches(/^[A-Za-z]+$/)
+    .withMessage("Name should contain letters"),
+  check("email")
+    .isEmail()
+    .withMessage("Please enter a valid email")
+    .normalizeEmail()
+    .custom(async (value) => {
+      const existingAdmin = await AdminUser.findOne({
+        email: value,
+      });
+      if (existingAdmin) {
+        throw new Error("Email/Username is already in use");
+      }
+    }),
+  check("password")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters long")
+    .matches(/[A-Z]/)
+    .withMessage("Password must contain at least one Uppercase letter")
+    .matches(/[a-z]/)
+    .withMessage("Password must contain at least one Lowercase letter")
+    .matches(/\d/)
+    .withMessage("Password must contain at least one number")
+    .matches(/[@$!%*?&]/)
+    .withMessage("Password must contain at least one special character")
+    .trim(),
+  (req, res, next) => {
+    const { name, email, password } = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        errors: errors.array().map((err) => err.msg),
+        oldInputs: {
+          name: name,
+          email: email,
+          password: password,
+        },
+      });
+      }
+      bcrypt.hash(password, 12).then((hashedPassword) => {
+          const adminUser = new AdminUser({
+              name: name,
+              email: email,
+              password: hashedPassword
+          });
+
+           adminUser.save().then(() => {
+          res.status(201).json({
+              message: "Signed Up Success",
+              
+          })
+      }).catch((err) => {
+          console.error("Error Signing In:", err);
+          res.status(500).json({
+              errors: ["An error Occured:"],
+              oldInputs: {
+                  name: name,
+                  email: email,
+                  password:password
+              }
+          })
+      })
+      })
+     
+  },
+];
+exports.postDeleteAccount = (req, res, next) => {};
+exports.postLogOut = (req, res, next) => {};

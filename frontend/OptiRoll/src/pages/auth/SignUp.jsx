@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { ApiUrl } from "../../../ApiUrl";
 
 export default function SignUp() {
   const [form, setForm] = useState({
@@ -12,6 +13,7 @@ export default function SignUp() {
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState([]);
 
   const strength = useMemo(() => {
     const p = form.password;
@@ -29,6 +31,8 @@ export default function SignUp() {
   const onChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((f) => ({ ...f, [name]: type === "checkbox" ? checked : value }));
+    setErrors([]);
+    setMessage("");
   };
 
   const onSubmit = async (e) => {
@@ -36,23 +40,22 @@ export default function SignUp() {
     setMessage("");
 
     if (!form.name || !form.email || !form.password) {
-      setMessage("Please fill all required fields.");
+      setErrors(["Please fill all required fields."]);
       return;
     }
     if (form.password !== form.confirm) {
-      setMessage("Passwords do not match.");
+      setErrors(["Passwords do not match."]);
       return;
     }
     if (!form.agree) {
-      setMessage("Please accept the Terms & Privacy Policy.");
+      setErrors(["Please accept the Terms & Privacy Policy."]);
       return;
     }
 
     setLoading(true);
     try {
-      // Replace with your backend endpoint
-      const API = import.meta?.env?.VITE_API_URL || "";
-      const res = await fetch(`${API}/api/auth/signup`, {
+      
+       const ress = await fetch(`${ApiUrl}/auth/signUp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -64,12 +67,20 @@ export default function SignUp() {
         credentials: "include",
       });
 
-      if (!res.ok) throw new Error("Failed to sign up");
-
-      setMessage("Account created! Check your email to verify.");
-      setForm({ name: "", email: "", password: "", confirm: "", role: "student", agree: false });
+      const res = await ress.json();
+      if (res.errors) {
+         setErrors(res.errors);
+      setForm({ name: res.oldInputs.name, email: res.oldInputs.email, password: res.oldInputs.password});
+      }
+      else {
+        setForm({ name: "", email: "", password: "", confirm: "", role: "student", agree: false });
+      }
+if(res.message){ setMessage(res.message);}
+     
+      
     } catch (err) {
-      setMessage(err.message || "Something went wrong.");
+       setErrors([err.message || "Something went wrong."]);
+      
     } finally {
       setLoading(false);
     }
@@ -269,8 +280,17 @@ export default function SignUp() {
               </button>
 
               {message && (
-                <div className={`mt-3 rounded-xl border px-4 py-3 text-sm ${message.includes("!") ? "border-emerald-400/40 bg-emerald-400/10 text-emerald-200" : message.includes("Failed") || message.includes("wrong") ? "border-rose-400/40 bg-rose-400/10 text-rose-200" : "border-white/15 bg-white/5 text-white/80"}`}>
+                <div className={`mt-3 rounded-xl border px-4 py-3 text-sm `}>
                   {message}
+                </div>
+              )}
+              {errors.length !== 0 && (
+                <div className={`mt-3 rounded-xl border px-4 py-3 text-sm border-rose-400/40 bg-rose-400/10 text-rose-200" `}>
+                  {errors.map(err => {
+                    return (
+                      <li>{err}</li>
+                    )
+                  })}
                 </div>
               )}
             </form>
