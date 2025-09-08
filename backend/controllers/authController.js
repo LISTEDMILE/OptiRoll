@@ -4,7 +4,60 @@ const bcrypt = require("bcryptjs");
 const path = require("path");
 const fs = require("fs");
 
-exports.getLogin = (req, res, next) => {};
+exports.getLogin = async (req, res, next) => {
+  const { email, password } = req.body;
+  try {
+    const adminUser = await AdminUser.findOne({ email: email });
+    if (!adminUser) {
+      return res.status(401).json({
+        errors: ["Invalid Credentials."],
+        oldInputs: {
+          email: email,
+          password: password
+        }
+      })
+    
+    }
+
+    const isMatch = await bcrypt.compare(password, adminUser.password);
+      if (!isMatch){
+        return res.status(401).json({
+          errors: ["Invalid Credentials."],
+          oldInputs: {
+            email: email,
+            password:password
+          }
+        })
+    }
+    req.session.isLoggedIn = true;
+    req.session.AdminUser = adminUser;
+    req.session.loginType = "normal";
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session save error : ", err);
+        return res.status(500).json({
+          errors: ["An error occured."],
+        });
+      }
+    })
+
+    res.status(200).json({
+      message: "Login Successful",
+    })
+
+  
+  } catch (err) {
+    console.error("Error finding User:", err);
+    res.status(500).json({
+      errors: ["An error occured."],
+      oldInputs: {
+        email: email,
+        password:password
+      }
+    })
+  }
+
+};
 exports.postSignUp = [
   check("name")
     .trim()
