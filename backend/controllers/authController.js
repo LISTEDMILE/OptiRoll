@@ -137,7 +137,55 @@ exports.postSignUp = [
     });
   },
 ];
-exports.postDeleteAccount = (req, res, next) => {};
+exports.postDeleteAccount = async (req, res, next) => {
+  try {
+    if (!req.session?.AdminUser?._id) {
+      return res.status(401).json({
+        errors: ["Unauthorized : Please log in first"]
+      });
+    }
+    const { password } = req.body;
+    const adminUser = await AdminUser.findOne({
+      email: req.session.AdminUser.email,
+    });
+
+    if (!adminUser) {
+      return res.status(404).json({
+        errors: ["User not found."]
+      });
+    }
+    const isMatch = await bcrypt.compare(password, adminUser.password);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        errors:["Wrong Credentials."]
+      })
+    }
+
+    // image logic
+
+    
+    await AdminUser.findByIdAndDelete(req.session.AdminUser._id);
+
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Error destroying session : ", err);
+      }
+      res.clearCookie("connect.sid");
+      return res.status(200).json({
+        success: true,
+        message:"Account Deleted Successfully.",
+      })
+    })
+
+
+  } catch (err)  {
+    console.error("Error deleting accound : ", err);
+    res.status(500).json({
+      errors:["Failed to delete account."]
+    })
+   }
+};
 
 exports.postLogOut = (req, res, next) => {
   req.session.destroy((err) => {
