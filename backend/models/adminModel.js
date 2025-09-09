@@ -22,4 +22,11 @@ const adminSchema = new mongoose.Schema({
   ],
 });
 
+adminSchema.post("findOneAndDelete", async function (doc) {
+  if (doc && doc.students && doc.students.length > 0) {
+    const StudentUser = mongoose.model("StudentUser");
+    await StudentUser.deleteMany({ _id: { $in: doc.students } });
+  }
+});
+
 module.exports = mongoose.model("AdminUser", adminSchema);

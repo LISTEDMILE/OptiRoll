@@ -77,6 +77,12 @@ export default function Header() {
       >
         Delete Account
       </button>
+       <Link
+        to={"/auth/login"}
+        className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition"
+      >
+        Login/SignUp
+      </Link>
 
       {showDelete && (
         <div className="inset-0 fixed flex justify-center items-center z-50">

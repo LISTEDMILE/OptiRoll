@@ -33,6 +33,7 @@ studentSchema.pre("findOneAndDelete", async function (next) {
     },
     { $pull: { students: studentId } }
   );
+  next();
 });
 
 module.exports = mongoose.model("StudentUser", studentSchema);
