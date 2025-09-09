@@ -22,12 +22,17 @@ const studentSchema = new mongoose.Schema({
 
 studentSchema.pre("findOneAndDelete", async function (next) {
   const queryId = this.getQuery()["_id"];
-  const studentId = typeof queryId === "string" ? new mongoose.Types.ObjectId(queryId) : queryId;
-   const AdminUser = mongoose.model("AdminUser");
-  await AdminUser.findOneAndUpdate({
-    students:studentId
-  },
-  {$pull:{students:studentId}})
-})
+  const studentId =
+    typeof queryId === "string"
+      ? new mongoose.Types.ObjectId(queryId)
+      : queryId;
+  const AdminUser = mongoose.model("AdminUser");
+  await AdminUser.findOneAndUpdate(
+    {
+      students: studentId,
+    },
+    { $pull: { students: studentId } }
+  );
+});
 
 module.exports = mongoose.model("StudentUser", studentSchema);

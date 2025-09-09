@@ -120,129 +120,123 @@ exports.adminStudentList = async (req, res, next) => {
   }
 };
 
-exports.adminStudentDashboard =async (req, res, next) => {
-    try {
-        if (!req.session || req.session.isLoggedIn !== true || req.session.loginType !== "admin") {
-            return res.status(401).json({
-                errors:["Unauthorized Access"]
-            })
-        }
-
-        const { sid } = req.params;
-        
-        const adminUser = await AdminUser.findById(req.session.AdminUser._id);
-        if (!adminUser.students.includes(sid)) {
-            return res.status(401).json({
-                errors:["Unauthorized Access"]
-            })
-        }
-
-        const student =await StudentUser.findById(sid);
-        
-        return res.status(200).json({
-            student:student
-        })
-
-    } catch (err) {
-        console.error("Error fetching dashboard : ", err);
-        return res.status(500).json({
-            errors:["Error fetching dashboard"]
-        })
+exports.adminStudentDashboard = async (req, res, next) => {
+  try {
+    if (
+      !req.session ||
+      req.session.isLoggedIn !== true ||
+      req.session.loginType !== "admin"
+    ) {
+      return res.status(401).json({
+        errors: ["Unauthorized Access"],
+      });
     }
-}
+
+    const { sid } = req.params;
+
+    const adminUser = await AdminUser.findById(req.session.AdminUser._id);
+    if (!adminUser.students.includes(sid)) {
+      return res.status(401).json({
+        errors: ["Unauthorized Access"],
+      });
+    }
+
+    const student = await StudentUser.findById(sid);
+
+    return res.status(200).json({
+      student: student,
+    });
+  } catch (err) {
+    console.error("Error fetching dashboard : ", err);
+    return res.status(500).json({
+      errors: ["Error fetching dashboard"],
+    });
+  }
+};
 
 exports.editStudentDashboard = async (req, res, next) => {
-    console.log("ldkjf")
-    try {
-        if (!req.session || req.session.isLoggedIn !== true || req.session.loginType !== "admin") {
-            return res.status(401).json({
-                errors:["Unauthorized Access"]
-            })
-        }
-
-        const { sid } = req.params;
-        
-        
-        const adminUser = await AdminUser.findById(req.session.AdminUser._id);
-        if (!adminUser.students.includes(sid)) {
-            return res.status(401).json({
-                errors:["Unauthorized Access"]
-            })
-        }
-
-        
-        
-        try {
-
-            
-            const student = await StudentUser.findById(sid);
-            
-            // more fields to add...
-            const { name } = req.body;
-            student.name = name;
-            
-            
-            await student.save();
-            return res.status(200).json({
-                message:"Student Updated successfully"
-            })
-            
-        } catch (err) {
-            console.error("Error fetching dashboard : ", err);
-        return res.status(500).json({
-            errors:["Error Editting dashboard"]
-        })
-        }
-        
-
-    } catch (err) {
-        console.error("Error fetching dashboard : ", err);
-        return res.status(500).json({
-            errors:["Error fetching dashboard"]
-        })
+  console.log("ldkjf");
+  try {
+    if (
+      !req.session ||
+      req.session.isLoggedIn !== true ||
+      req.session.loginType !== "admin"
+    ) {
+      return res.status(401).json({
+        errors: ["Unauthorized Access"],
+      });
     }
-}
+
+    const { sid } = req.params;
+
+    const adminUser = await AdminUser.findById(req.session.AdminUser._id);
+    if (!adminUser.students.includes(sid)) {
+      return res.status(401).json({
+        errors: ["Unauthorized Access"],
+      });
+    }
+
+    try {
+      const student = await StudentUser.findById(sid);
+
+      // more fields to add...
+      const { name } = req.body;
+      student.name = name;
+
+      await student.save();
+      return res.status(200).json({
+        message: "Student Updated successfully",
+      });
+    } catch (err) {
+      console.error("Error fetching dashboard : ", err);
+      return res.status(500).json({
+        errors: ["Error Editting dashboard"],
+      });
+    }
+  } catch (err) {
+    console.error("Error fetching dashboard : ", err);
+    return res.status(500).json({
+      errors: ["Error fetching dashboard"],
+    });
+  }
+};
 
 exports.deleteStudent = async (req, res, next) => {
-    try {
-        
-
-        const {sid} = req.params;
-        if (!req.session || req.session.loginType !== "admin" || req.session.isLoggedIn !== true) {
-            return res.status(401).json({
-                errors:["Unauthorized Access"]
-            })
-        }
-
-        
-
-        const adminUser = await AdminUser.findById(req.session.AdminUser._id);
-        if (!adminUser.students.includes(sid)) {
-            return res.status(401).json({
-                errors:["Unauthorized Access"]
-            })
-        }
-
-        try {
-
-            
-             await StudentUser.findByIdAndDelete(sid);           
-            
-            return res.status(200).json({
-                message:"Student Deleted successfully"
-            })
-            
-        } catch (err) {
-            console.error("Error Deleting Student : ", err);
-        return res.status(500).json({
-            errors:["Error Deleting Student"]
-        })
-        }
-
-    } catch (err) {
-        console.error("Error deleting Student : ", err);
-        return res.status(500).json({
-            errors:["Error Deleting Student"]
-        })
+  try {
+    const { sid } = req.params;
+    if (
+      !req.session ||
+      req.session.loginType !== "admin" ||
+      req.session.isLoggedIn !== true
+    ) {
+      return res.status(401).json({
+        errors: ["Unauthorized Access"],
+      });
     }
-}
+
+    const adminUser = await AdminUser.findById(req.session.AdminUser._id);
+    if (!adminUser.students.includes(sid)) {
+      return res.status(401).json({
+        errors: ["Unauthorized Access"],
+      });
+    }
+
+    try {
+      await StudentUser.findByIdAndDelete(sid);
+
+      return res.status(200).json({
+        message: "Student Deleted successfully",
+      });
+    } catch (err) {
+      console.error("Error Deleting Student : ", err);
+      return res.status(500).json({
+        errors: ["Error Deleting Student"],
+      });
+    }
+  } catch (err) {
+    console.error("Error deleting Student : ", err);
+    return res.status(500).json({
+      errors: ["Error Deleting Student"],
+    });
+  }
+};

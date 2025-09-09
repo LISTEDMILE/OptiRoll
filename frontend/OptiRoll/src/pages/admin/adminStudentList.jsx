@@ -37,8 +37,6 @@ export default function AdminStudentList() {
       <div className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-fuchsia-600/30 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-32 -right-16 h-[28rem] w-[28rem] rounded-full bg-cyan-500/30 blur-3xl" />
 
-      
-
       {/* Main Content */}
       <main className="mx-auto max-w-6xl px-6 pb-16 md:pt-4">
         <div className="mb-8 flex items-center justify-between">
