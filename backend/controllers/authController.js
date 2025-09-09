@@ -8,52 +8,42 @@ const fs = require("fs");
 exports.getLogin = async (req, res, next) => {
   const { email, password, loginType } = req.body;
   try {
-
-
     if (loginType === "student") {
-
-      
       const studentUser = await StudentUser.findOne({ email: email });
-    if (!studentUser) {
-      return res.status(401).json({
-        errors: ["Invalid Credentials."],
-        oldInputs: {
-          email: email,
-          password: password,
-          loginType:loginType
-        },
-      });
-    }
-
-    const isMatch = await bcrypt.compare(password, studentUser.password);
-    if (!isMatch) {
-      return res.status(401).json({
-        errors: ["Invalid Credentials."],
-        oldInputs: {
-          email: email,
-          password: password,
-          loginType:loginType
-        },
-      });
-    }
-    req.session.isLoggedIn = true;
-    req.session.StudentUser = studentUser;
-    req.session.loginType = loginType;
-    req.session.save((err) => {
-      if (err) {
-        console.error("Session save error : ", err);
-        return res.status(500).json({
-          errors: ["An error occured."],
+      if (!studentUser) {
+        return res.status(401).json({
+          errors: ["Invalid Credentials."],
+          oldInputs: {
+            email: email,
+            password: password,
+            loginType: loginType,
+          },
         });
       }
-    });
-   
-      
-      
-    }
 
-    else {
-      
+      const isMatch = await bcrypt.compare(password, studentUser.password);
+      if (!isMatch) {
+        return res.status(401).json({
+          errors: ["Invalid Credentials."],
+          oldInputs: {
+            email: email,
+            password: password,
+            loginType: loginType,
+          },
+        });
+      }
+      req.session.isLoggedIn = true;
+      req.session.StudentUser = studentUser;
+      req.session.loginType = loginType;
+      req.session.save((err) => {
+        if (err) {
+          console.error("Session save error : ", err);
+          return res.status(500).json({
+            errors: ["An error occured."],
+          });
+        }
+      });
+    } else {
       const adminUser = await AdminUser.findOne({ email: email });
       if (!adminUser) {
         return res.status(401).json({
@@ -61,7 +51,7 @@ exports.getLogin = async (req, res, next) => {
           oldInputs: {
             email: email,
             password: password,
-            loginType: loginType
+            loginType: loginType,
           },
         });
       }
@@ -73,7 +63,7 @@ exports.getLogin = async (req, res, next) => {
           oldInputs: {
             email: email,
             password: password,
-            loginType: loginType
+            loginType: loginType,
           },
         });
       }
@@ -88,7 +78,7 @@ exports.getLogin = async (req, res, next) => {
           });
         }
       });
-     }
+    }
 
     res.status(200).json({
       message: "Login Successful",
@@ -100,7 +90,7 @@ exports.getLogin = async (req, res, next) => {
       oldInputs: {
         email: email,
         password: password,
-        loginType:loginType
+        loginType: loginType,
       },
     });
   }
@@ -192,7 +182,7 @@ exports.postDeleteAccount = async (req, res, next) => {
   try {
     if (!req.session?.AdminUser?._id) {
       return res.status(401).json({
-        errors: ["Unauthorized : Please log in first"]
+        errors: ["Unauthorized : Please log in first"],
       });
     }
     const { password } = req.body;
@@ -202,20 +192,19 @@ exports.postDeleteAccount = async (req, res, next) => {
 
     if (!adminUser) {
       return res.status(404).json({
-        errors: ["User not found."]
+        errors: ["User not found."],
       });
     }
     const isMatch = await bcrypt.compare(password, adminUser.password);
 
     if (!isMatch) {
       return res.status(401).json({
-        errors:["Wrong Credentials."]
-      })
+        errors: ["Wrong Credentials."],
+      });
     }
 
     // image logic
 
-    
     await AdminUser.findByIdAndDelete(req.session.AdminUser._id);
 
     req.session.destroy((err) => {
@@ -225,17 +214,15 @@ exports.postDeleteAccount = async (req, res, next) => {
       res.clearCookie("connect.sid");
       return res.status(200).json({
         success: true,
-        message:"Account Deleted Successfully.",
-      })
-    })
-
-
-  } catch (err)  {
+        message: "Account Deleted Successfully.",
+      });
+    });
+  } catch (err) {
     console.error("Error deleting accound : ", err);
     res.status(500).json({
-      errors:["Failed to delete account."]
-    })
-   }
+      errors: ["Failed to delete account."],
+    });
+  }
 };
 
 exports.postLogOut = (req, res, next) => {

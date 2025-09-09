@@ -19,28 +19,21 @@ function Layout() {
 }
 
 function App() {
-  const route = createBrowserRouter(
-    [{
+  const route = createBrowserRouter([
+    {
       element: <Layout />,
-      children: [{ path: "/", element: <LandingPage /> },
-    { path: "/auth/signUp", element: <SignUp /> },
+      children: [
+        { path: "/", element: <LandingPage /> },
+        { path: "/auth/signUp", element: <SignUp /> },
         { path: "/auth/login", element: <Login /> },
         { path: "/admin/addStudent", element: <AdminAddStudent /> },
         { path: "/admin/studentList", element: <AdminStudentList /> },
-        {
-          path:"/admin/studentDashboard/:sid", element:<AdminStudentDashboard/>
-        }
-      ]
-    }
-   
+        { path: "/admin/studentDashboard/:sid", element: <AdminStudentDashboard />, },
+      ],
+    },
   ]);
 
-  return (
-  
-     
-      <RouterProvider router={route}></RouterProvider>
-    
-  );
+  return <RouterProvider router={route}></RouterProvider>;
 }
 
 export default App;

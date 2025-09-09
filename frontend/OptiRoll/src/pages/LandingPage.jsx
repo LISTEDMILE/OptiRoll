@@ -43,7 +43,8 @@ export default function LandingPage() {
       >
         <h1 className="text-5xl font-bold mb-4">Automatic Attendance System</h1>
         <p className="text-lg mb-6 max-w-2xl mx-auto">
-          Revolutionize attendance management with our AI-powered, real-time platform.
+          Revolutionize attendance management with our AI-powered, real-time
+          platform.
         </p>
         <Link
           to="/auth/signup"
@@ -72,9 +73,12 @@ export default function LandingPage() {
 
       {/* CTA Section */}
       <section className="py-16 bg-blue-600 text-center text-white">
-        <h2 className="text-3xl font-bold mb-4">Ready to Automate Attendance?</h2>
+        <h2 className="text-3xl font-bold mb-4">
+          Ready to Automate Attendance?
+        </h2>
         <p className="mb-6 max-w-xl mx-auto">
-          Start saving time and increasing accuracy today with our simple and efficient solution.
+          Start saving time and increasing accuracy today with our simple and
+          efficient solution.
         </p>
         <Link
           to="/auth/signup"

@@ -26,7 +26,7 @@ export default function AdminStudentDashboard() {
         setStudents(data.studentsList || []);
       } catch (err) {
         console.error(err.messsage);
-        setError( "Something went wrong");
+        setError("Something went wrong");
       } finally {
         setLoading(false);
       }

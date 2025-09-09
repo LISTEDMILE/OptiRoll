@@ -14,11 +14,11 @@ const studentSchema = new mongoose.Schema({
     type: String,
     required: [true, "Password is required"],
   },
- admin: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "AdminUser",
-  required: true
-}
+  admin: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "AdminUser",
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("StudentUser", studentSchema);

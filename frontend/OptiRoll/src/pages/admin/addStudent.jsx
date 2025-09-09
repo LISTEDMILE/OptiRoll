@@ -164,7 +164,9 @@ export default function AdminAddStudent() {
 
               {/* Email */}
               <div>
-                <label className="mb-1 block text-sm text-white/80">Email</label>
+                <label className="mb-1 block text-sm text-white/80">
+                  Email
+                </label>
                 <input
                   type="email"
                   name="email"

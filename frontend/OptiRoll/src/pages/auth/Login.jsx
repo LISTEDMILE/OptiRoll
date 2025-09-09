@@ -6,7 +6,7 @@ export default function Login() {
     email: "",
     password: "",
     remember: false,
-    loginType:"teacher"
+    loginType: "teacher",
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -37,7 +37,7 @@ export default function Login() {
         body: JSON.stringify({
           email: form.email,
           password: form.password,
-          loginType:form.loginType
+          loginType: form.loginType,
         }),
         credentials: "include",
       });
@@ -168,7 +168,7 @@ export default function Login() {
                 />
               </div>
 
-               {/* Role */}
+              {/* Role */}
               <div>
                 <label className="mb-1 block text-sm text-white/80">Role</label>
                 <select
