@@ -9,6 +9,7 @@ export default function AdminStudentDashboard() {
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState([]);
   const [message, setMessage] = useState("");
+  const [showDelete, setShowDelete] = useState(false);
 
   useEffect(() => {
     const fetchStudent = async () => {
@@ -205,8 +206,48 @@ export default function AdminStudentDashboard() {
         </form>
 
 
-        <button onClick={() => deleteStudent()}>Delete Student</button>
+       <button
+  onClick={() => setShowDelete(true)}
+  className="mt-6 w-full py-3 rounded-2xl bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition active:scale-[0.98]"
+>
+  Delete Student
+</button>
+
+        
+      
+        
       </div>
+      {showDelete && (
+  <div className="inset-0 w-screen h-screen fixed flex flex-col justify-center items-center gap-12">
+    {/* Modal */}
+    <div className="z-20 bg-white rounded-3xl shadow-2xl p-6 w-96 flex flex-col items-center gap-4">
+      <h2 className="text-xl font-bold text-gray-800 text-center">
+        Are you sure you want to delete this student?
+      </h2>
+      <div className="flex justify-between gap-4 mt-4 w-full">
+        <button
+          onClick={() => deleteStudent()}
+          className="flex-1 py-2 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-600 shadow-md transition"
+        >
+          Delete
+        </button>
+        <button
+          onClick={() => setShowDelete(false)}
+          className="flex-1 py-2 rounded-xl bg-gray-200 text-gray-800 font-semibold hover:bg-gray-300 shadow-sm transition"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+
+    {/* Overlay */}
+    <div
+      className="inset-0 w-screen h-screen fixed z-10 bg-black/60"
+      onClick={() => setShowDelete(false)}
+    ></div>
+  </div>
+)}
+
     </div>
   );
 }
