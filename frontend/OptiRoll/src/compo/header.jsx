@@ -58,12 +58,19 @@ export default function Header() {
       >
         Home
       </Link>
+     
       <button
         onClick={logout}
         className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium mr-3 transition"
       >
         Logout
       </button>
+       <Link
+        to={"/admin/studentList"}
+        className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition"
+      >
+        Students
+      </Link>
       <button
         onClick={() => setShowDelete(true)}
         className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-medium transition"

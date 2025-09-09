@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom"; // Assuming React Router
 import { ApiUrl } from "../../../ApiUrl";
+import Header from "../../compo/header";
 
 export default function AdminStudentList() {
   const [students, setStudents] = useState([]);
@@ -36,23 +37,7 @@ export default function AdminStudentList() {
       <div className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-fuchsia-600/30 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-32 -right-16 h-[28rem] w-[28rem] rounded-full bg-cyan-500/30 blur-3xl" />
 
-      {/* Nav */}
-      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6">
-        <div className="flex items-center gap-3">
-          <span className="inline-grid h-9 w-9 place-items-center rounded-2xl bg-gradient-to-br from-cyan-400 to-fuchsia-500 text-slate-950 font-black shadow-lg shadow-cyan-500/20">
-            OR
-          </span>
-          <span className="text-lg font-semibold tracking-wide text-white/90">
-            OptiRoll
-          </span>
-        </div>
-        <a
-          href="#"
-          className="text-sm text-white/70 hover:text-white/90 transition"
-        >
-          Need help?
-        </a>
-      </header>
+      
 
       {/* Main Content */}
       <main className="mx-auto max-w-6xl px-6 pb-16 md:pt-4">
