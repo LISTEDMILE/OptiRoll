@@ -14,16 +14,12 @@ const adminSchema = new mongoose.Schema({
     type: String,
     required: [true, "Password is required"],
   },
-  students: {
-    type: Array,
-    default: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "StudentUser",
-      required:true
-    }
-    ],
-    
-  },
+  students: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "StudentUser",
+    required: true
+  }
+  ],
 });
 
 module.exports = mongoose.model("AdminUser", adminSchema);

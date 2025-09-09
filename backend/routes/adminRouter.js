@@ -4,5 +4,6 @@ const adminRouter = express.Router();
 
 
 adminRouter.post("/addStudent", adminController.addStudentPost);
+adminRouter.post("/studentsList", adminController.adminStudentList);
 
 module.exports = adminRouter;

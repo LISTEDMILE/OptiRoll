@@ -87,4 +87,37 @@ async (req, res, next)  => {
             }
         })
     }
-} ] 
+    }] 
+
+exports.adminStudentList = async (req, res, next) => {
+    
+    try {
+        if (!req.session || req.session.isLoggedIn !==true || req.session.loginType!=="admin") {
+            return res.status(401).json({
+                errors:["Unauthorized Access"]
+            })
+        }
+
+        const adminUser = await AdminUser.findById(req.session.AdminUser._id);
+        if (!adminUser) {
+            return res.status(404).json({
+                errors:["User not found"],
+            })
+        }
+
+        else {
+    
+            const studentsList = (await adminUser.populate("students")).students;
+            return res.status(200).json({
+                studentsList: studentsList
+                
+            })
+        }
+    }
+    catch (err) {
+        console.error("Error fetching students . : ", err);
+        res.status(500).json({
+            errors: ["Error fetching Students."]
+        })
+    }
+}

@@ -6,6 +6,7 @@ import SignUp from "./pages/auth/SignUp";
 import Login from "./pages/auth/Login";
 import Header from "./compo/header";
 import AdminAddStudent from "./pages/admin/addStudent";
+import AdminStudentList from "./pages/admin/adminStudentList";
 
 function Layout() {
   return (
@@ -23,7 +24,8 @@ function App() {
       children: [{ path: "/", element: <LandingPage /> },
     { path: "/auth/signUp", element: <SignUp /> },
         { path: "/auth/login", element: <Login /> },
-        {path:"/admin/addStudent", element:<AdminAddStudent/>}
+        { path: "/admin/addStudent", element: <AdminAddStudent /> },
+        {path:"/admin/studentList",element:<AdminStudentList/>}
       ]
     }
    
