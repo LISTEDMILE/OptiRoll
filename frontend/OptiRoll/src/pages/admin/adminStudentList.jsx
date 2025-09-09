@@ -101,7 +101,7 @@ export default function AdminStudentList() {
                     <td className="px-6 py-4">{s.email}</td>
                     <td className="px-6 py-4 text-center">
                       <Link
-                        to={`/admin/student/${s._id}`}
+                        to={`/admin/studentDashboard/${s._id}`}
                         className="inline-block rounded-xl bg-gradient-to-r from-cyan-400 to-fuchsia-500 px-4 py-2 text-xs font-semibold text-slate-950 shadow-md hover:scale-105 transition"
                       >
                         View Dashboard
