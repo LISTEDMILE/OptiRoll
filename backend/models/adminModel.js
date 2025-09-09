@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const StudentUser = require("../models/studentModel");
 
 const adminSchema = new mongoose.Schema({
   name: {

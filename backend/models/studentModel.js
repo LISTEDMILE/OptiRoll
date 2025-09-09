@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const AdminUser = require("../models/adminModel");
 
 const studentSchema = new mongoose.Schema({
   name: {
@@ -12,7 +11,7 @@ const studentSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, "Password is required"],
+    required: [true, "Password is requijred"],
   },
   admin: {
     type: mongoose.Schema.Types.ObjectId,
@@ -20,5 +19,15 @@ const studentSchema = new mongoose.Schema({
     required: true,
   },
 });
+
+studentSchema.pre("findOneAndDelete", async function (next) {
+  const queryId = this.getQuery()["_id"];
+  const studentId = typeof queryId === "string" ? new mongoose.Types.ObjectId(queryId) : queryId;
+   const AdminUser = mongoose.model("AdminUser");
+  await AdminUser.findOneAndUpdate({
+    students:studentId
+  },
+  {$pull:{students:studentId}})
+})
 
 module.exports = mongoose.model("StudentUser", studentSchema);

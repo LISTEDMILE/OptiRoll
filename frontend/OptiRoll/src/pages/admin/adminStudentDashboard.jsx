@@ -4,10 +4,11 @@ import { ApiUrl } from "../../../ApiUrl";
 
 export default function AdminStudentDashboard() {
   const { sid } = useParams();
-  const [student, setStudent] = useState(null); // single student
+  const navigate = useNavigate();
+  const [student, setStudent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState([]);
-  const navigate = useNavigate();
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const fetchStudent = async () => {
@@ -19,12 +20,8 @@ export default function AdminStudentDashboard() {
         });
 
         const data = await res.json();
-
-        if (data.errors) {
-          setErrors(data.errors);
-        } else {
-          setStudent(data.student); // set the single student object
-        }
+        if (data.errors) setErrors(data.errors);
+        else setStudent(data.student);
       } catch (err) {
         console.error(err.message);
         setErrors(["Something went wrong"]);
@@ -36,11 +33,62 @@ export default function AdminStudentDashboard() {
     fetchStudent();
   }, [sid]);
 
-  if (loading) return <div className="p-4 text-center">Loading student...</div>;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setStudent((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrors([]);
+    setMessage("");
+
+    try {
+      const res = await fetch(`${ApiUrl}/admin/editStudentDashboard/${sid}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(student),
+      });
+
+      const data = await res.json();
+      if (data.errors) setErrors(data.errors);
+      else setMessage("Student updated successfully!");
+    } catch (err) {
+      console.error(err.message);
+      setErrors(["Something went wrong"]);
+    }
+  };
+
+  const deleteStudent = async (e) => {
+     try {
+      const res = await fetch(`${ApiUrl}/admin/deleteStudent/${sid}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+
+      const data = await res.json();
+       if (data.errors) setErrors(data.errors);
+       else {
+         alert("Student deleted successfully");
+         navigate("/admin/studentList");
+       }
+
+    } catch (err) {
+      console.error(err.message);
+      setErrors(["Something went wrong"]);
+    }
+  }
+
+  if (loading)
+    return (
+      <div className="p-4 text-center text-white">Loading student...</div>
+    );
 
   if (errors.length > 0)
     return (
-      <div className="p-4 text-red-500 text-center">
+      <div className="p-4 text-red-400 text-center">
         {errors.map((err, i) => (
           <div key={i}>{err}</div>
         ))}
@@ -54,43 +102,111 @@ export default function AdminStudentDashboard() {
       </div>
     );
 
+  
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">
-        Student Dashboard
-      </h1>
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-6">
+      <div className="w-full max-w-3xl bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-8">
+        <h1 className="text-4xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-fuchsia-500">
+          Student Dashboard
+        </h1>
 
-      <table className="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden">
-        <thead>
-          <tr className="bg-gray-800 text-white">
-            <th className="border border-gray-300 p-3">Name</th>
-            <th className="border border-gray-300 p-3">Father's Name</th>
-            <th className="border border-gray-300 p-3">Class</th>
-            <th className="border border-gray-300 p-3">Phone</th>
-            <th className="border border-gray-300 p-3">Email</th>
-            <th className="border border-gray-300 p-3">Password</th>
-            <th className="border border-gray-300 p-3">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr className="text-center bg-white hover:bg-gray-50 transition">
-            <td className="border border-gray-300 p-3">{student.name || "N/A"}</td>
-            <td className="border border-gray-300 p-3">{student.fatherName || "N/A"}</td>
-            <td className="border border-gray-300 p-3">{student.class || "N/A"}</td>
-            <td className="border border-gray-300 p-3">{student.phone || "N/A"}</td>
-            <td className="border border-gray-300 p-3">{student.email || "N/A"}</td>
-            <td className="border border-gray-300 p-3">{student.password || "N/A"}</td>
-            <td className="border border-gray-300 p-3">
-              <button
-                onClick={() => navigate(`/attendance/${student._id}`)}
-                className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition"
-              >
-                View Attendance
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Name */}
+          <div>
+            <label className="block mb-1 font-semibold text-white/90">
+              Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={student.name || ""}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-2xl border border-white/20 bg-white/5 text-white placeholder-white/50 outline-none focus:border-cyan-400 focus:bg-white/10 transition"
+              placeholder="John Doe"
+            />
+          </div>
+
+          {/* Father's Name */}
+          <div>
+            <label className="block mb-1 font-semibold text-white/90">
+              Father's Name
+            </label>
+            <input
+              type="text"
+              name="fatherName"
+              value={student.fatherName || ""}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-2xl border border-white/20 bg-white/5 text-white placeholder-white/50 outline-none focus:border-cyan-400 focus:bg-white/10 transition"
+              placeholder="Father's Name"
+            />
+          </div>
+
+          {/* Class */}
+          <div>
+            <label className="block mb-1 font-semibold text-white/90">Class</label>
+            <input
+              type="text"
+              name="class"
+              value={student.class || ""}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-2xl border border-white/20 bg-white/5 text-white placeholder-white/50 outline-none focus:border-cyan-400 focus:bg-white/10 transition"
+              placeholder="10th Grade"
+            />
+          </div>
+
+          {/* Phone */}
+          <div>
+            <label className="block mb-1 font-semibold text-white/90">Phone</label>
+            <input
+              type="text"
+              name="phone"
+              value={student.phone || ""}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-2xl border border-white/20 bg-white/5 text-white placeholder-white/50 outline-none focus:border-cyan-400 focus:bg-white/10 transition"
+              placeholder="+91 9876543210"
+            />
+          </div>
+
+          {/* Email (Disabled) */}
+          <div>
+            <label className="block mb-1 font-semibold text-white/90">Email</label>
+            <input
+              type="text"
+              value={student.email || ""}
+              disabled
+              className="w-full px-4 py-3 rounded-2xl border border-white/20 bg-white/20 text-white/70 placeholder-white/50 outline-none cursor-not-allowed"
+            />
+          </div>
+
+          {/* Password (Disabled) */}
+          <div>
+            <label className="block mb-1 font-semibold text-white/90">Password</label>
+            <input
+              type="text"
+              value={student.password || ""}
+              disabled
+              className="w-full px-4 py-3 rounded-2xl border border-white/20 bg-white/20 text-white/70 placeholder-white/50 outline-none cursor-not-allowed"
+            />
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            className="w-full py-3 rounded-2xl bg-gradient-to-r from-cyan-400 to-fuchsia-500 text-slate-950 font-semibold text-lg shadow-lg hover:shadow-xl transition active:scale-[0.98]"
+          >
+            Update Student
+          </button>
+
+          {message && (
+            <div className="mt-3 text-green-400 font-medium text-center">
+              {message}
+            </div>
+          )}
+        </form>
+
+
+        <button onClick={() => deleteStudent()}>Delete Student</button>
+      </div>
     </div>
   );
 }
