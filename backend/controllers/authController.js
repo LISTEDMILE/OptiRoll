@@ -32,18 +32,30 @@ exports.getLogin = async (req, res, next) => {
           },
         });
       }
-      req.session.isLoggedIn = true;
-      req.session.StudentUser = studentUser;
-      req.session.loginType = loginType;
-      req.session.save((err) => {
-        if (err) {
+
+      req.session.regenerate((err) => {
+  if (err) {
           console.error("Session save error : ", err);
           return res.status(500).json({
             errors: ["An error occured."],
           });
         }
-      });
-    } else {
+
+req.session.isLoggedIn = true;
+      req.session.StudentUser = studentUser;
+        req.session.loginType = loginType;
+        
+
+         res.status(200).json({
+      message: "Login Successful",
+    });
+
+});
+
+    
+    }
+    
+    else {
       const adminUser = await AdminUser.findOne({ email: email });
       if (!adminUser) {
         return res.status(401).json({
@@ -67,22 +79,26 @@ exports.getLogin = async (req, res, next) => {
           },
         });
       }
-      req.session.isLoggedIn = true;
-      req.session.AdminUser = adminUser;
-      req.session.loginType = loginType;
-      req.session.save((err) => {
-        if (err) {
+      
+      req.session.regenerate((err) => {
+  if (err) {
           console.error("Session save error : ", err);
           return res.status(500).json({
             errors: ["An error occured."],
           });
         }
-      });
-    }
 
-    res.status(200).json({
+req.session.isLoggedIn = true;
+      req.session.AdminUser = adminUser;
+        req.session.loginType = loginType;
+        
+         res.status(200).json({
       message: "Login Successful",
     });
+});
+    }
+
+   
   } catch (err) {
     console.error("Error finding User:", err);
     res.status(500).json({
@@ -149,20 +165,24 @@ exports.postSignUp = [
       adminUser
         .save()
         .then((adminUser) => {
-          req.session.isLoggedIn = true;
-          req.session.AdminUser = adminUser;
-          req.session.loginType = "teacher";
-          req.session.save((err) => {
+          req.session.regenerate((err) => {
             if (err) {
-              console.error("Session save error: ", err);
+              console.error("Session save error : ", err);
               return res.status(500).json({
-                errors: ["Error saving session."],
+                errors: ["An error occured."],
               });
             }
+
+            req.session.isLoggedIn = true;
+            req.session.AdminUser = adminUser;
+            req.session.loginType = "teacher";
+        
+
+            res.status(200).json({
+              message: "SignUp Successful",
+            });
           });
-          res.status(201).json({
-            message: "Signed Up Success",
-          });
+        
         })
         .catch((err) => {
           console.error("Error Signing In:", err);

@@ -18,6 +18,7 @@ const studentSchema = new mongoose.Schema({
     ref: "AdminUser",
     required: true,
   },
+  attendence: []
 });
 
 studentSchema.pre("findOneAndDelete", async function (next) {

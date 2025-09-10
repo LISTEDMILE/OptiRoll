@@ -12,7 +12,7 @@ const port = process.env.PORT;
 const cors = require("cors");
 
 const authRouter = require("../backend/routes/authRouter");
-const hostRouter = require("../backend/routes/hostRouter");
+const teacherRouter = require("./routes/teacherRouter");
 const adminRouter = require("../backend/routes/adminRouter");
 const studentRouter = require("../backend/routes/studentRouter");
 
@@ -65,7 +65,7 @@ app.use(
 );
 
 app.use("/auth", authRouter);
-app.use("/host", hostRouter);
+app.use("/teacher", teacherRouter);
 app.use("/admin", adminRouter);
 app.use("/student", studentRouter);
 
