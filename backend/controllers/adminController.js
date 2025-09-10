@@ -155,7 +155,6 @@ exports.adminStudentDashboard = async (req, res, next) => {
 };
 
 exports.editStudentDashboard = async (req, res, next) => {
-  console.log("ldkjf");
   try {
     if (
       !req.session ||

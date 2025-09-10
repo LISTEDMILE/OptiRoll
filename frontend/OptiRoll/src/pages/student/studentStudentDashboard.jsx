@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ApiUrl } from "../../../ApiUrl";
 
-export default function studentStudentDashboard() {
+export default function StudentStudentDashboard() {
   const navigate = useNavigate();
   const [student, setStudent] = useState(null);
   const [loading, setLoading] = useState(true);

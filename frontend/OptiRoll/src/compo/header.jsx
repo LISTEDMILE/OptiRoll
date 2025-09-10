@@ -65,6 +65,12 @@ export default function Header() {
       >
         Logout
       </button>
+       <Link
+        to={"/student/studentDashboard"}
+        className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition"
+      >
+        Your Dashboard
+      </Link>
       <Link
         to={"/admin/studentList"}
         className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition"

@@ -33,35 +33,28 @@ exports.studentStudentDashboard = async (req, res, next) => {
 };
 
 exports.editStudentDashboard = async (req, res, next) => {
-  console.log("ldkjf");
   try {
     if (
       !req.session ||
       req.session.isLoggedIn !== true ||
-      req.session.loginType !== "admin"
+      req.session.loginType !== "student" || !req.session.StudentUser
     ) {
       return res.status(401).json({
         errors: ["Unauthorized Access"],
       });
     }
 
-    const { sid } = req.params;
 
-    const adminUser = await AdminUser.findById(req.session.AdminUser._id);
-    if (!adminUser.students.includes(sid)) {
-      return res.status(401).json({
-        errors: ["Unauthorized Access"],
-      });
-    }
+   
 
     try {
-      const student = await StudentUser.findById(sid);
+      const studentUser = await StudentUser.findById(req.session.StudentUser._id);
 
       // more fields to add...
       const { name } = req.body;
-      student.name = name;
+      studentUser.name = name;
 
-      await student.save();
+      await studentUser.save();
       return res.status(200).json({
         message: "Student Updated successfully",
       });

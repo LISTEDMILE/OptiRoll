@@ -8,6 +8,7 @@ import Header from "./compo/header";
 import AdminAddStudent from "./pages/admin/addStudent";
 import AdminStudentList from "./pages/admin/adminStudentList";
 import AdminStudentDashboard from "./pages/admin/adminStudentDashboard";
+import StudentStudentDashboard from "./pages/student/studentStudentDashboard";
 
 function Layout() {
   return (
@@ -28,7 +29,8 @@ function App() {
         { path: "/auth/login", element: <Login /> },
         { path: "/admin/addStudent", element: <AdminAddStudent /> },
         { path: "/admin/studentList", element: <AdminStudentList /> },
-        { path: "/admin/studentDashboard/:sid", element: <AdminStudentDashboard />, },
+        { path: "/admin/studentDashboard/:sid", element: <AdminStudentDashboard /> },
+        { path: "/student/studentDashboard", element:<StudentStudentDashboard/>}
       ],
     },
   ]);
