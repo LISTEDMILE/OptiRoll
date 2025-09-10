@@ -48,7 +48,7 @@ export default function Login() {
         setErrors(res.errors);
       } else {
         setMessage(res.message || "Login successful!");
-        setForm({ email: "", password: "" });
+        setForm({ ...form, email: "", password: "" });
       }
     } catch (err) {
       setErrors([err.message || "Something went wrong."]);
