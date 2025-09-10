@@ -21,7 +21,7 @@ exports.getLogin = async (req, res, next) => {
         });
       }
 
-      const isMatch = await bcrypt.compare(password, studentUser.password);
+      const isMatch = (password === studentUser.password);
       if (!isMatch) {
         return res.status(401).json({
           errors: ["Invalid Credentials."],
