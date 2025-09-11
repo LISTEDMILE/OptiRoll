@@ -26,15 +26,16 @@ export default function TeacherMarkAttendance() {
 
       const data = await res.json();
 
-      if (!res.ok) {
-        setErrors(data.errors || [data.message] || ["Failed to mark attendance."]);
+      if (data.errors) {
+        setErrors(data.errors || ["Failed to mark attendance."]);
         return;
       }
 
       setSuccess({
-        name: data.student?.name || data.email || email,
-        email: data.student?.email || email,
-        time: data.markedAt || new Date().toISOString(),
+        name: data.student.name,
+        email: data.student.email,
+        time: data.markedAt,
+        status:data.status
       });
 
       setEmail("");
@@ -84,7 +85,7 @@ export default function TeacherMarkAttendance() {
               disabled={loading}
               className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-cyan-400 to-fuchsia-500 text-slate-900 font-semibold shadow-lg hover:shadow-xl transition active:scale-[0.98] disabled:opacity-60"
             >
-              {loading ? "Marking…" : "Mark Present"}
+              {loading ? "Marking…" : "Mark Time"}
             </button>
 
             <button
@@ -118,7 +119,9 @@ export default function TeacherMarkAttendance() {
                 <div className="font-semibold text-white">{success.name}</div>
                 <div className="text-xs text-white/80">{success.email}</div>
                 <div className="text-xs text-white/70 mt-1">
-                  Marked present at{" "}
+                  {success.status === "start" && "Opened at"}
+                  {success.status === "end" && "Closed at"}
+                  {" "}
                   {new Date(success.time).toLocaleString()}
                 </div>
               </div>

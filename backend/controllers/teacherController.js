@@ -29,7 +29,6 @@ exports.teacherMarkAttendence = async (req, res, next) => {
     });
 
     if (!studentUser) {
-      console.error("Student Not found ");
       return res.status(404).json({
         errors: ["Student Not Found"],
       });
@@ -39,6 +38,16 @@ exports.teacherMarkAttendence = async (req, res, next) => {
     if (studentUser.attendence.whatNext == "start") {
       studentUser.attendence.startTime = testDate.toISOString();
       studentUser.attendence.whatNext = "end";
+      studentUser.markModified("attendence.data");
+    await studentUser.save();
+    return res.status(200).json({
+      student: {
+        name: studentUser.name,
+        email:studentUser.email
+      },
+      markedAt: testDate,
+      status:"start"
+    })
     } else if (studentUser.attendence.whatNext == "end") {
       const existing = studentUser.attendence.data.find(
         (atten) =>
@@ -75,10 +84,19 @@ exports.teacherMarkAttendence = async (req, res, next) => {
         });
       }
       studentUser.attendence.whatNext = "start";
+      studentUser.markModified("attendence.data");
+    await studentUser.save();
+    return res.status(200).json({
+       student: {
+        name: studentUser.name,
+        email:studentUser.email
+      },
+      markedAt: testDate,
+      status:"end"
+    })
     }
 
-    studentUser.markModified("attendence.data");
-    await studentUser.save();
+    
   } catch (err) {
     console.error("Error marking attendence : ", err);
     return res.status(500).json({
