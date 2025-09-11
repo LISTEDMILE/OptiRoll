@@ -35,41 +35,40 @@ exports.teacherMarkAttendence = async (req, res, next) => {
       });
     }
     const testDate = new Date();
-    const attendDate = testDate.toISOString().split("T")[0];
 
     if (studentUser.attendence.whatNext == "start") {
-      studentUser.attendence.startTime = testDate;
+      studentUser.attendence.startTime = testDate.toISOString();
       studentUser.attendence.whatNext = "end";
     } else if (studentUser.attendence.whatNext == "end") {
       const existing = studentUser.attendence.data.find(
         (atten) =>
-          atten.Date.toString().split("T")[0] ==
-          studentUser.attendence.startTime.toString().split("T")[0]
+          atten.Date.split("T")[0] ==
+          studentUser.attendence.startTime.split("T")[0]
       );
 
       if (existing) {
         const onlineTime =
           testDate -
-          studentUser.attendence.startTime +
-          studentUser.attendence.onlineTime;
+          new Date(studentUser.attendence.startTime) +
+          Number(existing.onlineTime);
         existing.Date = studentUser.attendence.startTime;
         existing.timings = [
           ...existing.timings,
           {
             start: studentUser.attendence.startTime,
-            end: testDate,
+            end: testDate.toISOString(),
           },
         ];
 
         existing.onlineTime = onlineTime;
       } else {
-        const onlineTime = testDate - studentUser.attendence.startTime;
+        const onlineTime = testDate - new Date(studentUser.attendence.startTime);
         studentUser.attendence.data.push({
           Date: studentUser.attendence.startTime,
           timings: [
             {
               start: studentUser.attendence.startTime,
-              end: testDate,
+              end: testDate.toISOString(),
             },
           ],
           onlineTime: onlineTime,
