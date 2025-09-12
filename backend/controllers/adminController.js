@@ -239,3 +239,50 @@ exports.deleteStudent = async (req, res, next) => {
     });
   }
 };
+
+exports.adminStudentAttencence = async (req, res, next) => {
+  try {
+    if (!req.session || req.session.isLoggedIn !== true || req.session.loginType !== "admin") {
+      return res.status(401).json({
+        errors: ["Unauthorized Access"]
+      })
+    }
+
+    const { sid } = req.params;
+
+    const adminUser = await AdminUser.findById(req.session.AdminUser._id);
+    if (!adminUser.students.includes(sid)) {
+      return res.status(401).json({
+        errors: ["Unauthorized Access"],
+      });
+    }
+
+    try {
+
+      const student = await StudentUser.findById(sid);
+      if (!student) {
+        return res.status(404).json({
+          errors:["Error finding student"]
+        })
+      }
+
+      return res.status(200).json({
+        attendence: student.attendence
+      })
+      
+    } catch (err) {
+      console.error("Error fetching data", err);
+      return res.status(500).json({
+        errors:["Error fetching data"]
+      })
+    }
+
+
+  }
+  catch (err) {
+    console.error("Error fetching attendence", err);
+    return res.status(500).json({
+      errors:["Server Error"]
+    })
+  }
+}
