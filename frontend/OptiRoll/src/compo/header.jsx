@@ -1,28 +1,24 @@
 import { useState } from "react";
 import { ApiUrl } from "../../ApiUrl";
 import { Link } from "react-router";
+import { useSelector } from "react-redux";
 
 export default function Header() {
   const [password, setPassword] = useState("");
   const [showDelete, setShowDelete] = useState(false);
+  const { isLoggedIn, loginType } = useSelector((store) => store.userInfo);
 
   const logout = async () => {
     try {
       const ress = await fetch(`${ApiUrl}/auth/logout`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
       const res = await ress.json();
-      if (res.errors) {
-        alert(res.errors);
-      } else {
-        alert("Logout Successfully");
-      }
+      alert(res.errors ? res.errors : "Logout Successfully");
     } catch (err) {
-      alert([err.message || "Something went wrong."]);
+      alert(err.message || "Something went wrong.");
     }
   };
 
@@ -30,13 +26,9 @@ export default function Header() {
     try {
       const ress = await fetch(`${ApiUrl}/auth/deleteAccount`, {
         method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
+        headers: { "Content-type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({
-          password: password,
-        }),
+        body: JSON.stringify({ password }),
       });
       const res = await ress.json();
       if (res.errors) {
@@ -46,71 +38,111 @@ export default function Header() {
         window.location.href = "/";
       }
     } catch (err) {
-      console.error("Error deleting Account : ", err);
+      console.error("Error deleting Account:", err);
       alert("Something went wrong.");
     }
   };
+
   return (
-    <header className="flex justify-end p-4 bg-gray-800 text-white shadow-md">
-      <Link
-        to={"/"}
-        className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition"
-      >
-        Home
-      </Link>
+    <header className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-lg border-b border-white/10 shadow-lg">
+      <div className="flex items-center justify-between max-w-7xl mx-auto px-6 py-4">
+        {/* Brand Logo */}
+        <Link
+          to="/"
+          className="text-2xl font-extrabold bg-gradient-to-r from-cyan-400 to-fuchsia-500 bg-clip-text text-transparent tracking-wide"
+        >
+          OptiRoll
+        </Link>
 
-      <button
-        onClick={logout}
-        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium mr-3 transition"
-      >
-        Logout
-      </button>
-       <Link
-        to={"/student/studentDashboard"}
-        className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition"
-      >
-        Your Dashboard
-      </Link>
-      <Link
-        to={"/admin/studentList"}
-        className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition"
-      >
-        Students
-      </Link>
-      <button
-        onClick={() => setShowDelete(true)}
-        className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-medium transition"
-      >
-        Delete Account
-      </button>
-      <Link
-        to={"/teacher/markAttendence"}
-        className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition"
-      >
-        Mark Attendence
-      </Link>
-       <Link
-        to={"/auth/login"}
-        className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition"
-      >
-        Login/SignUp
-      </Link>
+        {/* Navigation */}
+        <nav className="flex items-center gap-3 md:gap-4">
+          {/* Home */}
+          <Link
+            to="/"
+            className="px-4 py-2 rounded-lg font-medium bg-gradient-to-r from-cyan-400 to-fuchsia-500 text-black hover:scale-105 transition"
+          >
+            Home
+          </Link>
 
+          {/* Auth */}
+          {!isLoggedIn ? (
+            <Link
+              to="/auth/login"
+              className="px-4 py-2 rounded-lg font-medium bg-gradient-to-r from-green-400 to-emerald-500 text-black hover:scale-105 transition"
+            >
+              Login / SignUp
+            </Link>
+          ) : (
+            <button
+              onClick={logout}
+              className="px-4 py-2 rounded-lg font-medium bg-gradient-to-r from-blue-400 to-indigo-500 text-white hover:scale-105 transition"
+            >
+              Logout
+            </button>
+          )}
+
+          {/* Student */}
+          {isLoggedIn && loginType === "student" && (
+            <>
+              <Link
+                to="/student/studentDashboard"
+                className="px-4 py-2 rounded-lg font-medium bg-gradient-to-r from-purple-400 to-pink-500 text-white hover:scale-105 transition"
+              >
+                Dashboard
+              </Link>
+              <Link
+                to="/student/studentAttendence"
+                className="px-4 py-2 rounded-lg font-medium bg-gradient-to-r from-pink-400 to-rose-500 text-white hover:scale-105 transition"
+              >
+                Analytics
+              </Link>
+            </>
+          )}
+
+          {/* Teacher */}
+          {isLoggedIn && loginType === "teacher" && (
+            <Link
+              to="/teacher/markAttendence"
+              className="px-4 py-2 rounded-lg font-medium bg-gradient-to-r from-yellow-400 to-orange-500 text-black hover:scale-105 transition"
+            >
+              Mark Attendance
+            </Link>
+          )}
+
+          {/* Admin */}
+          {isLoggedIn && loginType === "admin" && (
+            <>
+              <Link
+                to="/admin/studentList"
+                className="px-4 py-2 rounded-lg font-medium bg-gradient-to-r from-emerald-400 to-teal-500 text-black hover:scale-105 transition"
+              >
+                Students
+              </Link>
+              <button
+                onClick={() => setShowDelete(true)}
+                className="px-4 py-2 rounded-lg font-medium bg-gradient-to-r from-red-500 to-rose-600 text-white hover:scale-105 transition"
+              >
+                Delete Account
+              </button>
+            </>
+          )}
+        </nav>
+      </div>
+
+      {/* Delete Modal */}
       {showDelete && (
-        <div className="inset-0 fixed flex justify-center items-center z-50">
-          {/* Dark Overlay */}
+        <div className="fixed inset-0 z-50 flex justify-center items-center">
           <div
-            className="absolute inset-0 bg-black opacity-60"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setShowDelete(false)}
           ></div>
 
-          {/* Modal */}
-          <div className="relative bg-white rounded-xl shadow-lg w-[90%] md:w-[500px] p-6 z-50">
-            <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
-              Confirm Account Deletion
+          <div className="relative bg-slate-900 rounded-xl shadow-xl w-[90%] md:w-[400px] p-6 border border-white/10 z-50">
+            <h2 className="text-2xl font-bold text-center text-white mb-4">
+              Confirm Deletion
             </h2>
-            <p className="text-gray-600 text-center mb-6">
-              Please enter your password to permanently delete your account.
+            <p className="text-slate-300 text-center mb-6">
+              Enter your password to permanently delete your account.
             </p>
 
             <input
@@ -118,19 +150,19 @@ export default function Header() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full p-3 text-black border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full p-3 border border-slate-700 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-rose-500 bg-slate-800 text-white"
             />
 
-            <div className="flex justify-between gap-4">
+            <div className="flex gap-4">
               <button
                 onClick={() => setShowDelete(false)}
-                className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition"
+                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition"
               >
                 Cancel
               </button>
               <button
                 onClick={deleteAccount}
-                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition"
+                className="flex-1 px-4 py-2 bg-gradient-to-r from-red-500 to-rose-600 hover:scale-105 text-white rounded-lg transition"
               >
                 Delete
               </button>

@@ -1,1 +1,58 @@
 @import "tailwindcss";
+
+/* Hide scrollbar but keep scrolling */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+
+/* Calendar container */
+.calendar-custom {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: white;
+  font-family: inherit;
+}
+
+/* Month navigation */
+.react-calendar__navigation button {
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  transition: background 0.2s;
+}
+.react-calendar__navigation button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Weekdays */
+.react-calendar__month-view__weekdays {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Days */
+.react-calendar__tile {
+  padding: 0.75rem 0.25rem;
+  border-radius: 0.75rem;
+  transition: background 0.2s, transform 0.1s;
+}
+.react-calendar__tile:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
+}
+.react-calendar__tile--active {
+  background: linear-gradient(to right, rgba(34,211,238,0.4), rgba(236,72,153,0.4));
+}
+
+/* Today highlight */
+.react-calendar__tile--now {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}

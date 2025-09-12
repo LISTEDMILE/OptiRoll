@@ -89,6 +89,13 @@ export default function AdminStudentList() {
                       >
                         View Dashboard
                       </Link>
+
+                      <Link
+                        to={`/admin/studentAttendence/${s._id}`}
+                        className="inline-block rounded-xl bg-gradient-to-r from-cyan-400 to-fuchsia-500 px-4 py-2 text-xs font-semibold text-slate-950 shadow-md hover:scale-105 transition"
+                      >
+                        View Analytics
+                      </Link>
                     </td>
                   </tr>
                 ))}

@@ -22,7 +22,7 @@ exports.teacherMarkAttendence = async (req, res, next) => {
     if (!adminUserStudents) {
       return res.status(404).json({ errors: ["Admin not found"] });
     }
-
+    
     const studentUser = await StudentUser.findOne({
       _id: { $in: adminUserStudents.students },
       email: studentEmail,
