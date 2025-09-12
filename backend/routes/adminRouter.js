@@ -7,5 +7,6 @@ adminRouter.post("/studentsList", adminController.adminStudentList);
 adminRouter.post("/studentDashboard/:sid", adminController.adminStudentDashboard);
 adminRouter.post("/editStudentDashboard/:sid", adminController.editStudentDashboard);
 adminRouter.post("/deleteStudent/:sid", adminController.deleteStudent);
+adminRouter.post("/studentAttendence/:sid", adminController.adminStudentAttencence);
 
 module.exports = adminRouter;

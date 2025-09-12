@@ -267,3 +267,18 @@ exports.postLogOut = (req, res, next) => {
     });
   });
 };
+
+
+exports.postMe = (req, res, next) => {
+  if (req.session.isLoggedIn && req.session.loginType) {
+    return res.json({
+      isLoggedIn: true,
+      loginType: req.session.loginType,
+    });
+  }
+  else {
+    return res.json({
+      isLoggedIn:false,
+    })
+  }
+};
