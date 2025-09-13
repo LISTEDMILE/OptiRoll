@@ -176,7 +176,7 @@ exports.postSignUp = [
             req.session.isLoggedIn = true;
             req.session.AdminUser = adminUser;
             req.session.loginType = "admin";
-        
+      
 
             res.status(200).json({
               message: "SignUp Successful",

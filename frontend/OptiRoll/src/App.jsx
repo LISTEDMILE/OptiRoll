@@ -15,6 +15,7 @@ import TeacherMarkAttendance from "./pages/teacher/markAttendence";
 import AdminStudentAttendance from "./pages/admin/adminStudentAttendence";
 import StudentStudentAttendence from "./pages/student/studentStudentAttendence";
 import { ApiUrl } from "../ApiUrl";
+import TeacherToggleMarking from "./pages/teacher/teacherToggleMarking";
 
 function Layout() {
   return (
@@ -76,7 +77,8 @@ function App() {
         },
         { path: "/teacher/markAttendence", element: <TeacherMarkAttendance /> },
         { path: "/admin/studentAttendence/:sid", element: <AdminStudentAttendance /> },
-        {path:"/student/studentAttendence/", element:<StudentStudentAttendence/>}
+        { path: "/student/studentAttendence", element: <StudentStudentAttendence /> },
+        {path:"/teacher/toggleMarking", element:<TeacherToggleMarking/>}
       ],
     },
   ]);

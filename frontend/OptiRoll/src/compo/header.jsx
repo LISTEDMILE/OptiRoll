@@ -101,12 +101,20 @@ export default function Header() {
 
           {/* Teacher */}
           {isLoggedIn && loginType === "teacher" && (
+            <>
             <Link
               to="/teacher/markAttendence"
               className="px-4 py-2 rounded-lg font-medium bg-gradient-to-r from-yellow-400 to-orange-500 text-black hover:scale-105 transition"
             >
               Mark Attendance
             </Link>
+            <Link
+                to="/teacher/toggleMarking"
+                className="px-4 py-2 rounded-lg font-medium bg-gradient-to-r from-emerald-400 to-teal-500 text-black hover:scale-105 transition"
+              >
+                Toggle Attendence
+              </Link>
+              </>
           )}
 
           {/* Admin */}
