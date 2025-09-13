@@ -70,10 +70,8 @@ export default function StudentStudentAttendence() {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white relative overflow-hidden">
-      {/* Background effects */}
       <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-fuchsia-600/30 blur-3xl pointer-events-none" />
       <div className="absolute -bottom-32 -right-16 h-[28rem] w-[28rem] rounded-full bg-cyan-500/30 blur-3xl pointer-events-none" />
-
 
       <main className="mx-auto max-w-6xl px-6 pb-16 md:pt-4">
         <h1 className="text-3xl font-bold mb-6">
@@ -89,51 +87,46 @@ export default function StudentStudentAttendence() {
 
         {!loading && !error && (
           <>
-            {/* Analytics Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 backdrop-blur-xl text-center">
-                <h3 className="text-lg font-semibold text-cyan-300">
-                  Total Hours
-                </h3>
+                <h3 className="text-lg font-semibold text-cyan-300">Total Hours</h3>
                 <p className="text-2xl font-bold">{totalHours.toFixed(1)}h</p>
               </div>
               <div className="rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 backdrop-blur-xl text-center">
-                <h3 className="text-lg font-semibold text-cyan-300">
-                  Total Days
-                </h3>
+                <h3 className="text-lg font-semibold text-cyan-300">Total Days</h3>
                 <p className="text-2xl font-bold">{totalDays}</p>
               </div>
               <div className="rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 backdrop-blur-xl text-center">
-                <h3 className="text-lg font-semibold text-cyan-300">
-                  Avg Hours/Day
-                </h3>
+                <h3 className="text-lg font-semibold text-cyan-300">Avg Hours/Day</h3>
                 <p className="text-2xl font-bold">{avgHours.toFixed(1)}h</p>
               </div>
             </div>
 
             <div className="flex h-fit flex-col md:flex-row gap-8">
-              {/* Calendar */}
               <div className="bg-white/5 rounded-3xl border border-white/10 shadow-xl p-6 backdrop-blur-xl w-full md:w-1/2 h-fit">
                 <Calendar
                   onClickDay={handleDayClick}
                   tileContent={({ date, view }) =>
-                    view === "month" && (
-                      <p className="text-xs mt-1 text-cyan-300">
-                        {getDayOnlineHours(date)}
-                      </p>
-                    )
-                  }
+  view === "month" && getDayOnlineHours(date) ? (
+    <div className="tile-hours">{getDayOnlineHours(date)}h</div>
+  ) : null
+}
+
                   className="calendar-custom"
                 />
               </div>
 
-              {/* Day Details */}
               <div className="flex-1 bg-white/5 rounded-3xl border border-white/10 shadow-xl p-6 backdrop-blur-xl overflow-y-scroll h-full scrollbar-hide">
                 {selectedDate ? (
                   <>
                     <h2 className="text-xl font-semibold mb-4">
                       {selectedDate.toDateString()}
                     </h2>
+                    {totalDayDurationMs > 0 && (
+                      <p className="text-lg font-bold mb-4 text-cyan-300">
+                        Total: {totalDayDurationHrs.toFixed(1)}h
+                      </p>
+                    )}
                     {selectedDetails.length > 0 ? (
                       <ul className="space-y-3">
                         {selectedDetails.map((t, idx) => (
@@ -142,25 +135,14 @@ export default function StudentStudentAttendence() {
                             className="rounded-xl bg-gradient-to-r from-cyan-400/20 to-fuchsia-500/20 px-4 py-3"
                           >
                             <p className="text-sm">
-                              Start:{" "}
-                              <span className="text-cyan-300 font-medium">
-                                {new Date(t.start).toLocaleTimeString()}
-                              </span>
+                              Start: <span className="text-cyan-300 font-medium">{new Date(t.start).toLocaleTimeString()}</span>
                             </p>
                             <p className="text-sm">
-                              End:{" "}
-                              <span className="text-fuchsia-300 font-medium">
-                                {t.end
-                                  ? new Date(t.end).toLocaleTimeString()
-                                  : "Ongoing"}
-                              </span>
+                              End: <span className="text-fuchsia-300 font-medium">{t.end ? new Date(t.end).toLocaleTimeString() : "Ongoing"}</span>
                             </p>
-                            <p className="text-sm text-white/70">
-                              Duration:{" "}
-                              <span className="font-medium text-green-300">
-                                {getDuration(t.start, t.end)}
-                              </span>
-                            </p>
+                            {t.end && (
+                              <p className="text-sm text-white/70">Session: {calculateSessionDuration(t.start, t.end)}</p>
+                            )}
                           </li>
                         ))}
                       </ul>

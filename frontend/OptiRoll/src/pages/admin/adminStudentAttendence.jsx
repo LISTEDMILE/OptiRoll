@@ -40,7 +40,7 @@ export default function AdminStudentAttendance() {
       (d) => new Date(d.Date).toDateString() === date.toDateString()
     );
     if (!day) return null;
-    const hours = day.onlineTime / (1000 * 60 * 60); // ms → hrs
+    const hours = day.onlineTime / (1000 * 60 * 60);
     return hours > 0 ? hours.toFixed(1) : null;
   };
 
@@ -52,18 +52,34 @@ export default function AdminStudentAttendance() {
     setSelectedDetails(day?.timings || []);
   };
 
-  // 🔹 Analytics
+  const calculateSessionDuration = (start, end) => {
+    if (!end) return null;
+    const durationMs = new Date(end) - new Date(start);
+    const durationMin = Math.floor(durationMs / (1000 * 60));
+    const hrs = Math.floor(durationMin / 60);
+    const mins = durationMin % 60;
+    return `${hrs > 0 ? hrs + "h " : ""}${mins}m`;
+  };
+
+  const calculateTotalDayDuration = () => {
+    return selectedDetails.reduce((total, t) => {
+      if (!t.end) return total;
+      const durationMs = new Date(t.end) - new Date(t.start);
+      return total + durationMs;
+    }, 0);
+  };
+
+  const totalDayDurationMs = calculateTotalDayDuration();
+  const totalDayDurationHrs = totalDayDurationMs / (1000 * 60 * 60);
+
   const totalHours = attendance.reduce((sum, d) => sum + (d.onlineTime || 0), 0) / (1000 * 60 * 60);
   const totalDays = attendance.length;
   const avgHours = totalDays > 0 ? totalHours / totalDays : 0;
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white relative overflow-hidden">
-      {/* Background effects */}
       <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-fuchsia-600/30 blur-3xl pointer-events-none" />
       <div className="absolute -bottom-32 -right-16 h-[28rem] w-[28rem] rounded-full bg-cyan-500/30 blur-3xl pointer-events-none" />
-
-
 
       <main className="mx-auto max-w-6xl px-6 pb-16 md:pt-4">
         <h1 className="text-3xl font-bold mb-6">
@@ -79,7 +95,6 @@ export default function AdminStudentAttendance() {
 
         {!loading && !error && (
           <>
-            {/* Analytics Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 backdrop-blur-xl text-center">
                 <h3 className="text-lg font-semibold text-cyan-300">Total Hours</h3>
@@ -96,30 +111,30 @@ export default function AdminStudentAttendance() {
             </div>
 
             <div className="flex h-fit flex-col md:flex-row gap-8">
-              {/* Calendar */}
               <div className="bg-white/5 rounded-3xl border border-white/10 shadow-xl p-6 backdrop-blur-xl w-full md:w-1/2 h-fit">
                 <Calendar
                   onClickDay={handleDayClick}
                   tileContent={({ date, view }) =>
-                    view === "month" && (
-                      <p className="text-xs mt-1 text-cyan-300">
-                        {getDayOnlineHours(date)
-                          ? `${getDayOnlineHours(date)}h`
-                          : ""}
-                      </p>
-                    )
-                  }
+  view === "month" && getDayOnlineHours(date) ? (
+    <div className="tile-hours">{getDayOnlineHours(date)}h</div>
+  ) : null
+}
+
                   className="calendar-custom"
                 />
               </div>
 
-              {/* Day Details */}
               <div className="flex-1 bg-white/5 rounded-3xl border border-white/10 shadow-xl p-6 backdrop-blur-xl overflow-y-scroll h-full scrollbar-hide">
                 {selectedDate ? (
                   <>
                     <h2 className="text-xl font-semibold mb-4">
                       {selectedDate.toDateString()}
                     </h2>
+                    {totalDayDurationMs > 0 && (
+                      <p className="text-lg font-bold mb-4 text-cyan-300">
+                        Total: {totalDayDurationHrs.toFixed(1)}h
+                      </p>
+                    )}
                     {selectedDetails.length > 0 ? (
                       <ul className="space-y-3">
                         {selectedDetails.map((t, idx) => (
@@ -128,19 +143,14 @@ export default function AdminStudentAttendance() {
                             className="rounded-xl bg-gradient-to-r from-cyan-400/20 to-fuchsia-500/20 px-4 py-3"
                           >
                             <p className="text-sm">
-                              Start:{" "}
-                              <span className="text-cyan-300 font-medium">
-                                {new Date(t.start).toLocaleTimeString()}
-                              </span>
+                              Start: <span className="text-cyan-300 font-medium">{new Date(t.start).toLocaleTimeString()}</span>
                             </p>
                             <p className="text-sm">
-                              End:{" "}
-                              <span className="text-fuchsia-300 font-medium">
-                                {t.end
-                                  ? new Date(t.end).toLocaleTimeString()
-                                  : "Ongoing"}
-                              </span>
+                              End: <span className="text-fuchsia-300 font-medium">{t.end ? new Date(t.end).toLocaleTimeString() : "Ongoing"}</span>
                             </p>
+                            {t.end && (
+                              <p className="text-sm text-white/70">Session: {calculateSessionDuration(t.start, t.end)}</p>
+                            )}
                           </li>
                         ))}
                       </ul>
