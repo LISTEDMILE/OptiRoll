@@ -17,12 +17,14 @@ import StudentStudentAttendence from "./pages/student/studentStudentAttendence";
 import { ApiUrl } from "../ApiUrl";
 import TeacherToggleMarking from "./pages/teacher/teacherToggleMarking";
 import AdminAdminAttendence from "./pages/admin/adminAdminAttendence";
+import Footer from "./compo/footer";
 
 function Layout() {
   return (
     <>
       <Header />
-      <Outlet /> {/* This is where the pages will render */}
+      <Outlet />
+      <Footer/>
     </>
   );
 }
