@@ -1,4 +1,5 @@
 const StudentUser = require("../models/studentModel");
+const AdminUser = require("../models/adminModel");
 
 exports.studentStudentDashboard = async (req, res, next) => {
   try {
@@ -81,7 +82,8 @@ exports.studentStudentAttencence = async (req, res, next) => {
       })
     }
 
-    const  sid  = req.session.StudentUser._id;
+    const sid = req.session.StudentUser._id;
+   
 
     try {
 
@@ -91,9 +93,16 @@ exports.studentStudentAttencence = async (req, res, next) => {
           errors:["Error finding student"]
         })
       }
+      const adminAttendence = await AdminUser.findById(student.admin).select("attendence");
+      if (!adminAttendence) {
+        return res.status(404).json({
+          errors:["Your admin not found"]
+        })
+      }
 
       return res.status(200).json({
-        attendence: student.attendence
+        attendence: student.attendence,
+        adminAttendence:adminAttendence.attendence
       })
       
     } catch (err) {
