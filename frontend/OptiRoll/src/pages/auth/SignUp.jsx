@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from "react";
 import { ApiUrl } from "../../../ApiUrl";
-import { useNavigate } from "react-router";
 
 export default function SignUp() {
   const [form, setForm] = useState({
@@ -15,7 +14,7 @@ export default function SignUp() {
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState([]);
 
-  const navigate = useNavigate();
+
 
   const strength = useMemo(() => {
     const p = form.password;
@@ -94,7 +93,7 @@ export default function SignUp() {
         if (res.message) {
           setMessage(res.message);
         }
-        navigate("/");
+        window.location.assign("/");
       }
     } catch (err) {
       setErrors([err.message || "Something went wrong."]);

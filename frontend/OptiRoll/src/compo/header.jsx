@@ -17,6 +17,7 @@ export default function Header() {
       });
       const res = await ress.json();
       alert(res.errors ? res.errors : "Logout Successfully");
+      window.location.assign("/");
     } catch (err) {
       alert(err.message || "Something went wrong.");
     }
@@ -35,7 +36,7 @@ export default function Header() {
         alert(res.errors);
       } else {
         alert("Account deleted Successfully.");
-        window.location.href = "/";
+        window.location.assign("/");
       }
     } catch (err) {
       console.error("Error deleting Account:", err);

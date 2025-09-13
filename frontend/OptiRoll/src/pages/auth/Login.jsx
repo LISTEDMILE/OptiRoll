@@ -49,6 +49,7 @@ export default function Login() {
       } else {
         setMessage(res.message || "Login successful!");
         setForm({ ...form, email: "", password: "" });
+        window.location.assign("/");
       }
     } catch (err) {
       setErrors([err.message || "Something went wrong."]);
