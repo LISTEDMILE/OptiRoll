@@ -3,7 +3,7 @@ import { ApiUrl } from "../../../ApiUrl";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
-export default function StudentStudentAttendence() {
+export default function AdminAdminAttendence() {
   const [attendance, setAttendance] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -14,8 +14,8 @@ export default function StudentStudentAttendence() {
   useEffect(() => {
     const fetchAttendance = async () => {
       try {
-        const res = await fetch(`${ApiUrl}/student/studentAttendence`, {
-           method: "POST",
+        const res = await fetch(`${ApiUrl}/admin/adminAttendence`, {
+          method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
         });

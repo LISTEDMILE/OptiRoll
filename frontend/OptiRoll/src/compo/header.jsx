@@ -132,6 +132,12 @@ export default function Header() {
               >
                 Delete Account
               </button>
+               <Link
+                to="/admin/adminAttendence"
+                className="px-4 py-2 rounded-lg font-medium bg-gradient-to-r from-emerald-400 to-teal-500 text-black hover:scale-105 transition"
+              >
+                Class data
+              </Link>
             </>
           )}
         </nav>
