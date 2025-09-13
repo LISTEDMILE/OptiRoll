@@ -266,8 +266,11 @@ exports.adminStudentAttencence = async (req, res, next) => {
         })
       }
 
+     
+
       return res.status(200).json({
-        attendence: student.attendence
+        attendence: student.attendence,
+        adminAttendence: adminUser.attendence
       })
       
     } catch (err) {
