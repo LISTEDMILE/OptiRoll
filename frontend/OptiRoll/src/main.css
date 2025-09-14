@@ -10,10 +10,10 @@
 }
 
 /* Calendar container */
-.calendar-custom {
+.calendar-custom.react-calendar {
   width: 100%;
   max-width: 100%;
-  background: transparent;
+  background:transparent;
   border: none;
   font-family: inherit;
   color: #fff;

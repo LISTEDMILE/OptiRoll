@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // Assuming React Router
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { ApiUrl } from "../../../ApiUrl";
-import Header from "../../compo/header";
 
 export default function AdminStudentList() {
   const [students, setStudents] = useState([]);

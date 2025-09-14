@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { ApiUrl } from "../../../ApiUrl";
+import "../../main.css";
 
 export default function AdminAddStudent() {
   const [form, setForm] = useState({

@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ApiUrl } from "../../../ApiUrl";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { useParams } from "react-router";
 
 // Circular Progress Component
 const CircularProgress = ({ percentage, color = "text-cyan-400" }) => {
