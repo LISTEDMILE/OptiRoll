@@ -62,75 +62,7 @@ export default function Header() {
           </div>
         </Link>
 
-        {/* Navigation */}
-        <nav className="flex items-center gap-3 md:gap-4">
-         
-
-          {/* Auth */}
-          {!isLoggedIn && (
-            <Link
-              to="/auth/login"
-              className="px-4 py-2 rounded-lg font-medium bg-gradient-to-r from-green-400 to-emerald-500 text-black hover:scale-105 transition"
-            >
-              Login / SignUp
-            </Link>
-          ) }
-
-          {/* Student */}
-          {isLoggedIn && loginType === "student" && (
-            <>
-              <Link
-                to="/student/studentDashboard"
-                className="px-4 py-2 rounded-lg font-medium bg-gradient-to-r from-purple-400 to-pink-500 text-white hover:scale-105 transition"
-              >
-                Dashboard
-              </Link>
-              <Link
-                to="/student/studentAttendence"
-                className="px-4 py-2 rounded-lg font-medium bg-gradient-to-r from-pink-400 to-rose-500 text-white hover:scale-105 transition"
-              >
-                Analytics
-              </Link>
-            </>
-          )}
-
-          {/* Teacher */}
-          {isLoggedIn && loginType === "teacher" && (
-            <>
-            <Link
-              to="/teacher/markAttendence"
-              className="px-4 py-2 rounded-lg font-medium bg-gradient-to-r from-yellow-400 to-orange-500 text-black hover:scale-105 transition"
-            >
-              Mark Attendance
-            </Link>
-            <Link
-                to="/teacher/toggleMarking"
-                className="px-4 py-2 rounded-lg font-medium bg-gradient-to-r from-emerald-400 to-teal-500 text-black hover:scale-105 transition"
-              >
-                Toggle Attendence
-              </Link>
-              </>
-          )}
-
-          {/* Admin */}
-          {isLoggedIn && loginType === "admin" && (
-            <>
-              <Link
-                to="/admin/studentList"
-                className="px-4 py-2 rounded-lg font-medium bg-gradient-to-r from-emerald-400 to-teal-500 text-black hover:scale-105 transition"
-              >
-                Students
-              </Link>
-             
-               <Link
-                to="/admin/adminAttendence"
-                className="px-4 py-2 rounded-lg font-medium bg-gradient-to-r from-emerald-400 to-teal-500 text-black hover:scale-105 transition"
-              >
-                Class data
-              </Link>
-            </>
-          )}
-        </nav>
+        
 
         <button onClick={() => setShowMenu(!showMenu)}> <MdOutlineMenu  className="text-3xl text-white"/></button>
        
