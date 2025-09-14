@@ -50,7 +50,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-lg border-b border-white/10 shadow-lg">
-      <div className="flex items-center justify-between w-full px-12 py-4">
+      <div className="flex items-center justify-between w-full px-6 py-2 md:px-12 md:py-4 ">
         {/* Brand Logo */}
         <Link to="/" className="flex gap-2 items-center">
           <img src="/Logo.png"  className="h-[40px]"/>
