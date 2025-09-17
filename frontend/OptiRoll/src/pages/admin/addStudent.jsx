@@ -1,4 +1,5 @@
-import { useState } from "react";
+import React, { useState, useRef } from "react";
+import Webcam from "react-webcam";
 import { ApiUrl } from "../../../ApiUrl";
 import "../../main.css";
 
@@ -12,12 +13,47 @@ export default function AdminAddStudent() {
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState([]);
 
+  // webcam images
+  const [images, setImages] = useState([]); // data URLs
+  const webcamRef = useRef(null);
+
+  // webcam settings (adjust if you want different resolution)
+  const videoConstraints = {
+    width: 640,
+    height: 480,
+    facingMode: "user",
+  };
+
   const onChange = (e) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
     setErrors([]);
     setMessage("");
   };
+
+  // Capture one photo from the webcam
+  const capture = () => {
+    if (!webcamRef.current) return;
+    const imageSrc = webcamRef.current.getScreenshot(); // data:image/jpeg;base64,...
+    if (!imageSrc) {
+      setErrors(["Unable to capture image — please allow camera access and try again."]);
+      return;
+    }
+    if (images.length >= 5) {
+      setErrors(["Maximum 5 images allowed."]);
+      return;
+    }
+    setImages((prev) => [...prev, imageSrc]);
+    setErrors([]);
+  };
+
+  // Remove single thumbnail
+  const removeImage = (idx) => {
+    setImages((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  // Clear all captures
+  const clearImages = () => setImages([]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -29,6 +65,11 @@ export default function AdminAddStudent() {
       return;
     }
 
+    if (images.length < 3) {
+      setErrors(["Please capture at least 3 images for reliable recognition"]);
+      return;
+    }
+
     setLoading(true);
     try {
       const ress = await fetch(`${ApiUrl}/admin/addStudent`, {
@@ -37,7 +78,9 @@ export default function AdminAddStudent() {
         credentials: "include",
         body: JSON.stringify({
           name: form.name,
+          rollNo: form.rollNo,
           email: form.email,
+          images, // array of data URLs
         }),
       });
 
@@ -47,6 +90,7 @@ export default function AdminAddStudent() {
       } else {
         setMessage(res.message || "Student added successfully!");
         setForm({ name: "", rollNo: "", email: "" });
+        setImages([]);
       }
     } catch (err) {
       setErrors([err.message || "Something went wrong."]);
@@ -71,10 +115,7 @@ export default function AdminAddStudent() {
             OptiRoll
           </span>
         </div>
-        <a
-          href="#"
-          className="text-sm text-white/70 hover:text-white/90 transition"
-        >
+        <a href="#" className="text-sm text-white/70 hover:text-white/90 transition">
           Need help?
         </a>
       </header>
@@ -150,9 +191,7 @@ export default function AdminAddStudent() {
 
               {/* Roll No */}
               <div>
-                <label className="mb-1 block text-sm text-white/80">
-                  Roll Number
-                </label>
+                <label className="mb-1 block text-sm text-white/80">Roll Number</label>
                 <input
                   type="text"
                   name="rollNo"
@@ -165,9 +204,7 @@ export default function AdminAddStudent() {
 
               {/* Email */}
               <div>
-                <label className="mb-1 block text-sm text-white/80">
-                  Email
-                </label>
+                <label className="mb-1 block text-sm text-white/80">Email</label>
                 <input
                   type="email"
                   name="email"
@@ -176,6 +213,67 @@ export default function AdminAddStudent() {
                   placeholder="student@school.com"
                   className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/40 outline-none transition focus:border-cyan-400/60 focus:bg-white/10"
                 />
+              </div>
+
+              {/* Webcam Capture UI */}
+              <div>
+                <label className="mb-1 block text-sm text-white/80">Capture Face Images</label>
+                <div className="grid gap-3 md:flex md:items-start">
+                  <div className="rounded-xl overflow-hidden border border-white/10 bg-black/30 p-2">
+                    <Webcam
+                      audio={false}
+                      ref={webcamRef}
+                      screenshotFormat="image/jpeg"
+                      videoConstraints={videoConstraints}
+                      className="w-72 h-48 object-cover rounded-lg"
+                    />
+                    <div className="mt-2 flex gap-2">
+                      <button
+                        type="button"
+                        onClick={capture}
+                        disabled={images.length >= 5}
+                        className="inline-flex items-center gap-2 rounded-xl px-3 py-2 bg-cyan-500/90 text-slate-950 font-medium disabled:opacity-60"
+                      >
+                        Capture
+                      </button>
+                      <button
+                        type="button"
+                        onClick={clearImages}
+                        disabled={images.length === 0}
+                        className="inline-flex items-center gap-2 rounded-xl px-3 py-2 bg-rose-600/80 text-white font-medium disabled:opacity-60"
+                      >
+                        Clear
+                      </button>
+                      <div className="ml-auto text-xs text-white/60 self-center">
+                        {images.length}/5 (min 3)
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Thumbnails */}
+                  <div className="flex gap-2 overflow-x-auto mt-2 md:mt-0">
+                    {images.map((img, i) => (
+                      <div key={i} className="relative">
+                        <img
+                          src={img}
+                          alt={`capture-${i}`}
+                          className="w-20 h-20 rounded-lg object-cover border border-white/10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(i)}
+                          className="absolute -top-2 -right-2 rounded-full bg-rose-500 p-1 text-xs"
+                          title="Remove"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <p className="mt-2 text-xs text-white/60">
+                  Take 3–5 photos: front, slight left, slight right for best results.
+                </p>
               </div>
 
               {/* Submit */}
