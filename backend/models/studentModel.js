@@ -18,19 +18,21 @@ const studentSchema = new mongoose.Schema({
     ref: "AdminUser",
     required: true,
   },
+  faceEncoding: [[Number]],
   attendence: {
     whatNext: {
       type: String,
-      default:"start"
+      default: "start",
     },
     startTime: {
       type: String,
     },
     data: {
       type: Array,
-      default:[]
-    }
-  }
+      default: [],
+    },
+    
+  },
 });
 
 studentSchema.pre("findOneAndDelete", async function (next) {
