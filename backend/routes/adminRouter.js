@@ -4,7 +4,7 @@ const adminRouter = express.Router();
 const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() }); 
 
-adminRouter.post("/admin/addStudent", upload.array("images", 5), addStudentPost);
+adminRouter.post("/admin/addStudent", upload.array("images", 5),adminController.addStudentPost);
 
 adminRouter.post("/studentsList", adminController.adminStudentList);
 adminRouter.post("/studentDashboard/:sid", adminController.adminStudentDashboard);
