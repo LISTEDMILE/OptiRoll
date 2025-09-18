@@ -116,15 +116,8 @@ useEffect(() => {
     setErrors([]);
     setMessage("");
 
-    if (!form.name || !form.rollNo || !form.email) {
-      setErrors(["Please fill all fields"]);
-      return;
-    }
-
-    if (images.length < 3) {
-      setErrors(["Please capture at least 3 images for reliable recognition"]);
-      return;
-    }
+    if (!form.name || !form.rollNo || !form.email) return setErrors(["Please fill all fields"]);
+    if (images.length < 3) return setErrors(["Capture at least 3 images"]);
 
     setLoading(true);
     try {
@@ -133,7 +126,6 @@ useEffect(() => {
       formData.append("rollNo", form.rollNo);
       formData.append("email", form.email);
 
-      // convert base64 → Blob → append as file
       images.forEach((img, i) => {
         const byteString = atob(img.split(",")[1]);
         const mimeString = img.split(",")[0].split(":")[1].split(";")[0];
@@ -144,27 +136,21 @@ useEffect(() => {
         formData.append("images", file, `capture-${i}.jpg`);
       });
 
-      const ress = await fetch(`${ApiUrl}/admin/addStudent`, {
+      const res = await fetch(`${ApiUrl}/admin/addStudent`, {
         method: "POST",
         body: formData,
         credentials: "include",
-        body: JSON.stringify({
-          name: form.name,
-          rollNo: form.rollNo,
-          email: form.email,
-          images, 
-        }),
       });
 
-      const res = await ress.json();
-      if (res.errors) setErrors(res.errors);
+      const data = await res.json();
+      if (data.errors) setErrors(data.errors);
       else {
-        setMessage(res.message || "Student added successfully!");
+        setMessage(data.message || "Student added successfully!");
         setForm({ name: "", rollNo: "", email: "" });
         setImages([]);
       }
     } catch (err) {
-      setErrors([err.message || "Something went wrong."]);
+      setErrors([err.message || "Something went wrong"]);
     } finally {
       setLoading(false);
     }
