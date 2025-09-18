@@ -148,6 +148,12 @@ useEffect(() => {
         method: "POST",
         body: formData,
         credentials: "include",
+        body: JSON.stringify({
+          name: form.name,
+          rollNo: form.rollNo,
+          email: form.email,
+          images, 
+        }),
       });
 
       const res = await ress.json();
