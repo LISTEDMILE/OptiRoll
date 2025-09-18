@@ -78,9 +78,9 @@ export default function AdminAddStudent() {
         credentials: "include",
         body: JSON.stringify({
           name: form.name,
-          rollNo: form.rollNo,
+         
           email: form.email,
-          images, // array of data URLs
+      
         }),
       });
 
