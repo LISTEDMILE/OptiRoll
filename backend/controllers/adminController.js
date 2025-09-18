@@ -1,8 +1,46 @@
 const { check, validationResult } = require("express-validator");
 const AdminUser = require("../models/adminModel");
 const StudentUser = require("../models/studentModel");
+const { spawn } = require("child_process");
+const path = require("path");
+const fs = require("fs");
+const multer = require("multer");
+
+// Multer setup
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, "../uploads"));
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  },
+});
+const upload = multer({ storage });
+
+// helper function for python
+function getFaceEncoding(imagePath) {
+  return new Promise((resolve, reject) => {
+    const py = spawn("py", ["./face/encode_face.py", imagePath]);
+
+    let data = "";
+    py.stdout.on("data", (chunk) => (data += chunk.toString()));
+    py.stderr.on("data", (err) => console.error("Python error:", err.toString()));
+
+    py.on("close", () => {
+      try {
+        const result = JSON.parse(data);
+        if (result.error) reject(result.error);
+        else resolve(result.embedding); // ✅ fix: use "embedding"
+      } catch (e) {
+        reject(e);
+      }
+    });
+  });
+}
 
 exports.addStudentPost = [
+  upload.array("images", 5), // ✅ accept multiple images (up to 5)
   check("name")
     .trim()
     .isLength({ min: 1 })
@@ -14,13 +52,12 @@ exports.addStudentPost = [
     .withMessage("Please enter a valid email")
     .normalizeEmail()
     .custom(async (value) => {
-      const existingStudent = await StudentUser.findOne({
-        email: value,
-      });
+      const existingStudent = await StudentUser.findOne({ email: value });
       if (existingStudent) {
         throw new Error("Email/Username is already in use");
       }
     }),
+
   async (req, res, next) => {
     const { name, email } = req.body;
     try {
@@ -29,19 +66,14 @@ exports.addStudentPost = [
         req.session.isLoggedIn !== true ||
         req.session.loginType !== "admin"
       ) {
-        return res.status(401).json({
-          errors: ["Unauthorized Access"],
-        });
+        return res.status(401).json({ errors: ["Unauthorized Access"] });
       }
-      const errors = validationResult(req);
 
+      const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({
           errors: errors.array().map((err) => err.msg),
-          oldInputs: {
-            name: name,
-            email: email,
-          },
+          oldInputs: { name, email },
         });
       }
 
@@ -49,26 +81,45 @@ exports.addStudentPost = [
       if (!adminUser) {
         return res.status(404).json({
           errors: ["User not found."],
-          oldInputs: {
-            name: name,
-            email: email,
-          },
+          oldInputs: { name, email },
         });
       }
 
-      let pass = "";
-      for (let i = 0; i < 10; i++) {
-        pass += Math.floor(Math.random() * 10);
+      // generate random 10-digit password
+      let pass = Array.from({ length: 10 }, () =>
+        Math.floor(Math.random() * 10)
+      ).join("");
+
+      // process all uploaded images
+      let encodings = [];
+      if (req.files && req.files.length > 0) {
+        for (const file of req.files) {
+          try {
+            const encoding = await getFaceEncoding(file.path);
+            encodings.push(encoding);
+          } catch (err) {
+            console.error("Face encoding error:", err);
+            return res.status(400).json({
+              errors: ["Could not detect a valid face in one of the uploaded images"],
+              oldInputs: { name, email },
+            });
+          } finally {
+            // cleanup uploaded file
+            fs.unlinkSync(file.path);
+          }
+        }
       }
 
+      // create student with face encodings
       const studentUser = new StudentUser({
-        name: name,
-        email: email,
+        name,
+        email,
         password: pass,
         admin: req.session.AdminUser._id,
+        faceEncoding: encodings, // store as array of embeddings
       });
 
-      adminUser.students = [...adminUser.students, studentUser._id];
+      adminUser.students.push(studentUser._id);
 
       await adminUser.save();
       await studentUser.save();
@@ -80,14 +131,13 @@ exports.addStudentPost = [
       console.error("Error adding student : ", err);
       return res.status(500).json({
         errors: ["Error Adding student"],
-        oldInputs: {
-          name: name,
-          email: email,
-        },
+        oldInputs: { name, email },
       });
     }
   },
 ];
+
+
 
 exports.adminStudentList = async (req, res, next) => {
   try {
