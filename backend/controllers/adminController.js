@@ -5,12 +5,13 @@ const { spawn } = require("child_process");
 const tmp = require("tmp");
 const fs = require("fs");
 const path = require("path");
+require("dotenv").config();
 
 
 
 function getFaceEncoding(imagePath) {
   return new Promise((resolve, reject) => {
-    const py = spawn("py", ["./face/encode_face.py", imagePath]);
+    const py = spawn(process.env.NODE_ENV === "production" ? "python3" : "py", ["./face/encode_face.py", imagePath]);
 
     let data = "";
     py.stdout.on("data", (chunk) => (data += chunk.toString()));
