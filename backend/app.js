@@ -5,11 +5,10 @@ const session = require("express-session");
 require("dotenv").config();
 const MongoDBStore = require("connect-mongodb-session")(session);
 const { default: mongoose } = require("mongoose");
+const cors = require("cors");
 
 const DB_path = process.env.MONGO_URL;
 const port = process.env.PORT;
-
-const cors = require("cors");
 
 const authRouter = require("../backend/routes/authRouter");
 const teacherRouter = require("./routes/teacherRouter");
@@ -18,19 +17,20 @@ const studentRouter = require("../backend/routes/studentRouter");
 
 const app = express();
 
+// CORS setup (must be at the top)
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );
-
 // Allow preflight for all routes
-app.options("*", cors({
+app.use(cors({
   origin: process.env.FRONTEND_URL,
   credentials: true,
 }));
 
+// Session store
 const store = new MongoDBStore({
   uri: DB_path,
   collection: "sessions",
@@ -38,12 +38,12 @@ const store = new MongoDBStore({
 
 app.set("trust proxy", 1);
 
-
-
+// Static files for public assets
 app.use(express.static(path.join(rootDir, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-   
+
+// Session middleware
 app.use(
   session({
     secret: process.env.SECRET,
@@ -59,6 +59,7 @@ app.use(
   })
 );
 
+// Attach session info to req
 app.use((req, res, next) => {
   req.isLoggedIn = req.session.isLoggedIn;
   req.AdminUser = req.session.AdminUser;
@@ -66,18 +67,21 @@ app.use((req, res, next) => {
   next();
 });
 
-
+// API routes
 app.use("/auth", authRouter);
 app.use("/teacher", teacherRouter);
 app.use("/admin", adminRouter);
 app.use("/student", studentRouter);
 
+// Serve frontend (React build)
 app.use(express.static(path.join(rootDir, "../frontend/OptiRoll")));
 
-app.get((req, res) => {
+// Catch-all to serve React index.html for client-side routing
+app.get( (req, res) => {
   res.sendFile(path.join(rootDir, "../frontend/OptiRoll/index.html"));
 });
-
+ 
+// Connect to MongoDB and start server
 mongoose
   .connect(DB_path)
   .then(() => {
