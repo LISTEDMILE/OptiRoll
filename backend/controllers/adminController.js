@@ -11,7 +11,7 @@ require("dotenv").config();
 
 function getFaceEncoding(imagePath) {
   return new Promise((resolve, reject) => {
-    const py = spawn(process.env.NODE_ENV === "production" ? "python3" : "py", ["./face/encode_face.py", imagePath]);
+    const py = spawn(process.env.NODE_ENV === "production" ? "./venv/bin/python" : "py", ["./face/encode_face.py", imagePath]);
 
     let data = "";
     py.stdout.on("data", (chunk) => (data += chunk.toString()));
