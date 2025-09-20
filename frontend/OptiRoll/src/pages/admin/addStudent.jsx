@@ -279,16 +279,7 @@ useEffect(() => {
         ))}
       </select>
 
-      <button
-        type="button"
-        onClick={() => {
-          setSelectedDeviceId(null);
-          setFacingMode((f) => (f === "user" ? "environment" : "user"));
-        }}
-        className="inline-flex items-center gap-2 rounded-xl px-3 py-2 bg-indigo-500/80 text-white text-sm"
-      >
-        Switch Camera
-      </button>
+    
 
       <div className="ml-auto text-xs text-white/60">
         {selectedDeviceId ? "Using selected device" : `Facing: ${facingMode}`}
