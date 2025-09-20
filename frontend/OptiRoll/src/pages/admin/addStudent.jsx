@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Webcam from "react-webcam";
 import { ApiUrl } from "../../../ApiUrl";
 import "../../main.css";
+import imageCompression from "browser-image-compression";
 
 export default function AdminAddStudent() {
   const [form, setForm] = useState({
@@ -111,50 +112,82 @@ useEffect(() => {
   // Clear all captures
   const clearImages = () => setImages([]);
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    setErrors([]);
-    setMessage("");
 
-    if (!form.name || !form.rollNo || !form.email) return setErrors(["Please fill all fields"]);
-    if (images.length < 3) return setErrors(["Capture at least 3 images"]);
 
-    setLoading(true);
-    try {
-      const formData = new FormData();
-      formData.append("name", form.name);
-      formData.append("rollNo", form.rollNo);
-      formData.append("email", form.email);
+ const onSubmit = async (e) => {
+  e.preventDefault();
+  setErrors([]);
+  setMessage("");
 
-      images.forEach((img, i) => {
-        const byteString = atob(img.split(",")[1]);
-        const mimeString = img.split(",")[0].split(":")[1].split(";")[0];
-        const ab = new ArrayBuffer(byteString.length);
-        const ia = new Uint8Array(ab);
-        for (let j = 0; j < byteString.length; j++) ia[j] = byteString.charCodeAt(j);
-        const file = new Blob([ab], { type: mimeString });
-        formData.append("images", file, `capture-${i}.jpg`);
-      });
+  if (!form.name || !form.rollNo || !form.email) {
+    return setErrors(["Please fill all fields"]);
+  }
+  if (images.length < 3) {
+    return setErrors(["Capture at least 3 images"]);
+  }
 
-      const res = await fetch(`${ApiUrl}/admin/addStudent`, {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
+  setLoading(true);
+  try {
+    const formData = new FormData();
+    formData.append("name", form.name);
+    formData.append("rollNo", form.rollNo);
+    formData.append("email", form.email);
 
-      const data = await res.json();
-      if (data.errors) setErrors(data.errors);
-      else {
-        setMessage(data.message || "Student added successfully!");
-        setForm({ name: "", rollNo: "", email: "" });
-        setImages([]);
+    for (let i = 0; i < images.length; i++) {
+      // Convert dataURL to Blob
+      let blob;
+      try {
+        blob = await (await fetch(images[i])).blob();
+        if (!blob || !blob.size) throw new Error("Invalid image blob");
+      } catch (err) {
+        setErrors([`Could not process image ${i + 1}`]);
+        setLoading(false);
+        return;
       }
-    } catch (err) {
-      setErrors([err.message || "Something went wrong"]);
-    } finally {
-      setLoading(false);
+
+      // Compress the image
+      let compressedBlob;
+      try {
+        compressedBlob = await imageCompression(blob, {
+          maxSizeMB: 0.2,
+          maxWidthOrHeight: 640,
+          useWebWorker: true,
+        });
+        if (!compressedBlob || !compressedBlob.size) throw new Error("Compression failed");
+      } catch (err) {
+        setErrors([`Image compression failed for image ${i + 1}`]);
+        setLoading(false);
+        return;
+      }
+
+     
+
+      formData.append("images", compressedBlob, `capture-${i}.jpg`);
     }
-  };
+
+    const res = await fetch(`${ApiUrl}/admin/addStudent`, {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    });
+
+   
+
+    const data = await res.json();
+    if (data.errors) {
+      setErrors(data.errors);
+    } else {
+      setMessage(data.message || "Student added successfully!");
+      setForm({ name: "", rollNo: "", email: "" });
+      setImages([]);
+    }
+  } catch (err) {
+    console.error("AddStudent error:", err);
+    setErrors([err.message || "Something went wrong"]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white relative overflow-hidden">
