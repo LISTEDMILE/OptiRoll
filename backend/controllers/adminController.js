@@ -2,23 +2,12 @@ const { check, validationResult } = require("express-validator");
 const AdminUser = require("../models/adminModel");
 const StudentUser = require("../models/studentModel");
 const { spawn } = require("child_process");
-const path = require("path");
+const tmp = require("tmp");
 const fs = require("fs");
-const multer = require("multer");
+const path = require("path");
 
-// Multer setup
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../uploads"));
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  },
-});
-const upload = multer({ storage });
 
-// helper function for python
+
 function getFaceEncoding(imagePath) {
   return new Promise((resolve, reject) => {
     const py = spawn("py", ["./face/encode_face.py", imagePath]);
@@ -31,7 +20,7 @@ function getFaceEncoding(imagePath) {
       try {
         const result = JSON.parse(data);
         if (result.error) reject(result.error);
-        else resolve(result.embedding); // ✅ fix: use "embedding"
+        else resolve(result.embedding);
       } catch (e) {
         reject(e);
       }
@@ -40,7 +29,6 @@ function getFaceEncoding(imagePath) {
 }
 
 exports.addStudentPost = [
-  upload.array("images", 5), // ✅ accept multiple images (up to 5)
   check("name")
     .trim()
     .isLength({ min: 1 })
@@ -57,7 +45,7 @@ exports.addStudentPost = [
         throw new Error("Email/Username is already in use");
       }
     }),
-
+ 
   async (req, res, next) => {
     const { name, email } = req.body;
     try {
@@ -92,23 +80,27 @@ exports.addStudentPost = [
 
       // process all uploaded images
       let encodings = [];
-      if (req.files && req.files.length > 0) {
-        for (const file of req.files) {
-          try {
-            const encoding = await getFaceEncoding(file.path);
-            encodings.push(encoding);
-          } catch (err) {
-            console.error("Face encoding error:", err);
-            return res.status(400).json({
-              errors: ["Could not detect a valid face in one of the uploaded images"],
-              oldInputs: { name, email },
-            });
-          } finally {
-            // cleanup uploaded file
-            fs.unlinkSync(file.path);
-          }
-        }
-      }
+if (req.files && req.files.length > 0) {
+  for (const file of req.files) {
+    // Write buffer to a temp file
+    const tmpFile = tmp.fileSync({ postfix: path.extname(file.originalname) });
+    fs.writeFileSync(tmpFile.name, file.buffer);
+
+    try {
+      const encoding = await getFaceEncoding(tmpFile.name);
+      encodings.push(encoding);
+    } catch (err) {
+      console.error("Face encoding error:", err);
+      return res.status(400).json({
+        errors: ["Could not detect a valid face in one of the uploaded images"],
+        oldInputs: { name, email },
+      });
+    } finally {
+      // cleanup temp file
+      tmpFile.removeCallback();
+    }
+  }
+}
 
       // create student with face encodings
       const studentUser = new StudentUser({
