@@ -18,6 +18,19 @@ const studentRouter = require("../backend/routes/studentRouter");
 
 const app = express();
 
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  })
+);
+
+// Allow preflight for all routes
+app.options("*", cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true,
+}));
+
 const store = new MongoDBStore({
   uri: DB_path,
   collection: "sessions",
@@ -25,12 +38,7 @@ const store = new MongoDBStore({
 
 app.set("trust proxy", 1);
 
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true,
-  })
-);
+
 
 app.use(express.static(path.join(rootDir, "public")));
 app.use(express.urlencoded({ extended: true }));
@@ -58,11 +66,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(
-  "/uploads",
-  require("cors")(),
-  express.static(path.join(__dirname, "uploads"))
-);
 
 app.use("/auth", authRouter);
 app.use("/teacher", teacherRouter);
