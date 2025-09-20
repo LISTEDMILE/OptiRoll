@@ -17,15 +17,15 @@ const studentRouter = require("../backend/routes/studentRouter");
 
 const app = express();
 
-// CORS setup (must be at the top)
+// CORS setup (must be at the top, only once)
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );
-// Allow preflight for all routes
-app.use(cors({
+// Explicitly handle preflight requests for all routes
+app.options(/.*/, cors({
   origin: process.env.FRONTEND_URL,
   credentials: true,
 }));
@@ -77,10 +77,10 @@ app.use("/student", studentRouter);
 app.use(express.static(path.join(rootDir, "../frontend/OptiRoll")));
 
 // Catch-all to serve React index.html for client-side routing
-app.get( (req, res) => {
+app.get(/.*/, (req, res) => {
   res.sendFile(path.join(rootDir, "../frontend/OptiRoll/index.html"));
 });
- 
+
 // Connect to MongoDB and start server
 mongoose
   .connect(DB_path)
