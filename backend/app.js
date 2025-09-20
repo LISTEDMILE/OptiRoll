@@ -33,9 +33,9 @@ app.use(
 );
 
 app.use(express.static(path.join(rootDir, "public")));
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
+   
 app.use(
   session({
     secret: process.env.SECRET,
