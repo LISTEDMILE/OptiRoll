@@ -1,7 +1,11 @@
 import sys
 import json
+import os
 from deepface import DeepFace
 import cv2
+
+# Set DeepFace to use your local weight folder
+os.environ["DEEPFACE_HOME"] = "deepfaceWeights"  # folder containing facenet_weights.h5
 
 def main():
     if len(sys.argv) < 2:
