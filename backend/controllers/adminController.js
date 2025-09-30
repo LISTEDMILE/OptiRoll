@@ -79,7 +79,6 @@ exports.addStudentPost = [
         Math.floor(Math.random() * 10)
       ).join("");
 
-      // process all uploaded images
       let encodings = [];
 if (req.files && req.files.length > 0) {
   for (const file of req.files) {
@@ -100,6 +99,14 @@ if (req.files && req.files.length > 0) {
       // cleanup temp file
       tmpFile.removeCallback();
     }
+  }
+
+  // Take the average of all embeddings and store as a single embedding
+  if (encodings.length > 1) {
+    const avgEncoding = encodings[0].map((_, i) => {
+      return encodings.reduce((sum, enc) => sum + enc[i], 0) / encodings.length;
+    });
+    encodings = [avgEncoding]; // replace multiple embeddings with a single averaged embedding
   }
 }
 
