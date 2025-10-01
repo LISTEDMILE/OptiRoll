@@ -5,17 +5,21 @@ const { spawn } = require("child_process");
 const tmp = require("tmp");
 const fs = require("fs");
 const path = require("path");
+const cloudinary = require("../utils/cloudinary");
 require("dotenv").config();
-
-
 
 function getFaceEncoding(imagePath) {
   return new Promise((resolve, reject) => {
-    const py = spawn(process.env.NODE_ENV === "production" ? "./venv/bin/python" : "py", ["./face/encode_face.py", imagePath]);
+    const py = spawn(
+      process.env.NODE_ENV === "production" ? "./venv/bin/python" : "py",
+      ["./face/encode_face.py", imagePath]
+    );
 
     let data = "";
     py.stdout.on("data", (chunk) => (data += chunk.toString()));
-    py.stderr.on("data", (err) => console.error("Python error:", err.toString()));
+    py.stderr.on("data", (err) =>
+      console.error("Python error:", err.toString())
+    );
 
     py.on("close", () => {
       try {
@@ -46,9 +50,29 @@ exports.addStudentPost = [
         throw new Error("Email/Username is already in use");
       }
     }),
- 
+
   async (req, res, next) => {
-    const { name, email } = req.body;
+    const {
+      name,
+      email,
+      rollNumber,
+      dateOfBirth,
+      gender,
+      phone,
+      address,
+      course,
+      year,
+      section,
+      parentName,
+      parentPhone,
+      parentEmail,
+      emergencyContact,
+      hobbies,
+      bio,
+      skills,
+      achievements,
+    } = req.body;
+
     try {
       if (
         !req.session ||
@@ -62,7 +86,26 @@ exports.addStudentPost = [
       if (!errors.isEmpty()) {
         return res.status(400).json({
           errors: errors.array().map((err) => err.msg),
-          oldInputs: { name, email },
+          oldInputs: {
+            name,
+            email,
+            rollNumber,
+            dateOfBirth,
+            gender,
+            phone,
+            address,
+            course,
+            year,
+            section,
+            parentName,
+            parentPhone,
+            parentEmail,
+            emergencyContact,
+            hobbies,
+            bio,
+            skills,
+            achievements,
+          },
         });
       }
 
@@ -70,7 +113,26 @@ exports.addStudentPost = [
       if (!adminUser) {
         return res.status(404).json({
           errors: ["User not found."],
-          oldInputs: { name, email },
+          oldInputs: {
+            name,
+            email,
+            rollNumber,
+            dateOfBirth,
+            gender,
+            phone,
+            address,
+            course,
+            year,
+            section,
+            parentName,
+            parentPhone,
+            parentEmail,
+            emergencyContact,
+            hobbies,
+            bio,
+            skills,
+            achievements,
+          },
         });
       }
 
@@ -79,44 +141,135 @@ exports.addStudentPost = [
         Math.floor(Math.random() * 10)
       ).join("");
 
+      // Handle profile picture upload via Cloudinary
+      let profilePicUrl = null;
+      if (
+        req.files &&
+        req.files.profilePicture &&
+        req.files.profilePicture[0]
+      ) {
+        const file = req.files.profilePicture[0];
+        try {
+          await new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+              { folder: "Optiroll/profilePictures" },
+              (error, result) => {
+                if (error) reject(error);
+                else {
+                  profilePicUrl = result.secure_url;
+                  resolve(result);
+                }
+              }
+            );
+            stream.end(file.buffer);
+          });
+        } catch (err) {
+          console.error("Cloudinary upload error:", err);
+          return res.status(500).json({
+            errors: ["Failed to upload profile picture"],
+            oldInputs: {
+              name,
+              email,
+              rollNumber,
+              dateOfBirth,
+              gender,
+              phone,
+              address,
+              course,
+              year,
+              section,
+              parentName,
+              parentPhone,
+              parentEmail,
+              emergencyContact,
+              hobbies,
+              bio,
+              skills,
+              achievements,
+            },
+          });
+        }
+      }
+
+      // Handle webcam images → face embeddings
       let encodings = [];
-if (req.files && req.files.length > 0) {
-  for (const file of req.files) {
-    // Write buffer to a temp file
-    const tmpFile = tmp.fileSync({ postfix: path.extname(file.originalname) });
-    fs.writeFileSync(tmpFile.name, file.buffer);
+      if (req.files && req.files.images && req.files.images.length > 0) {
+        for (const file of req.files.images) {
+          const tmpFile = tmp.fileSync({
+            postfix: path.extname(file.originalname),
+          });
+          fs.writeFileSync(tmpFile.name, file.buffer);
 
-    try {
-      const encoding = await getFaceEncoding(tmpFile.name);
-      encodings.push(encoding);
-    } catch (err) {
-      console.error("Face encoding error:", err);
-      return res.status(400).json({
-        errors: ["Could not detect a valid face in one of the uploaded images"],
-        oldInputs: { name, email },
-      });
-    } finally {
-      // cleanup temp file
-      tmpFile.removeCallback();
-    }
-  }
+          try {
+            const encoding = await getFaceEncoding(tmpFile.name);
+            encodings.push(encoding);
+          } catch (err) {
+            console.error("Face encoding error:", err);
+            return res.status(400).json({
+              errors: [
+                "Could not detect a valid face in one of the uploaded images",
+              ],
+              oldInputs: {
+                name,
+                email,
+                rollNumber,
+                dateOfBirth,
+                gender,
+                phone,
+                address,
+                course,
+                year,
+                section,
+                parentName,
+                parentPhone,
+                parentEmail,
+                emergencyContact,
+                hobbies,
+                bio,
+                skills,
+                achievements,
+              },
+            });
+          } finally {
+            tmpFile.removeCallback();
+          }
+        }
 
-  // Take the average of all embeddings and store as a single embedding
-  if (encodings.length > 1) {
-    const avgEncoding = encodings[0].map((_, i) => {
-      return encodings.reduce((sum, enc) => sum + enc[i], 0) / encodings.length;
-    });
-    encodings = [avgEncoding]; // replace multiple embeddings with a single averaged embedding
-  }
-}
+        // Average embeddings if multiple
+        if (encodings.length > 1) {
+          const avgEncoding = encodings[0].map((_, i) => {
+            return (
+              encodings.reduce((sum, enc) => sum + enc[i], 0) / encodings.length
+            );
+          });
+          encodings = [avgEncoding];
+        }
+      }
 
-      // create student with face encodings
+      // Create student
       const studentUser = new StudentUser({
         name,
         email,
         password: pass,
+        rollNumber,
+        dateOfBirth,
+        gender,
+        phone,
+        address,
+        profilePicture: profilePicUrl,
+        course,
+        year,
+        section,
+        parentName,
+        parentPhone,
+        parentEmail,
+        emergencyContact,
+        hobbies,
+        bio,
+        skills,
+        achievements,
         admin: req.session.AdminUser._id,
-        faceEncoding: encodings, // store as array of embeddings
+        faceEncoding: encodings,
       });
 
       adminUser.students.push(studentUser._id);
@@ -128,16 +281,33 @@ if (req.files && req.files.length > 0) {
         message: "Student Added Successfully.",
       });
     } catch (err) {
-      console.error("Error adding student : ", err);
+      console.error("Error adding student:", err);
       return res.status(500).json({
         errors: ["Error Adding student"],
-        oldInputs: { name, email },
+        oldInputs: {
+          name,
+          email,
+          rollNumber,
+          dateOfBirth,
+          gender,
+          phone,
+          address,
+          course,
+          year,
+          section,
+          parentName,
+          parentPhone,
+          parentEmail,
+          emergencyContact,
+          hobbies,
+          bio,
+          skills,
+          achievements,
+        },
       });
     }
   },
 ];
-
-
 
 exports.adminStudentList = async (req, res, next) => {
   try {
@@ -292,10 +462,14 @@ exports.deleteStudent = async (req, res, next) => {
 
 exports.adminStudentAttencence = async (req, res, next) => {
   try {
-    if (!req.session || req.session.isLoggedIn !== true || req.session.loginType !== "admin") {
+    if (
+      !req.session ||
+      req.session.isLoggedIn !== true ||
+      req.session.loginType !== "admin"
+    ) {
       return res.status(401).json({
-        errors: ["Unauthorized Access"]
-      })
+        errors: ["Unauthorized Access"],
+      });
     }
 
     const { sid } = req.params;
@@ -308,75 +482,66 @@ exports.adminStudentAttencence = async (req, res, next) => {
     }
 
     try {
-
       const student = await StudentUser.findById(sid);
       if (!student) {
         return res.status(404).json({
-          errors:["Error finding student"]
-        })
+          errors: ["Error finding student"],
+        });
       }
-
-     
 
       return res.status(200).json({
         attendence: student.attendence,
-        adminAttendence: adminUser.attendence
-      })
-      
+        adminAttendence: adminUser.attendence,
+      });
     } catch (err) {
       console.error("Error fetching data", err);
       return res.status(500).json({
-        errors:["Error fetching data"]
-      })
+        errors: ["Error fetching data"],
+      });
     }
-
-
-  }
-  catch (err) {
+  } catch (err) {
     console.error("Error fetching attendence", err);
     return res.status(500).json({
-      errors:["Server Error"]
-    })
+      errors: ["Server Error"],
+    });
   }
-}
-
+};
 
 exports.adminAdminAttencence = async (req, res, next) => {
   try {
-    if (!req.session || req.session.isLoggedIn !== true || req.session.loginType !== "admin") {
+    if (
+      !req.session ||
+      req.session.isLoggedIn !== true ||
+      req.session.loginType !== "admin"
+    ) {
       return res.status(401).json({
-        errors: ["Unauthorized Access"]
-      })
+        errors: ["Unauthorized Access"],
+      });
     }
 
-    const  sid  = req.session.AdminUser._id;
+    const sid = req.session.AdminUser._id;
 
     try {
-
       const admin = await AdminUser.findById(sid);
       if (!admin) {
         return res.status(404).json({
-          errors:["Error finding admin"]
-        })
+          errors: ["Error finding admin"],
+        });
       }
 
       return res.status(200).json({
-        attendence: admin.attendence
-      })
-      
+        attendence: admin.attendence,
+      });
     } catch (err) {
       console.error("Error fetching data", err);
       return res.status(500).json({
-        errors:["Error fetching data"]
-      })
+        errors: ["Error fetching data"],
+      });
     }
-
-
-  }
-  catch (err) {
+  } catch (err) {
     console.error("Error fetching attendence", err);
     return res.status(500).json({
-      errors:["Server Error"]
-    })
+      errors: ["Server Error"],
+    });
   }
-}
+};

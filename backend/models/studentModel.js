@@ -11,7 +11,68 @@ const studentSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, "Password is requijred"],
+    required: [true, "Password is required"],
+  },
+  rollNumber: {
+    type: String,
+    required: [true, "Roll Number is required"],
+    unique: true,
+  },
+  dateOfBirth: {
+    type: Date,
+    required: [true, "Date of Birth is required"],
+  },
+  gender: {
+    type: String,
+    enum: ["Male", "Female", "Other"],
+  },
+  phone: {
+    type: String,
+  },
+  address: {
+    street: String,
+    city: String,
+    state: String,
+    zip: String,
+    country: String,
+  },
+  profilePicture: {
+    type: String,
+  },
+  course: {
+    type: String,
+  },
+  year: {
+    type: Number,
+  },
+  section: {
+    type: String,
+  },
+   parentName: {
+    type: String,
+  },
+  parentPhone: {
+    type: String,
+  },
+  parentEmail: {
+    type: String,
+  },
+  emergencyContact: {
+    name: String,
+    relation: String,
+    phone: String,
+  },
+  hobbies: {
+    type: [String], // Array of hobbies
+  },
+  bio: {
+    type: String,
+  },
+  skills: {
+    type: [String], // Array of skills
+  },
+  achievements: {
+    type: [String], // Array of achievements
   },
   admin: {
     type: mongoose.Schema.Types.ObjectId,
