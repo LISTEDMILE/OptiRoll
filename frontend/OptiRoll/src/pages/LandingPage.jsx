@@ -89,7 +89,7 @@ export default function LandingPage() {
       opacity: 0,
       x: -50,
       duration: 0.8,
-      delay: 1,
+      delay: 0.4,
       ease: "expo.out",
       stagger:0.3
     })
@@ -97,7 +97,7 @@ export default function LandingPage() {
      gsap.from(".insideHeroLink", {
       opacity: 0,
       duration: 0.8,
-      delay: 1.5,
+      delay: 1,
       ease: "expo.out",
     })
 
