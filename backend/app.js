@@ -25,10 +25,13 @@ app.use(
   })
 );
 // Explicitly handle preflight requests for all routes
-app.options(/.*/, cors({
-  origin: process.env.FRONTEND_URL,
-  credentials: true,
-}));
+app.options(
+  /.*/,
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  })
+);
 
 // Session store
 const store = new MongoDBStore({
