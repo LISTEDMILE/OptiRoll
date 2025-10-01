@@ -38,7 +38,7 @@ export default function AdminStudentList() {
 
       {/* Main Content */}
       <main className="mx-auto max-w-6xl px-6 pb-16 md:pt-4">
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 mt-8 flex items-center justify-between">
           <h1 className="text-3xl font-bold text-white">
             Student <span className="text-cyan-400">Directory</span>
           </h1>
@@ -51,7 +51,13 @@ export default function AdminStudentList() {
         </div>
 
         {/* Error/Loading States */}
-        {loading && <p className="text-white/70">Loading students…</p>}
+        {loading &&
+          <div className="flex justify-center items-center fixed inset-0 h-screen w-screen bg-black/60">
+            <p className="text-white/70">
+              Loading students…
+            </p>
+          </div>
+        }
         {error && (
           <div className="rounded-xl border border-rose-400/40 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">
             {error}
@@ -104,9 +110,20 @@ export default function AdminStudentList() {
         )}
 
         {!loading && students.length === 0 && (
-          <p className="mt-6 text-white/60 text-center">
+           <div className="flex flex-col justify-center items-center mt-20">
+         
+           <img
+  src="/notFound.png"
+  className="h-[300px]"
+  style={{
+    filter: 'drop-shadow(2px 2px 2px yellow)',
+  }}
+  alt="Image not found"
+/>
+             <p className="mt-12 text-white/60 text-lg text-center">
             No students found. Try adding some!
-          </p>
+            </p>
+            </div>
         )}
       </main>
 

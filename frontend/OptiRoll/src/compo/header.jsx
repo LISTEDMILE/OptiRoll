@@ -18,7 +18,6 @@ import {
 import { ApiUrl } from "../../ApiUrl";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/all";
 
 export default function Header() {
   const [password, setPassword] = useState("");
