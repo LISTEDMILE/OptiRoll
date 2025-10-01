@@ -11,6 +11,9 @@ export default function AdminStudentDashboard() {
   const [message, setMessage] = useState("");
   const [showDelete, setShowDelete] = useState(false);
 
+  const [newProfilePic, setNewProfilePic] = useState(null);
+  const [previewPic, setPreviewPic] = useState(null);
+
   useEffect(() => {
     const fetchStudent = async () => {
       try {
@@ -36,7 +39,28 @@ export default function AdminStudentDashboard() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setStudent((prev) => ({ ...prev, [name]: value }));
+
+    // handle nested fields like address.street, emergencyContact.phone
+    if (name.includes(".")) {
+      const [parent, child] = name.split(".");
+      setStudent((prev) => ({
+        ...prev,
+        [parent]: {
+          ...prev[parent],
+          [child]: value,
+        },
+      }));
+    } else {
+      setStudent((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setNewProfilePic(file);
+      setPreviewPic(URL.createObjectURL(file));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -45,23 +69,46 @@ export default function AdminStudentDashboard() {
     setMessage("");
 
     try {
+      const formData = new FormData();
+
+      for (const key in student) {
+        if (Array.isArray(student[key])) {
+          formData.append(key, student[key].join(","));
+        } else if (typeof student[key] === "object" && student[key] !== null) {
+          // nested objects like address, emergencyContact
+          for (const nestedKey in student[key]) {
+            formData.append(`${key}[${nestedKey}]`, student[key][nestedKey]);
+          }
+        } else {
+          formData.append(key, student[key]);
+        }
+      }
+
+      if (newProfilePic) {
+        formData.append("profilePicture", newProfilePic);
+      }
+
       const res = await fetch(`${ApiUrl}/admin/editStudentDashboard/${sid}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(student),
+        body: formData,
       });
 
       const data = await res.json();
       if (data.errors) setErrors(data.errors);
-      else setMessage("Student updated successfully!");
+      else {
+        setMessage("Student updated successfully!");
+        setNewProfilePic(null);
+        setPreviewPic(null);
+        window.location.reload();
+      }
     } catch (err) {
       console.error(err.message);
       setErrors(["Something went wrong"]);
     }
   };
 
-  const deleteStudent = async (e) => {
+  const deleteStudent = async () => {
     try {
       const res = await fetch(`${ApiUrl}/admin/deleteStudent/${sid}`, {
         method: "POST",
@@ -101,151 +148,120 @@ export default function AdminStudentDashboard() {
     );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-6">
-      <div className="w-full max-w-3xl bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-8">
-        <h1 className="text-4xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-fuchsia-500">
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
+      <div className="w-full max-w-4xl bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-8">
+        <h1 className="text-3xl font-bold mb-6 text-center text-cyan-400">
           Student Dashboard
         </h1>
 
+        {/* Profile Picture */}
+        <div className="flex flex-col items-center mb-6">
+          <img
+            src={previewPic || student.profilePicture || "/default-avatar.png"}
+            alt="Profile"
+            className="w-32 h-32 rounded-full object-cover border-4 border-cyan-400 shadow-lg"
+          />
+          <label className="mt-4 cursor-pointer text-cyan-400 hover:underline">
+            Change Profile Picture
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+          </label>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Name */}
-          <div>
-            <label className="block mb-1 font-semibold text-white/90">
-              Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={student.name || ""}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-2xl border border-white/20 bg-white/5 text-white placeholder-white/50 outline-none focus:border-cyan-400 focus:bg-white/10 transition"
-              placeholder="John Doe"
-            />
-          </div>
+          {/* Basic Info */}
+          <InputField label="Name" name="name" value={student.name} onChange={handleChange} />
+          <InputField label="Roll Number" name="rollNumber" value={student.rollNumber} onChange={handleChange} />
+          <InputField type="date" label="Date of Birth" name="dateOfBirth" value={student.dateOfBirth?.slice(0, 10)} onChange={handleChange} />
+          <InputField label="Gender" name="gender" value={student.gender} onChange={handleChange} />
+          <InputField label="Course" name="course" value={student.course} onChange={handleChange} />
+          <InputField label="Year" name="year" value={student.year} onChange={handleChange} />
+          <InputField label="Section" name="section" value={student.section} onChange={handleChange} />
 
-          {/* Father's Name */}
-          <div>
-            <label className="block mb-1 font-semibold text-white/90">
-              Father's Name
-            </label>
-            <input
-              type="text"
-              name="fatherName"
-              value={student.fatherName || ""}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-2xl border border-white/20 bg-white/5 text-white placeholder-white/50 outline-none focus:border-cyan-400 focus:bg-white/10 transition"
-              placeholder="Father's Name"
-            />
-          </div>
+          {/* Address */}
+          <InputField label="Street" name="address.street" value={student.address?.street} onChange={handleChange} />
+          <InputField label="City" name="address.city" value={student.address?.city} onChange={handleChange} />
+          <InputField label="State" name="address.state" value={student.address?.state} onChange={handleChange} />
+          <InputField label="ZIP" name="address.zip" value={student.address?.zip} onChange={handleChange} />
+          <InputField label="Country" name="address.country" value={student.address?.country} onChange={handleChange} />
 
-          {/* Class */}
-          <div>
-            <label className="block mb-1 font-semibold text-white/90">
-              Class
-            </label>
-            <input
-              type="text"
-              name="class"
-              value={student.class || ""}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-2xl border border-white/20 bg-white/5 text-white placeholder-white/50 outline-none focus:border-cyan-400 focus:bg-white/10 transition"
-              placeholder="10th Grade"
-            />
-          </div>
+          {/* Parent Info */}
+          <InputField label="Parent Name" name="parentName" value={student.parentName} onChange={handleChange} />
+          <InputField label="Parent Phone" name="parentPhone" value={student.parentPhone} onChange={handleChange} />
+          <InputField label="Parent Email" name="parentEmail" value={student.parentEmail} onChange={handleChange} />
 
-          {/* Phone */}
-          <div>
-            <label className="block mb-1 font-semibold text-white/90">
-              Phone
-            </label>
-            <input
-              type="text"
-              name="phone"
-              value={student.phone || ""}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-2xl border border-white/20 bg-white/5 text-white placeholder-white/50 outline-none focus:border-cyan-400 focus:bg-white/10 transition"
-              placeholder="+91 9876543210"
-            />
-          </div>
+          {/* Emergency Contact */}
+          <InputField label="Emergency Contact Name" name="emergencyContact.name" value={student.emergencyContact?.name} onChange={handleChange} />
+          <InputField label="Relation" name="emergencyContact.relation" value={student.emergencyContact?.relation} onChange={handleChange} />
+          <InputField label="Emergency Phone" name="emergencyContact.phone" value={student.emergencyContact?.phone} onChange={handleChange} />
 
-          {/* Email (Disabled) */}
-          <div>
-            <label className="block mb-1 font-semibold text-white/90">
-              Email
-            </label>
-            <input
-              type="text"
-              value={student.email || ""}
-              disabled
-              className="w-full px-4 py-3 rounded-2xl border border-white/20 bg-white/20 text-white/70 placeholder-white/50 outline-none cursor-not-allowed"
-            />
-          </div>
+          {/* Extra */}
+          <InputField label="Hobbies (comma separated)" name="hobbies" value={student.hobbies?.join(", ")} onChange={(e) => setStudent({ ...student, hobbies: e.target.value.split(",").map((h) => h.trim()) })} />
+          <InputField label="Bio" name="bio" value={student.bio} onChange={handleChange} />
+          <InputField label="Skills (comma separated)" name="skills" value={student.skills?.join(", ")} onChange={(e) => setStudent({ ...student, skills: e.target.value.split(",").map((s) => s.trim()) })} />
+          <InputField label="Achievements (comma separated)" name="achievements" value={student.achievements?.join(", ")} onChange={(e) => setStudent({ ...student, achievements: e.target.value.split(",").map((a) => a.trim()) })} />
 
-          {/* Password (Disabled) */}
-          <div>
-            <label className="block mb-1 font-semibold text-white/90">
-              Password
-            </label>
-            <input
-              type="text"
-              value={student.password || ""}
-              disabled
-              className="w-full px-4 py-3 rounded-2xl border border-white/20 bg-white/20 text-white/70 placeholder-white/50 outline-none cursor-not-allowed"
-            />
-          </div>
+          {/* Contact Info */}
+          <InputField label="Phone" name="phone" value={student.phone} onChange={handleChange} />
+          <InputField label="Email" value={student.email} disabled />
+          <InputField label="Password" value={student.password} disabled />
 
           {/* Submit */}
-          <button
-            type="submit"
-            className="w-full py-3 rounded-2xl bg-gradient-to-r from-cyan-400 to-fuchsia-500 text-slate-950 font-semibold text-lg shadow-lg hover:shadow-xl transition active:scale-[0.98]"
-          >
+          <button type="submit" className="w-full py-3 rounded-2xl bg-gradient-to-r from-cyan-400 to-fuchsia-500 text-slate-950 font-semibold text-lg shadow-lg hover:shadow-xl transition active:scale-[0.98]">
             Update Student
           </button>
-
-          {message && (
-            <div className="mt-3 text-green-400 font-medium text-center">
-              {message}
-            </div>
-          )}
+          {message && <div className="mt-3 text-green-400 font-medium text-center">{message}</div>}
         </form>
 
-        <button
-          onClick={() => setShowDelete(true)}
-          className="mt-6 w-full py-3 rounded-2xl bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition active:scale-[0.98]"
-        >
+        {/* Delete */}
+        <button onClick={() => setShowDelete(true)} className="mt-6 w-full py-3 rounded-2xl bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition active:scale-[0.98]">
           Delete Student
         </button>
       </div>
+
+      {/* Delete Modal */}
       {showDelete && (
         <div className="inset-0 w-screen h-screen fixed flex flex-col justify-center items-center gap-12">
-          {/* Modal */}
           <div className="z-20 bg-white rounded-3xl shadow-2xl p-6 w-96 flex flex-col items-center gap-4">
             <h2 className="text-xl font-bold text-gray-800 text-center">
               Are you sure you want to delete this student?
             </h2>
             <div className="flex justify-between gap-4 mt-4 w-full">
-              <button
-                onClick={() => deleteStudent()}
-                className="flex-1 py-2 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-600 shadow-md transition"
-              >
+              <button onClick={deleteStudent} className="flex-1 py-2 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-600 shadow-md transition">
                 Delete
               </button>
-              <button
-                onClick={() => setShowDelete(false)}
-                className="flex-1 py-2 rounded-xl bg-gray-200 text-gray-800 font-semibold hover:bg-gray-300 shadow-sm transition"
-              >
+              <button onClick={() => setShowDelete(false)} className="flex-1 py-2 rounded-xl bg-gray-200 text-gray-800 font-semibold hover:bg-gray-300 shadow-sm transition">
                 Cancel
               </button>
             </div>
           </div>
-
-          {/* Overlay */}
-          <div
-            className="inset-0 w-screen h-screen fixed z-10 bg-black/60"
-            onClick={() => setShowDelete(false)}
-          ></div>
+          <div className="inset-0 w-screen h-screen fixed z-10 bg-black/60" onClick={() => setShowDelete(false)}></div>
         </div>
       )}
+    </div>
+  );
+}
+
+// Reusable InputField
+function InputField({ label, name, value, onChange, type = "text", disabled }) {
+  return (
+    <div>
+      <label className="block mb-1 font-semibold text-white/90">{label}</label>
+      <input
+        type={type}
+        name={name}
+        value={value || ""}
+        onChange={onChange}
+        disabled={disabled}
+        className={`w-full px-4 py-3 rounded-2xl border ${
+          disabled ? "bg-white/20 text-white/70 cursor-not-allowed" : "bg-white/5 text-white focus:border-cyan-400 focus:bg-white/10"
+        } border-white/20 placeholder-white/50 outline-none transition`}
+        placeholder={label}
+      />
     </div>
   );
 }

@@ -17,7 +17,7 @@ adminRouter.post(
   adminController.adminStudentDashboard
 );
 adminRouter.post(
-  "/editStudentDashboard/:sid",
+  "/editStudentDashboard/:sid",upload,
   adminController.editStudentDashboard
 );
 adminRouter.post("/deleteStudent/:sid", adminController.deleteStudent);
