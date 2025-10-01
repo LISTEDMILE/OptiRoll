@@ -116,7 +116,7 @@ exports.postSignUp = [
     .trim()
     .isLength({ min: 1 })
     .withMessage("Enter your name")
-    .matches(/^[A-Za-z]+$/)
+    .matches(/^[A-Za-z\s]+$/)
     .withMessage("Name should contain letters"),
   check("email")
     .isEmail()
