@@ -38,7 +38,7 @@ export default function AdminStudentList() {
 
       {/* Main Content */}
       <main className="mx-auto max-w-6xl px-6 pb-16 md:pt-4">
-        <div className="mb-8 mt-8 flex items-center justify-between">
+        <div className="mb-8 mt-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <h1 className="text-3xl font-bold text-white">
             Student <span className="text-cyan-400">Directory</span>
           </h1>
@@ -50,80 +50,90 @@ export default function AdminStudentList() {
           </Link>
         </div>
 
-        {/* Error/Loading States */}
-        {loading &&
+        {/* Loading */}
+        {loading && (
           <div className="flex justify-center items-center fixed inset-0 h-screen w-screen bg-black/60">
-            <p className="text-white/70">
-              Loading students…
-            </p>
+            <p className="text-white/70">Loading students…</p>
           </div>
-        }
+        )}
+
+        {/* Error */}
         {error && (
           <div className="rounded-xl border border-rose-400/40 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">
             {error}
           </div>
         )}
 
-        {/* Students Table */}
+        {/* Student Cards */}
         {!loading && !error && students.length > 0 && (
-          <div className="overflow-x-auto rounded-3xl border border-white/10 bg-white/5 shadow-2xl shadow-black/40 backdrop-blur-xl">
-            <table className="min-w-full border-collapse text-left">
-              <thead>
-                <tr className="bg-white/10 text-sm text-white/70">
-                  <th className="px-6 py-4">#</th>
-                  <th className="px-6 py-4">Name</th>
-                  <th className="px-6 py-4">Roll No</th>
-                  <th className="px-6 py-4">Email</th>
-                  <th className="px-6 py-4 text-center">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {students.map((s, i) => (
-                  <tr
-                    key={s._id}
-                    className="border-t border-white/10 hover:bg-white/10 transition"
-                  >
-                    <td className="px-6 py-4">{i + 1}</td>
-                    <td className="px-6 py-4">{s.name}</td>
-                    <td className="px-6 py-4">{s.rollNo}</td>
-                    <td className="px-6 py-4">{s.email}</td>
-                    <td className="px-6 py-4 text-center">
-                      <Link
-                        to={`/admin/studentDashboard/${s._id}`}
-                        className="inline-block rounded-xl bg-gradient-to-r from-cyan-400 to-fuchsia-500 px-4 py-2 text-xs font-semibold text-slate-950 shadow-md hover:scale-105 transition"
-                      >
-                        View Dashboard
-                      </Link>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {students.map((s) => (
+              <div
+                key={s._id}
+                className="bg-white/5 rounded-3xl border border-white/10 p-5 shadow-2xl shadow-black/40 backdrop-blur-xl flex flex-col items-center text-center transition hover:scale-[1.02]"
+              >
+                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white/20 mb-4">
+                  <img
+                    src={s.profilePicture || "/defaultProfile.png"}
+                    alt={s.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h2 className="text-lg font-semibold text-white mb-1">
+                  {s.name}
+                </h2>
+                <p className="text-sm text-white/60 mb-1">
+                  Roll No: {s.rollNumber}
+                </p>
+                <p className="text-sm text-white/60 mb-3">{s.email}</p>
 
-                      <Link
-                        to={`/admin/studentAttendence/${s._id}`}
-                        className="inline-block rounded-xl bg-gradient-to-r from-cyan-400 to-fuchsia-500 px-4 py-2 text-xs font-semibold text-slate-950 shadow-md hover:scale-105 transition"
-                      >
-                        View Analytics
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                {/* Optional extra info */}
+                {s.phone && (
+                  <p className="text-xs text-white/50 mb-1">Phone: {s.phone}</p>
+                )}
+                {s.course && (
+                  <p className="text-xs text-white/50 mb-1">
+                    Course: {s.course}
+                  </p>
+                )}
+                {s.section && (
+                  <p className="text-xs text-white/50 mb-3">
+                    Section: {s.section}
+                  </p>
+                )}
+
+                <div className="flex gap-2 mt-2">
+                  <Link
+                    to={`/admin/studentDashboard/${s._id}`}
+                    className="inline-block rounded-xl bg-gradient-to-r from-cyan-400 to-fuchsia-500 px-3 py-1 text-xs font-semibold text-slate-950 shadow-md hover:scale-105 transition"
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    to={`/admin/studentAttendence/${s._id}`}
+                    className="inline-block rounded-xl bg-gradient-to-r from-cyan-400 to-fuchsia-500 px-3 py-1 text-xs font-semibold text-slate-950 shadow-md hover:scale-105 transition"
+                  >
+                    Analytics
+                  </Link>
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
+        {/* No Students */}
         {!loading && students.length === 0 && (
-           <div className="flex flex-col justify-center items-center mt-20">
-         
-           <img
-  src="/notFound.png"
-  className="h-[300px]"
-  style={{
-    filter: 'drop-shadow(2px 2px 2px yellow)',
-  }}
-  alt="Image not found"
-/>
-             <p className="mt-12 text-white/60 text-lg text-center">
-            No students found. Try adding some!
+          <div className="flex flex-col justify-center items-center mt-20">
+            <img
+              src="/notFound.png"
+              className="h-[300px]"
+              style={{ filter: "drop-shadow(2px 2px 2px yellow)" }}
+              alt="Image not found"
+            />
+            <p className="mt-12 text-white/60 text-lg text-center">
+              No students found. Try adding some!
             </p>
-            </div>
+          </div>
         )}
       </main>
 
