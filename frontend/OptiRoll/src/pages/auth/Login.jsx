@@ -11,6 +11,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState([]);
+  const [showPwd, setShowPwd] = useState(false);
 
   const onChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -159,14 +160,23 @@ export default function Login() {
                 <label className="mb-1 block text-sm text-white/80">
                   Password
                 </label>
+                <div className="relative">
                 <input
-                  type="password"
+                  type={showPwd?"text":"password"}
                   name="password"
                   value={form.password}
                   onChange={onChange}
                   placeholder="••••••••"
                   className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/40 outline-none transition focus:border-fuchsia-400/60 focus:bg-white/10"
                 />
+                 <button
+                    type="button"
+                    onClick={() => setShowPwd((s) => !s)}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-xl px-2 py-1 text-xs text-white/70 hover:text-white/90"
+                  >
+                    {showPwd ? "Hide" : "Show"}
+                  </button>
+                  </div>
               </div>
 
               {/* Role */}
@@ -206,7 +216,7 @@ export default function Login() {
                 </div>
               )}
               {errors.length > 0 && (
-                <div className="mt-3 rounded-xl border border-rose-400/40 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">
+                <div className="mt-3 rounded-xl border border-rose-400/40 bg-rose-400/10 px-8 py-3 text-sm text-rose-200">
                   {errors.map((err, i) => (
                     <li key={i}>{err}</li>
                   ))}

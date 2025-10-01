@@ -85,48 +85,67 @@ export default function LandingPage() {
       ease: "power3.out",
     });
 
+    gsap.from(".insideHero", {
+      opacity: 0,
+      x: -50,
+      duration: 0.8,
+      delay: 1,
+      ease: "expo.out",
+      stagger:0.3
+    })
+
+     gsap.from(".insideHeroLink", {
+      opacity: 0,
+      duration: 0.8,
+      delay: 1.5,
+      ease: "expo.out",
+    })
+
     // Features cards animation
     featureRefs.current.forEach((el, i) => {
       gsap.from(el, {
         scrollTrigger: {
           trigger: el,
-          start: "top 85%",
+          start: "top 65%",
+          toggleActions: "play  none reverse none ",
+
         },
         opacity: 0,
-        y: 50,
+        y: 80,
         duration: 0.8,
-        delay: i * 0.1,
-        ease: "power3.out",
+        ease:"sine.inOut",
       });
     });
 
     // Testimonials animation
     testimonialRefs.current.forEach((el, i) => {
-      gsap.from(el, {
+       gsap.from(el, {
         scrollTrigger: {
           trigger: el,
-          start: "top 85%",
+          start: "top 65%",
+          toggleActions: "play  none reverse none ",
+   
         },
         opacity: 0,
-        y: 40,
+        y: 80,
         duration: 0.8,
-        delay: i * 0.1,
-        ease: "power3.out",
+        ease:"sine.inOut",
       });
     });
 
     // Pricing cards animation
     pricingRefs.current.forEach((el, i) => {
-      gsap.from(el, {
+       gsap.from(el, {
         scrollTrigger: {
           trigger: el,
-          start: "top 85%",
+          start: "top 65%",
+          toggleActions: "play  none reverse none ",
+         
         },
         opacity: 0,
-        y: 50,
+        y: 80,
         duration: 0.8,
-        delay: i * 0.1,
-        ease: "power3.out",
+        ease:"sine.inOut",
       });
     });
 
@@ -135,6 +154,7 @@ export default function LandingPage() {
       scrollTrigger: {
         trigger: ctaRef.current,
         start: "top 90%",
+        toggleActions: "play  none reverse none ",
       },
       scale: 0.9,
       opacity: 0,
@@ -148,19 +168,19 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section
         ref={heroRef}
-        className="relative text-center py-28 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white overflow-hidden"
+        className="relative p-5 md:text-center py-28 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white overflow-hidden"
       >
-        <div className="absolute inset-0 bg-[url('https://www.toptal.com/designers/subtlepatterns/patterns/double-bubble-outline.png')] opacity-10" />
-        <h1 className="text-5xl md:text-7xl font-extrabold mb-4">
+      
+        <h1 className="insideHero text-3xl md:text-7xl font-extrabold mb-4">
           Automate Attendance Seamlessly
         </h1>
-        <p className="text-lg md:text-2xl mb-6 max-w-3xl mx-auto text-white/90">
+        <p className="insideHero text-lg md:text-2xl mb-6 max-w-3xl mx-auto text-white/90">
           A next-gen attendance platform designed for schools, colleges, and
           organizations to save time and improve accuracy.
         </p>
         <Link
           to="/auth/signup"
-          className="px-10 py-4 bg-white text-indigo-600 rounded-xl font-semibold shadow-lg hover:bg-gray-100 transition"
+          className="insideHeroLink px-10 py-4 bg-white text-indigo-600 rounded-xl font-semibold shadow-lg hover:bg-gray-100 "
         >
           Get Started
         </Link>

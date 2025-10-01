@@ -329,7 +329,7 @@ export default function SignUp() {
                   Confirm Password
                 </label>
                 <input
-                  type="password"
+                   type={showPwd ? "text" : "password"}
                   name="confirm"
                   value={form.confirm}
                   onChange={onChange}
@@ -361,7 +361,7 @@ export default function SignUp() {
                 >
                   Privacy Policy
                 </a>
-                .
+                
               </label>
 
               {/* Submit */}
@@ -381,12 +381,12 @@ export default function SignUp() {
               )}
               {errors.length !== 0 && (
                 <div
-                  className={`mt-3 rounded-xl border px-4 py-3 text-sm border-rose-400/40 bg-rose-400/10 text-rose-200" `}
+                  className={`mt-3 rounded-xl border px-8 py-3 text-sm border-rose-400/40 bg-rose-400/10 text-rose-200" `}
                 >
                   {errors.map((err) => {
                     return <li>{err}</li>;
                   })}
-                </div>
+                </div>  
               )}
             </form>
 
