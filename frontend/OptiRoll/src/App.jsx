@@ -26,6 +26,7 @@ import DocumentationPage from "./pages/help/documentation";
 import FAQPage from "./pages/help/faq";
 import SupportPage from "./pages/help/support";
 import PrivacyPolicy from "./pages/help/PrivacyPolicy";
+import ErrorPage from "./pages/errorPage";
 
 function Layout() {
   return (
@@ -98,7 +99,8 @@ function App() {
         { path: "/documentation", element: <DocumentationPage /> },
         { path: "/faq", element: <FAQPage /> },
         { path: "support", element: <SupportPage /> },
-      {path:"privacyPolicy",element:<PrivacyPolicy/>}
+        { path: "privacyPolicy", element: <PrivacyPolicy /> },
+      {path:"*",element:<ErrorPage/>}
       ],
     },
   ]);
