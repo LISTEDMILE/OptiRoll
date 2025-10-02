@@ -7,14 +7,13 @@ exports.studentStudentDashboard = async (req, res, next) => {
     if (
       !req.session ||
       req.session.isLoggedIn !== true ||
-      req.session.loginType !== "student" || !req.session.StudentUser
+      req.session.loginType !== "student" ||
+      !req.session.StudentUser
     ) {
       return res.status(401).json({
         errors: ["Unauthorized Access"],
       });
     }
-
-      
 
     const studentUser = await StudentUser.findById(req.session.StudentUser._id);
     if (!studentUser) {
@@ -39,15 +38,13 @@ exports.editStudentDashboard = async (req, res, next) => {
     if (
       !req.session ||
       req.session.isLoggedIn !== true ||
-      req.session.loginType !== "student" || !req.session.StudentUser
+      req.session.loginType !== "student" ||
+      !req.session.StudentUser
     ) {
       return res.status(401).json({
         errors: ["Unauthorized Access"],
       });
     }
-
-
-   
 
     try {
       const student = await StudentUser.findById(req.session.StudentUser._id);
@@ -67,7 +64,7 @@ exports.editStudentDashboard = async (req, res, next) => {
         phone,
         bio,
       } = req.body;
-      
+
       if (name) student.name = name;
       if (rollNumber) student.rollNumber = rollNumber;
       if (dateOfBirth) student.dateOfBirth = dateOfBirth;
@@ -80,7 +77,7 @@ exports.editStudentDashboard = async (req, res, next) => {
       if (parentEmail) student.parentEmail = parentEmail;
       if (phone) student.phone = phone;
       if (bio) student.bio = bio;
-      
+
       // Address (nested object)
       if (req.body["address[street]"] || req.body["address.city"]) {
         student.address = {
@@ -91,49 +88,67 @@ exports.editStudentDashboard = async (req, res, next) => {
           country: req.body["address[country]"] || student.address?.country,
         };
       }
-      
+
       // Emergency Contact (nested object)
-      if (req.body["emergencyContact[name]"] || req.body["emergencyContact[phone]"]) {
+      if (
+        req.body["emergencyContact[name]"] ||
+        req.body["emergencyContact[phone]"]
+      ) {
         student.emergencyContact = {
-          name: req.body["emergencyContact[name]"] || student.emergencyContact?.name,
-          relation: req.body["emergencyContact[relation]"] || student.emergencyContact?.relation,
-          phone: req.body["emergencyContact[phone]"] || student.emergencyContact?.phone,
+          name:
+            req.body["emergencyContact[name]"] ||
+            student.emergencyContact?.name,
+          relation:
+            req.body["emergencyContact[relation]"] ||
+            student.emergencyContact?.relation,
+          phone:
+            req.body["emergencyContact[phone]"] ||
+            student.emergencyContact?.phone,
         };
       }
-      
+
       // Arrays (convert comma-separated values to array if string passed)
       if (req.body.hobbies) {
         student.hobbies = Array.isArray(req.body.hobbies)
           ? req.body.hobbies
           : req.body.hobbies.split(",").map((h) => h.trim());
       }
-      
+
       if (req.body.skills) {
         student.skills = Array.isArray(req.body.skills)
           ? req.body.skills
           : req.body.skills.split(",").map((s) => s.trim());
       }
-      
+
       if (req.body.achievements) {
         student.achievements = Array.isArray(req.body.achievements)
           ? req.body.achievements
           : req.body.achievements.split(",").map((a) => a.trim());
       }
-      
+
       // Handle profile picture (if uploaded via multer)
-      if (req.files && req.files.profilePicture && req.files.profilePicture.length > 0) {
+      if (
+        req.files &&
+        req.files.profilePicture &&
+        req.files.profilePicture.length > 0
+      ) {
         const file = req.files.profilePicture[0];
-      
+
         // Delete old one if exists
         if (student.profilePicture) {
-          const publicId = student.profilePicture.split("/").pop().split(".")[0];
+          const publicId = student.profilePicture
+            .split("/")
+            .pop()
+            .split(".")[0];
           try {
-            await cloudinary.uploader.destroy(`Optiroll/profilePictures/${publicId}`);
+            await cloudinary.uploader.destroy(
+              `Optiroll/profilePictures/${publicId}`
+            );
           } catch (err) {
             console.log("Error deleting old profile picture:", err.message);
           }
         }
-      
+
         const uploadResult = await new Promise((resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream(
             { folder: "Optiroll/profilePictures" },
@@ -144,13 +159,12 @@ exports.editStudentDashboard = async (req, res, next) => {
           );
           stream.end(file.buffer);
         });
-      
+
         student.profilePicture = uploadResult.secure_url;
-      
       }
-      
+
       await student.save();
-      
+
       return res.status(200).json({
         message: "Student updated successfully",
         student,
@@ -164,55 +178,55 @@ exports.editStudentDashboard = async (req, res, next) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json({
-      errors: ["Error Editing Dashboard"]
-    })
+      errors: ["Error Editing Dashboard"],
+    });
   }
 };
 
 exports.studentStudentAttencence = async (req, res, next) => {
   try {
-    if (!req.session || req.session.isLoggedIn !== true || req.session.loginType !== "student") {
+    if (
+      !req.session ||
+      req.session.isLoggedIn !== true ||
+      req.session.loginType !== "student"
+    ) {
       return res.status(401).json({
-        errors: ["Unauthorized Access"]
-      })
+        errors: ["Unauthorized Access"],
+      });
     }
 
     const sid = req.session.StudentUser._id;
-   
 
     try {
-
       const student = await StudentUser.findById(sid);
       if (!student) {
         return res.status(404).json({
-          errors:["Error finding student"]
-        })
+          errors: ["Error finding student"],
+        });
       }
-      const adminAttendence = await AdminUser.findById(student.admin).select("attendence");
+      const adminAttendence = await AdminUser.findById(student.admin).select(
+        "attendence"
+      );
       if (!adminAttendence) {
         return res.status(404).json({
-          errors:["Your admin not found"]
-        })
+          errors: ["Your admin not found"],
+        });
       }
 
       return res.status(200).json({
         attendence: student.attendence,
-        adminAttendence:adminAttendence.attendence
-      })
-      
+        adminAttendence: adminAttendence.attendence,
+      });
     } catch (err) {
       console.error("Error fetching data", err);
       return res.status(500).json({
-        errors:["Error fetching data"]
-      })
+        errors: ["Error fetching data"],
+      });
     }
-
-
-  }
-  catch (err) {
+  } catch (err) {
     console.error("Error fetching attendence", err);
     return res.status(500).json({
-      errors:["Server Error"]
-    })
+      errors: ["Server Error"],
+    });
   }
-}
+};
