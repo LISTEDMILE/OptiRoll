@@ -68,7 +68,7 @@ export default function StudentStudentDashboard() {
 
       for (const key in student) {
         if (Array.isArray(student[key])) {
-          student[key].forEach((item) => formData.append(key, item));
+          student[key].forEach((item) => { if (item) formData.append(key, item) });
         } else if (typeof student[key] === "object" && student[key] !== null) {
           for (const nestedKey in student[key]) {
             formData.append(`${key}[${nestedKey}]`, student[key][nestedKey]);
