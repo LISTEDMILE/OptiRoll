@@ -18,6 +18,14 @@ import { ApiUrl } from "../ApiUrl";
 import TeacherToggleMarking from "./pages/teacher/teacherToggleMarking";
 import AdminAdminAttendence from "./pages/admin/adminAdminAttendence";
 import Footer from "./compo/footer";
+import Features from "./pages/help/Features";
+import PricingPage from "./pages/help/Pricing";
+import ContactPage from "./pages/help/Contact";
+import AboutPage from "./pages/help/about";
+import DocumentationPage from "./pages/help/documentation";
+import FAQPage from "./pages/help/faq";
+import SupportPage from "./pages/help/support";
+import PrivacyPolicy from "./pages/help/PrivacyPolicy";
 
 function Layout() {
   return (
@@ -82,7 +90,15 @@ function App() {
         { path: "/admin/studentAttendence/:sid", element: <AdminStudentAttendance /> },
         { path: "/student/studentAttendence", element: <StudentStudentAttendence /> },
         { path: "/teacher/toggleMarking", element: <TeacherToggleMarking /> },
-        {path:"/admin/adminAttendence", element:<AdminAdminAttendence/>}
+        { path: "/admin/adminAttendence", element: <AdminAdminAttendence /> },
+        { path: "/features", element: <Features /> },
+        { path: "/pricing", element: <PricingPage /> },
+        { path: "/contact", element: <ContactPage /> },
+        { path: "/about", element: <AboutPage /> },
+        { path: "/documentation", element: <DocumentationPage /> },
+        { path: "/faq", element: <FAQPage /> },
+        { path: "support", element: <SupportPage /> },
+      {path:"privacyPolicy",element:<PrivacyPolicy/>}
       ],
     },
   ]);

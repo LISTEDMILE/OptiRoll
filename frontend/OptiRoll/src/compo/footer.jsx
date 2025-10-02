@@ -21,6 +21,7 @@ export default function Footer() {
             <li><Link to="/features" className="hover:text-white transition">Features</Link></li>
             <li><Link to="/pricing" className="hover:text-white transition">Pricing</Link></li>
             <li><Link to="/contact" className="hover:text-white transition">Contact</Link></li>
+             <li><Link to="/about" className="hover:text-white transition">About Us</Link></li>
           </ul>
         </div>
 
@@ -28,10 +29,10 @@ export default function Footer() {
         <div>
           <h3 className="text-lg font-semibold text-white mb-4">Resources</h3>
           <ul className="space-y-2 text-sm">
-            <li><Link to="/docs" className="hover:text-white transition">Documentation</Link></li>
+            <li><Link to="/documentation" className="hover:text-white transition">Documentation</Link></li>
             <li><Link to="/faq" className="hover:text-white transition">FAQ</Link></li>
             <li><Link to="/support" className="hover:text-white transition">Support</Link></li>
-            <li><Link to="/privacy" className="hover:text-white transition">Privacy Policy</Link></li>
+            <li><Link to="/privacyPolicy" className="hover:text-white transition">Privacy Policy</Link></li>
           </ul>
         </div>
 
