@@ -117,7 +117,7 @@ export default function TeacherMarkAttendance() {
 
         <div className="mt-6 space-y-3">
           {errors.length > 0 && (
-            <div className="rounded-xl border border-rose-400/30 bg-rose-400/8 px-4 py-3 text-sm text-rose-200">
+            <div className="rounded-xl border border-rose-400/30 bg-rose-400/8 px-8 py-3 text-sm text-rose-200">
               {errors.map((err, i) => (
                 <div key={i}>{err}</div>
               ))}

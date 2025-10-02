@@ -200,7 +200,7 @@ export default function StudentStudentDashboard() {
 
           {/* Errors & Submit */}
           {errorsInside.length > 0 && (
-            <div className="mt-3 rounded-xl border border-rose-400/40 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">
+            <div className="mt-3 rounded-xl border border-rose-400/40 bg-rose-400/10 px-8 py-3 text-sm text-rose-200">
               {errorsInside.map((err, i) => (
                 <li key={i}>{err}</li>
               ))}
