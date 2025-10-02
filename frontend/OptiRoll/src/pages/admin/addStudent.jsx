@@ -137,7 +137,7 @@ export default function AdminAddStudent() {
 
     return (
       <div>
-        <label className="mb-1 block text-sm text-white/80">{label}</label>
+        <label className="pl-3 mb-1 block text-sm text-white/80">{label}</label>
         <div className="flex gap-2">
           <input
             type="text"
@@ -357,25 +357,25 @@ form.achievements.forEach((a) => formData.append("achievements[]", a));
             <form onSubmit={onSubmit} className="space-y-4">
               {/* Existing fields (name, roll, email) */}
               <div>
-                <label className="mb-1 block text-sm text-white/80">Name</label>
+                <label className="pl-3 mb-1 block text-sm text-white/80">Name</label>
                 <input type="text" name="name" value={form.name} onChange={onChange} placeholder="John Doe" className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/40 outline-none transition focus:border-cyan-400/60 focus:bg-white/10" />
               </div>
               <div>
-                <label className="mb-1 block text-sm text-white/80">Roll Number</label>
+                <label className="pl-3 mb-1 block text-sm text-white/80">Roll Number</label>
                 <input type="text" name="rollNumber" value={form.rollNumber} onChange={onChange} placeholder="123456" className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/40 outline-none transition focus:border-fuchsia-400/60 focus:bg-white/10" />
               </div>
               <div>
-                <label className="mb-1 block text-sm text-white/80">Email</label>
+                <label className="pl-3 mb-1 block text-sm text-white/80">Email</label>
                 <input type="email" name="email" value={form.email} onChange={onChange} placeholder="student@school.com" className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/40 outline-none transition focus:border-cyan-400/60 focus:bg-white/10" />
               </div>
 
               {/* New fields */}
               <div>
-                <label className="mb-1 block text-sm text-white/80">Date of Birth</label>
+                <label className="pl-3 mb-1 block text-sm text-white/80">Date of Birth</label>
                 <input type="date" name="dateOfBirth" value={form.dateOfBirth} onChange={onChange} className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/40 outline-none transition focus:border-cyan-400/60 focus:bg-white/10" />
               </div>
               <div>
-                <label className="mb-1 block text-sm text-white/80">Gender</label>
+                <label className="pl-3 mb-1 block text-sm text-white/80">Gender</label>
                 <select name="gender" value={form.gender} onChange={onChange} className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white outline-none">
                   <option value="">Select Gender</option>
                   <option value="Male">Male</option>
@@ -384,80 +384,81 @@ form.achievements.forEach((a) => formData.append("achievements[]", a));
                 </select>
               </div>
               <div>
-                <label className="mb-1 block text-sm text-white/80">Phone</label>
+                <label className="pl-3 mb-1 block text-sm text-white/80">Phone</label>
                 <input type="text" name="phone" value={form.phone} onChange={onChange} placeholder="1234567890" className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white outline-none" />
               </div>
 
               {/* Address */}
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="mb-1 block text-sm text-white/80">Street</label>
+                  <label className="pl-3 mb-1 block text-sm text-white/80">Street</label>
                   <input type="text" name="street" value={form.street} onChange={onChange} className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white outline-none" />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm text-white/80">City</label>
+                  <label className="pl-3 mb-1 block text-sm text-white/80">City</label>
                   <input type="text" name="city" value={form.city} onChange={onChange} className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white outline-none" />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm text-white/80">State</label>
+                  <label className="pl-3 mb-1 block text-sm text-white/80">State</label>
                   <input type="text" name="state" value={form.state} onChange={onChange} className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white outline-none" />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm text-white/80">ZIP</label>
+                  <label className="pl-3 mb-1 block text-sm text-white/80">ZIP</label>
                   <input type="text" name="zip" value={form.zip} onChange={onChange} className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white outline-none" />
                 </div>
                 <div className="col-span-2">
-                  <label className="mb-1 block text-sm text-white/80">Country</label>
+                  <label className="pl-3 mb-1 block text-sm text-white/80">Country</label>
                   <input type="text" name="country" value={form.country} onChange={onChange} className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white outline-none" />
                 </div>
               </div>
 
               {/* Profile Picture */}
               <div>
-                <label className="mb-1 block text-sm text-white/80">Profile Picture</label>
+                <label className="pl-3 mb-1 block text-sm text-white/80">Profile Picture</label>
                 <input type="file" name="profilePicture" onChange={onChange} accept="image/*" className="w-full text-white/80" />
               </div>
 
               {/* Other new fields */}
               <div>
-                <label className="mb-1 block text-sm text-white/80">Course</label>
+                <label className="pl-3 mb-1 block text-sm text-white/80">Course</label>
                 <input type="text" name="course" value={form.course} onChange={onChange} className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white outline-none" />
               </div>
               <div>
-                <label className="mb-1 block text-sm text-white/80">Year</label>
+                <label className="pl-3 mb-1 block text-sm text-white/80">Year</label>
                 <input type="number" name="year" value={form.year} onChange={onChange} className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white outline-none" />
               </div>
               <div>
-                <label className="mb-1 block text-sm text-white/80">Section</label>
+                <label className="pl-3 mb-1 block text-sm text-white/80">Section</label>
                 <input type="text" name="section" value={form.section} onChange={onChange} className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white outline-none" />
               </div>
 
               {/* Parent Info */}
               <div>
-                <label className="mb-1 block text-sm text-white/80">Parent Name</label>
+                <label className="pl-3 mb-1 block text-sm text-white/80">Parent Name</label>
                 <input type="text" name="parentName" value={form.parentName} onChange={onChange} className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white outline-none" />
               </div>
               <div>
-                <label className="mb-1 block text-sm text-white/80">Parent Phone</label>
+                <label className="pl-3 mb-1 block text-sm text-white/80">Parent Phone</label>
                 <input type="text" name="parentPhone" value={form.parentPhone} onChange={onChange} className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white outline-none" />
               </div>
               <div>
-                <label className="mb-1 block text-sm text-white/80">Parent Email</label>
+                <label className="pl-3 mb-1 block text-sm text-white/80">Parent Email</label>
                 <input type="email" name="parentEmail" value={form.parentEmail} onChange={onChange} className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white outline-none" />
               </div>
 
               {/* Emergency Contact */}
-              <div className="grid grid-cols-3 gap-2">
+              <h1 className="mt-10">Emergency Contact</h1>
+              <div className="flex flex-col md:flex-row flex-wrap min-w-[50%] justify-between">
                 <div>
-                  <label className="mb-1 block text-sm text-white/80">Emergency Name</label>
+                  <label className="pl-3 mb-2 mt-2  block text-sm text-white/80"> Name</label>
                   <input type="text" name="emergencyName" value={form.emergencyName} onChange={onChange} className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white outline-none" />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm text-white/80">Relation</label>
+                  <label className="pl-3 mb-2 mt-4 block text-sm text-white/80">Relation</label>
                   <input type="text" name="emergencyRelation" value={form.emergencyRelation} onChange={onChange} className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white outline-none" />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm text-white/80">Phone</label>
+                  <label className="pl-3 mb-2 block text-sm text-white/80">Phone</label>
                   <input type="text" name="emergencyPhone" value={form.emergencyPhone} onChange={onChange} className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white outline-none" />
                 </div>
               </div>
@@ -469,7 +470,7 @@ form.achievements.forEach((a) => formData.append("achievements[]", a));
 
               {/* Webcam */}
               <div>
-                <label className="mb-1 block text-sm text-white/80">Capture Face Images</label>
+                <label className="pl-3 mb-1 block text-sm text-white/80">Capture Face Images</label>
                 <div className="rounded-xl overflow-hidden border border-white/10 bg-black/30 p-2">
                   <div className="flex items-center gap-2 mb-2">
                     <select value={selectedDeviceId ?? ""} onChange={(e) => setSelectedDeviceId(e.target.value || null)} className="rounded-lg bg-white/5 px-3 py-2 text-sm text-white/80 outline-none">
