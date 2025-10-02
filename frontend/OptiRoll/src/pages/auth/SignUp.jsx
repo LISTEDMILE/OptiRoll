@@ -119,7 +119,7 @@ export default function SignUp() {
           </span>
         </div>
         <a
-          href="#"
+          href="/contact"
           className="text-sm text-white/70 hover:text-white/90 transition"
         >
           Need help?
@@ -348,16 +348,10 @@ export default function SignUp() {
                   className="mt-0.5 h-5 w-5 rounded-md border-white/20 bg-white/10 text-cyan-400 focus:ring-cyan-400"
                 />
                 I agree to the{" "}
-                <a
-                  className="mx-1 underline decoration-dotted underline-offset-4 hover:text-white"
-                  href="#"
-                >
-                  Terms
-                </a>{" "}
-                and{" "}
+                
                 <a
                   className="underline decoration-dotted underline-offset-4 hover:text-white"
-                  href="#"
+                  href="/privacyPolicy"
                 >
                   Privacy Policy
                 </a>
