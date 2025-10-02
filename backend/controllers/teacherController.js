@@ -72,133 +72,14 @@ function handleAttendanceSplit(user, startTime, endTime) {
   }
 }
 
-// exports.teacherMarkAttendence = async (req, res, next) => {
-//   try {
-//     if (
-//       !req.session ||
-//       req.session.isLoggedIn !== true ||
-//       req.session.loginType !== "teacher" ||
-//       !req.session.AdminUser
-//     ) {
-//       console.log(req.session);
-//       return res.status(401).json({
-//         errors: ["Unauthorized Access "],
-//       });
-//     }
-//     const studentEmail = req.body.email;
-
-//     const adminUserStudents = await AdminUser.findById(
-//       req.session.AdminUser._id
-//     ).select("students");
-
-//     if (!adminUserStudents) {
-//       return res.status(404).json({ errors: ["Admin not found"] });
-//     }
-
-//     const adminUserStatus = await AdminUser.findById(
-//       req.session.AdminUser._id
-//     ).select("attendence.whatNext");
-
-//     if (adminUserStatus.attendence.whatNext !== "end") {
-//       return res.status(201).json({
-//         errors: ["Attendence not marking"],
-//       });
-//     }
-
-//     const studentUser = await StudentUser.findOne({
-//       _id: { $in: adminUserStudents.students },
-//       email: studentEmail,
-//     });
-
-//     if (!studentUser) {
-//       return res.status(404).json({
-//         errors: ["Student Not Found"],
-//       });
-//     }
-//     const testDate = new Date();
-
-//     if (studentUser.attendence.whatNext == "start") {
-//       studentUser.attendence.startTime = testDate.toISOString();
-//       studentUser.attendence.whatNext = "end";
-//       studentUser.markModified("attendence.data");
-//       await studentUser.save();
-//       return res.status(200).json({
-//         student: {
-//           name: studentUser.name,
-//           email: studentUser.email,
-//         },
-//         markedAt: testDate,
-//         status: "start",
-//       });
-//     } else if (studentUser.attendence.whatNext == "end") {
-//       const startTime = new Date(studentUser.attendence.startTime);
-//       const endTime = testDate;
-
-//       if (formatDate(startTime) === formatDate(endTime)) {
-//         // same day logic
-//         const existing = studentUser.attendence.data.find(
-//           (atten) => formatDate(new Date(atten.Date)) === formatDate(startTime)
-//         );
-
-//         if (existing) {
-//           const onlineTime =
-//             endTime - startTime + Number(existing.onlineTime);
-//           existing.Date = startTime.toISOString();
-//           existing.timings = [
-//             ...existing.timings,
-//             {
-//               start: startTime.toISOString(),
-//               end: endTime.toISOString(),
-//             },
-//           ];
-//           existing.onlineTime = onlineTime;
-//         } else {
-//           const onlineTime = endTime - startTime;
-//           studentUser.attendence.data.push({
-//             Date: startTime.toISOString(),
-//             timings: [
-//               {
-//                 start: startTime.toISOString(),
-//                 end: endTime.toISOString(),
-//               },
-//             ],
-//             onlineTime,
-//           });
-//         }
-//       } else {
-//         // cross-midnight fix
-//         handleAttendanceSplit(studentUser, startTime, endTime);
-//       }
-
-//       studentUser.attendence.whatNext = "start";
-//       studentUser.markModified("attendence.data");
-//       await studentUser.save();
-//       return res.status(200).json({
-//         student: {
-//           name: studentUser.name,
-//           email: studentUser.email,
-//         },
-//         markedAt: testDate,
-//         status: "end",
-//       });
-//     }
-//   } catch (err) {
-//     console.error("Error marking attendence : ", err);
-//     return res.status(500).json({
-//       errors: ["Error Marking Attendence"],
-//     });
-//   }
-// };
-
-
-
-
 // ====================
 // Cosine distance function
 // ====================
 function cosineDistance(vecA, vecB) {
   if (!vecA || !vecB || vecA.length !== vecB.length) return 1;
-  let dot = 0, magA = 0, magB = 0;
+  let dot = 0,
+    magA = 0,
+    magB = 0;
   for (let i = 0; i < vecA.length; i++) {
     dot += vecA[i] * vecB[i];
     magA += vecA[i] * vecA[i];
@@ -217,7 +98,11 @@ function cosineDistance(vecA, vecB) {
 function getFaceEncodingFromBuffer(buffer, ext = ".jpg") {
   return new Promise((resolve, reject) => {
     // Create an in-memory temp file
-    const tmpFile = tmp.fileSync({ postfix: ext, keep: true, discardDescriptor: true });
+    const tmpFile = tmp.fileSync({
+      postfix: ext,
+      keep: true,
+      discardDescriptor: true,
+    });
     require("fs").writeFileSync(tmpFile.name, buffer);
 
     const py = spawn(
@@ -227,7 +112,9 @@ function getFaceEncodingFromBuffer(buffer, ext = ".jpg") {
 
     let data = "";
     py.stdout.on("data", (chunk) => (data += chunk.toString()));
-    py.stderr.on("data", (err) => console.error("Python error:", err.toString()));
+    py.stderr.on("data", (err) =>
+      console.error("Python error:", err.toString())
+    );
 
     py.on("close", () => {
       tmpFile.removeCallback(); // cleanup
@@ -256,56 +143,65 @@ exports.teacherMarkAttendence = async (req, res, next) => {
       return res.status(401).json({ errors: ["Unauthorized Access "] });
     }
 
-    const adminUserStudents = await AdminUser.findById(req.session.AdminUser._id).select("students");
-    if (!adminUserStudents) return res.status(404).json({ errors: ["Admin not found"] });
+    const adminUserStudents = await AdminUser.findById(
+      req.session.AdminUser._id
+    ).select("students");
+    if (!adminUserStudents)
+      return res.status(404).json({ errors: ["Admin not found"] });
 
-    const adminUserStatus = await AdminUser.findById(req.session.AdminUser._id).select("attendence.whatNext");
-    if (adminUserStatus.attendence.whatNext !== "end") return res.status(201).json({ errors: ["Attendence not marking"] });
+    const adminUserStatus = await AdminUser.findById(
+      req.session.AdminUser._id
+    ).select("attendence.whatNext");
+    if (adminUserStatus.attendence.whatNext !== "end")
+      return res.status(201).json({ errors: ["Attendence not marking"] });
 
-    if (!req.file || !req.file.buffer) return res.status(400).json({ errors: ["No face image uploaded"] });
+    if (!req.file || !req.file.buffer)
+      return res.status(400).json({ errors: ["No face image uploaded"] });
 
     // ====================
     // Get face embedding from uploaded buffer
     // ====================
     let uploadedEmbedding;
     try {
-      uploadedEmbedding = await getFaceEncodingFromBuffer(req.file.buffer, ".jpg");
+      uploadedEmbedding = await getFaceEncodingFromBuffer(
+        req.file.buffer,
+        ".jpg"
+      );
     } catch (err) {
-      return res.status(400).json({ errors: ["Could not detect a face in the image"] });
+      return res
+        .status(400)
+        .json({ errors: ["Could not detect a face in the image"] });
     }
 
+    // ====================
+    // Matching logic
+    // ====================
+    let bestMatch = null;
+    let minDistance = Infinity;
 
+    // stricter threshold for unknown faces
+    const THRESHOLD = 0.35;
 
-    
-// ====================
-// Matching logic
-// ====================
-let bestMatch = null;
-let minDistance = Infinity;
+    for (const studentId of adminUserStudents.students) {
+      const student = await StudentUser.findById(studentId);
+      if (!student.faceEncoding || student.faceEncoding.length === 0) continue;
 
-// stricter threshold for unknown faces
-const THRESHOLD = 0.35;
+      // only one embedding per student now
+      const emb = student.faceEncoding[0];
+      const distance = cosineDistance(uploadedEmbedding, emb);
 
-for (const studentId of adminUserStudents.students) {
-  const student = await StudentUser.findById(studentId);
-  if (!student.faceEncoding || student.faceEncoding.length === 0) continue;
+      if (distance < THRESHOLD && distance < minDistance) {
+        minDistance = distance;
+        bestMatch = student;
+      }
+    }
 
-  // only one embedding per student now
-  const emb = student.faceEncoding[0];
-  const distance = cosineDistance(uploadedEmbedding, emb);
+    // if no student passes the threshold, reject
+    if (!bestMatch) {
+      return res.status(404).json({ errors: ["Student not recognized"] });
+    }
 
-  if (distance < THRESHOLD && distance < minDistance) {
-    minDistance = distance;
-    bestMatch = student;
-  }
-}
-
-// if no student passes the threshold, reject
-if (!bestMatch) {
-  return res.status(404).json({ errors: ["Student not recognized"] });
-}
-
-const studentUser = bestMatch;
+    const studentUser = bestMatch;
     const testDate = new Date();
 
     // ====================
@@ -342,7 +238,9 @@ const studentUser = bestMatch;
           const onlineTime = endTime - startTime;
           studentUser.attendence.data.push({
             Date: startTime.toISOString(),
-            timings: [{ start: startTime.toISOString(), end: endTime.toISOString() }],
+            timings: [
+              { start: startTime.toISOString(), end: endTime.toISOString() },
+            ],
             onlineTime,
           });
         }
@@ -365,9 +263,6 @@ const studentUser = bestMatch;
   }
 };
 
-
-
-
 exports.startMarking = async (req, res, next) => {
   try {
     if (
@@ -383,9 +278,9 @@ exports.startMarking = async (req, res, next) => {
 
     const { password } = req.body;
 
-    const pass = await AdminUser.findById(
-      req.session.AdminUser._id
-    ).select("password");
+    const pass = await AdminUser.findById(req.session.AdminUser._id).select(
+      "password"
+    );
     const isMatch = await bcrypt.compare(password, pass.password);
 
     if (!isMatch) {
@@ -424,8 +319,7 @@ exports.startMarking = async (req, res, next) => {
         );
 
         if (existing) {
-          const onlineTime =
-            endTime - startTime + Number(existing.onlineTime);
+          const onlineTime = endTime - startTime + Number(existing.onlineTime);
           existing.Date = startTime.toISOString();
           existing.timings = [
             ...existing.timings,
