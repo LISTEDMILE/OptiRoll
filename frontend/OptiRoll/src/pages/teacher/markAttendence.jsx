@@ -58,6 +58,18 @@ export default function TeacherMarkAttendance() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-6">
+      
+       {/* Loading */}
+        {loading && (
+        <div className="flex flex-col gap-16 justify-center items-center fixed inset-0 h-screen w-screen bg-black/60 z-60">
+          <div className="relative w-24 h-24">
+      <div className="absolute inset-0 rounded-full border-4 border-t-transparent border-cyan-400 animate-spin"></div>
+      <div className="absolute inset-4 rounded-full border-4 border-t-transparent border-fuchsia-500 animate-spin-slow"></div>
+    </div>
+          <p className="text-white text-xl text-center animate-pulse">Loading…</p>
+           
+          </div>
+        )}
       <div className="w-full max-w-xl bg-white/8 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-8">
         <h1 className="text-3xl font-bold mb-2 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-fuchsia-500">
           Quick Attendance

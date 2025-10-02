@@ -292,6 +292,17 @@ form.achievements.forEach((a) => formData.append("achievements[]", a));
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white relative overflow-hidden">
+        {/* Loading */}
+        {loading && (
+        <div className="flex flex-col gap-16 justify-center items-center fixed inset-0 h-screen w-screen bg-black/60 z-60">
+          <div className="relative w-24 h-24">
+      <div className="absolute inset-0 rounded-full border-4 border-t-transparent border-cyan-400 animate-spin"></div>
+      <div className="absolute inset-4 rounded-full border-4 border-t-transparent border-fuchsia-500 animate-spin-slow"></div>
+    </div>
+          <p className="text-white text-xl text-center animate-pulse">Adding Student. It may take a while…</p>
+           
+          </div>
+        )}
       <div className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-fuchsia-600/30 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-32 -right-16 h-[28rem] w-[28rem] rounded-full bg-cyan-500/30 blur-3xl" />
 
@@ -495,6 +506,8 @@ form.achievements.forEach((a) => formData.append("achievements[]", a));
                 <span className="absolute inset-0 -translate-x-full bg-white/30 transition group-hover:translate-x-0" />
                 {loading ? "Adding…" : "Add Student"}
               </button>
+
+            
 
               {/* Messages */}
               {message && (
