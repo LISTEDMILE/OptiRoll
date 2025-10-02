@@ -142,7 +142,7 @@ export default function StudentStudentDashboard() {
         {/* Profile Picture */}
         <div className="flex flex-col items-center mb-6">
           <img
-            src={previewPic || student.profilePicture || "/default-avatar.png"}
+            src={previewPic || student.profilePicture || "/defaultAvatar.png"}
             alt="Profile"
             className="w-32 h-32 rounded-full object-cover border-4 border-cyan-400 shadow-lg"
           />
