@@ -8,6 +8,7 @@ export default function AdminStudentDashboard() {
   const [student, setStudent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState([]);
+  const [errorsInside, setErrorsInside] = useState([]);
   const [message, setMessage] = useState("");
   const [showDelete, setShowDelete] = useState(false);
 
@@ -40,7 +41,6 @@ export default function AdminStudentDashboard() {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // handle nested fields like address.street, emergencyContact.phone
     if (name.includes(".")) {
       const [parent, child] = name.split(".");
       setStudent((prev) => ({
@@ -64,49 +64,58 @@ export default function AdminStudentDashboard() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErrors([]);
-    setMessage("");
+  e.preventDefault();
+  setErrors([]);
+  setMessage("");
 
-    try {
-      const formData = new FormData();
+  try {
+    const formData = new FormData();
 
-      for (const key in student) {
-        if (Array.isArray(student[key])) {
-          formData.append(key, student[key].join(","));
-        } else if (typeof student[key] === "object" && student[key] !== null) {
-          // nested objects like address, emergencyContact
-          for (const nestedKey in student[key]) {
-            formData.append(`${key}[${nestedKey}]`, student[key][nestedKey]);
-          }
-        } else {
-          formData.append(key, student[key]);
+    for (const key in student) {
+      if (Array.isArray(student[key])) {
+        student[key].forEach((item) => formData.append(key, item));
+      } else if (typeof student[key] === "object" && student[key] !== null) {
+        for (const nestedKey in student[key]) {
+          formData.append(`${key}[${nestedKey}]`, student[key][nestedKey]);
         }
+      } else {
+        formData.append(key, student[key]);
       }
+    }
 
-      if (newProfilePic) {
-        formData.append("profilePicture", newProfilePic);
-      }
+    if (newProfilePic) formData.append("profilePicture", newProfilePic);
 
-      const res = await fetch(`${ApiUrl}/admin/editStudentDashboard/${sid}`, {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
+    const res = await fetch(`${ApiUrl}/admin/editStudentDashboard/${sid}`, {
+      method: "POST",
+      credentials: "include",
+      body: formData,
+    });
 
-      const data = await res.json();
-      if (data.errors) setErrors(data.errors);
-      else {
-        setMessage("Student updated successfully!");
-        setNewProfilePic(null);
-        setPreviewPic(null);
-        window.location.reload();
-      }
-    } catch (err) {
-      console.error(err.message);
+    const data = await res.json();
+
+    // If server responds with errors, show them
+    if (data.errors && data.errors.length > 0) {
+      setErrorsInside(data.errors);
+      setMessage(""); // clear any previous success
+    } else if (data.student) {
+      // Only reload / show success when update was actually successful
+      setMessage("Student updated successfully!");
+      setErrors([]);
+      setNewProfilePic(null);
+      setPreviewPic(null);
+      // Optionally you can update the local state without reload
+      setStudent(data.student);
+      // window.location.reload(); <-- remove this, not needed
+    } else {
+      // Catch-all fallback if response is unexpected
       setErrors(["Something went wrong"]);
     }
-  };
+  } catch (err) {
+    console.error(err.message);
+    setErrors(["Something went wrong"]);
+  }
+};
+
 
   const deleteStudent = async () => {
     try {
@@ -199,16 +208,33 @@ export default function AdminStudentDashboard() {
           <InputField label="Relation" name="emergencyContact.relation" value={student.emergencyContact?.relation} onChange={handleChange} />
           <InputField label="Emergency Phone" name="emergencyContact.phone" value={student.emergencyContact?.phone} onChange={handleChange} />
 
-          {/* Extra */}
-          <InputField label="Hobbies (comma separated)" name="hobbies" value={student.hobbies?.join(", ")} onChange={(e) => setStudent({ ...student, hobbies: e.target.value.split(",").map((h) => h.trim()) })} />
+          {/* Extra: Dynamic Array Fields */}
+          <DynamicArrayInput
+            label="Hobbies"
+            values={student.hobbies || []}
+            setValues={(arr) => setStudent({ ...student, hobbies: arr })}
+          />
           <InputField label="Bio" name="bio" value={student.bio} onChange={handleChange} />
-          <InputField label="Skills (comma separated)" name="skills" value={student.skills?.join(", ")} onChange={(e) => setStudent({ ...student, skills: e.target.value.split(",").map((s) => s.trim()) })} />
-          <InputField label="Achievements (comma separated)" name="achievements" value={student.achievements?.join(", ")} onChange={(e) => setStudent({ ...student, achievements: e.target.value.split(",").map((a) => a.trim()) })} />
+          <DynamicArrayInput
+            label="Skills"
+            values={student.skills || []}
+            setValues={(arr) => setStudent({ ...student, skills: arr })}
+          />
+          <DynamicArrayInput
+            label="Achievements"
+            values={student.achievements || []}
+            setValues={(arr) => setStudent({ ...student, achievements: arr })}
+          />
 
           {/* Contact Info */}
           <InputField label="Phone" name="phone" value={student.phone} onChange={handleChange} />
           <InputField label="Email" value={student.email} disabled />
           <InputField label="Password" value={student.password} disabled />
+
+
+           {errorsInside.length > 0 && (
+                <div className="mt-3 rounded-xl border border-rose-400/40 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">{errorsInside.map((err, i) => (<li key={i}>{err}</li>))}</div>
+              )}
 
           {/* Submit */}
           <button type="submit" className="w-full py-3 rounded-2xl bg-gradient-to-r from-cyan-400 to-fuchsia-500 text-slate-950 font-semibold text-lg shadow-lg hover:shadow-xl transition active:scale-[0.98]">
@@ -262,6 +288,47 @@ function InputField({ label, name, value, onChange, type = "text", disabled }) {
         } border-white/20 placeholder-white/50 outline-none transition`}
         placeholder={label}
       />
+    </div>
+  );
+}
+
+// Dynamic array input
+function DynamicArrayInput({ label, values, setValues }) {
+  const addItem = () => setValues([...values, ""]);
+  const removeItem = (index) => setValues(values.filter((_, i) => i !== index));
+  const handleChange = (index, val) => {
+    const newArr = [...values];
+    newArr[index] = val;
+    setValues(newArr);
+  };
+
+  return (
+    <div className="space-y-2">
+      <label className="block font-semibold text-white/90">{label}</label>
+      {values.map((val, i) => (
+        <div key={i} className="flex gap-2">
+          <input
+            type="text"
+            value={val}
+            onChange={(e) => handleChange(i, e.target.value)}
+            className="flex-1 px-4 py-2 rounded-2xl border border-white/20 bg-white/5 text-white outline-none"
+          />
+          <button
+            type="button"
+            onClick={() => removeItem(i)}
+            className="px-3 py-2 bg-red-500 rounded-xl text-white font-semibold hover:bg-red-600"
+          >
+            Remove
+          </button>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={addItem}
+        className="mt-2 px-4 py-2 bg-cyan-400 rounded-xl text-slate-950 font-semibold hover:bg-cyan-500"
+      >
+        Add {label}
+      </button>
     </div>
   );
 }
