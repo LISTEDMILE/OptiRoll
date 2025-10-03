@@ -34,6 +34,8 @@ export default function StudentStudentDashboard() {
   }, []);
 
   const handleChange = (e) => {
+    setMessage("");
+      setErrorsInside([]);
     const { name, value } = e.target;
 
     if (name.includes(".")) {
@@ -51,6 +53,8 @@ export default function StudentStudentDashboard() {
   };
 
   const handleFileChange = (e) => {
+    setMessage("");
+      setErrorsInside([]);
     const file = e.target.files[0];
     if (file) {
       setNewProfilePic(file);

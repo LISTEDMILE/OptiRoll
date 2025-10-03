@@ -39,6 +39,8 @@ export default function AdminStudentDashboard() {
   }, [sid]);
 
   const handleChange = (e) => {
+    setMessage("");
+      setErrorsInside([]);
     const { name, value } = e.target;
 
     if (name.includes(".")) {
@@ -56,6 +58,8 @@ export default function AdminStudentDashboard() {
   };
 
   const handleFileChange = (e) => {
+    setMessage("");
+      setErrorsInside([]);
     const file = e.target.files[0];
     if (file) {
       setNewProfilePic(file);
@@ -342,7 +346,7 @@ export default function AdminStudentDashboard() {
           <InputField label="Password" value={student.password} disabled />
 
           {errorsInside.length > 0 && (
-            <div className="mt-3 rounded-xl border border-rose-400/40 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">
+            <div className="mt-3 rounded-xl border border-rose-400/40 bg-rose-400/10 px-8 py-3 text-sm text-rose-200">
               {errorsInside.map((err, i) => (
                 <li key={i}>{err}</li>
               ))}

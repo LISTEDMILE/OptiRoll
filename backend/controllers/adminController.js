@@ -532,12 +532,34 @@ exports.editStudentDashboard = [
         req.body.address = JSON.parse(req.body.address);
       }
 
-      // Parse array fields
-      ["hobbies", "skills", "achievements"].forEach((field) => {
-        if (req.body[field] && typeof req.body[field] === "string") {
-          req.body[field] = JSON.parse(req.body[field]);
+      // Normalize array fields directly
+["hobbies", "skills", "achievements"].forEach((field) => {
+  if (req.body[field]) {
+    try {
+      let val = req.body[field];
+
+      // If client sent string like '["a","b"]', parse it
+      if (typeof val === "string") {
+        try {
+          val = JSON.parse(val);
+        } catch {
+          // not JSON, treat it as single string value
+          val = [val];
         }
+      }
+
+      // Ensure array
+      if (!Array.isArray(val)) val = [val];
+      req.body[field] = val;
+    } catch (err) {
+      console.error(`Error normalizing ${field}:`, err.message);
+      return res.status(400).json({
+        errors: [`Invalid value for ${field}`],
       });
+    }
+  }
+});
+
     } catch (err) {
       console.error("JSON parse error:", err.message);
       return res.status(400).json({
@@ -753,10 +775,14 @@ exports.editStudentDashboard = [
         };
       }
 
-      // Arrays
       ["hobbies", "skills", "achievements"].forEach((arr) => {
-        if (req.body[arr]) student[arr] = req.body[arr];
-      });
+  if (req.body[arr]) {
+    student[arr] = Array.isArray(req.body[arr])
+      ? req.body[arr]
+      : [req.body[arr]];
+  }
+});
+
 
       // Profile picture (multer)
       if (
