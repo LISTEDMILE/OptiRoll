@@ -16,7 +16,6 @@ export default function AboutPage() {
       role: "Founder & CEO",
       img: "Owner.jpg", // replace with real photo
     },
-   
   ];
 
   useGSAP(() => {
@@ -69,7 +68,7 @@ export default function AboutPage() {
           About Us
         </h1>
         <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto">
-          Learn more about our mission, vision, and the team behind AutoAttend.
+          Learn more about our mission, vision, and the team behind OptiRoll.
         </p>
       </section>
 
@@ -80,7 +79,7 @@ export default function AboutPage() {
       >
         <h2 className="text-4xl font-bold mb-6 text-indigo-700">Our Mission</h2>
         <p className="text-gray-700 text-lg md:text-xl leading-relaxed">
-          At AutoAttend, our mission is to revolutionize attendance management
+          At OptiRoll, our mission is to revolutionize attendance management
           through automation, accuracy, and simplicity. We believe technology
           should empower schools and organizations to save time and focus on
           what truly matters — education and growth.

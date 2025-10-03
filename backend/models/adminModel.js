@@ -23,16 +23,16 @@ const adminSchema = new mongoose.Schema({
   attendence: {
     whatNext: {
       type: String,
-      default:"start"
+      default: "start",
     },
     startTime: {
       type: String,
     },
     data: {
       type: Array,
-      default:[]
-    }
-  }
+      default: [],
+    },
+  },
 });
 
 adminSchema.post("findOneAndDelete", async function (doc) {

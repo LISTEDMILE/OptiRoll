@@ -114,7 +114,7 @@ exports.postSendOtp = async (req, res) => {
         .json({ success: false, message: "Email is required" });
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-     await Otp.deleteMany({ email });
+    await Otp.deleteMany({ email });
 
     // Save OTP in Otp collection
     await Otp.create({ email, otp });

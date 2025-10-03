@@ -13,7 +13,7 @@ export default function DocumentationPage() {
     {
       title: "Getting Started",
       content:
-        "Learn how to install and set up AutoAttend quickly. Includes requirements, installation steps, and first run guide.",
+        "Learn how to install and set up OptiRoll quickly. Includes requirements, installation steps, and first run guide.",
     },
     {
       title: "Features Overview",
@@ -28,7 +28,7 @@ export default function DocumentationPage() {
     {
       title: "FAQ",
       content:
-        "Answers to common questions about AutoAttend’s setup, usage, and troubleshooting.",
+        "Answers to common questions about OptiRoll’s setup, usage, and troubleshooting.",
     },
     {
       title: "Support",
@@ -74,7 +74,7 @@ export default function DocumentationPage() {
           Documentation
         </h1>
         <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto">
-          Everything you need to know about using AutoAttend, from setup to
+          Everything you need to know about using OptiRoll, from setup to
           advanced features.
         </p>
       </section>

@@ -85,7 +85,7 @@ export default function FeaturesPage() {
           Powerful Features
         </h1>
         <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto">
-          Explore the tools that make AutoAttend the best solution for smart
+          Explore the tools that make OptiRoll the best solution for smart
           attendance tracking.
         </p>
       </section>

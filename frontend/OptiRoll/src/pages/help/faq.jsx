@@ -12,9 +12,9 @@ export default function FAQPage() {
 
   const faqs = [
     {
-      question: "What is AutoAttend?",
+      question: "What is OptiRoll?",
       answer:
-        "AutoAttend is a smart attendance management system that automates the process of tracking and recording attendance.",
+        "OptiRoll is a smart attendance management system that automates the process of tracking and recording attendance.",
     },
     {
       question: "How do I get started?",
@@ -22,14 +22,14 @@ export default function FAQPage() {
         "Simply sign up, add your organization details, and start managing attendance with ease. A quick-start guide is available in our documentation.",
     },
     {
-      question: "Is AutoAttend secure?",
+      question: "Is OptiRoll secure?",
       answer:
         "Yes. We use industry-standard encryption and secure data handling practices to ensure your data is always safe.",
     },
     {
-      question: "Can I integrate AutoAttend with other tools?",
+      question: "Can I integrate OptiRoll with other tools?",
       answer:
-        "Absolutely! AutoAttend provides APIs and integrations with popular platforms for smooth workflows.",
+        "Absolutely! OptiRoll provides APIs and integrations with popular platforms for smooth workflows.",
     },
     {
       question: "Is there customer support available?",
@@ -75,7 +75,7 @@ export default function FAQPage() {
           Frequently Asked Questions
         </h1>
         <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto">
-          Find answers to the most common questions about AutoAttend.
+          Find answers to the most common questions about OptiRoll.
         </p>
       </section>
 

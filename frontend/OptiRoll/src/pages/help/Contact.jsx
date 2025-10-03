@@ -13,7 +13,7 @@ export default function ContactPage() {
   const contacts = [
     {
       title: "Email",
-      detail: "support@autoattend.com",
+      detail: "support@OptiRoll.com",
       icon: "✉️",
     },
     {

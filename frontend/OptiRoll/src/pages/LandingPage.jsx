@@ -91,15 +91,15 @@ export default function LandingPage() {
       duration: 0.8,
       delay: 0.4,
       ease: "expo.out",
-      stagger:0.3
-    })
+      stagger: 0.3,
+    });
 
-     gsap.from(".insideHeroLink", {
+    gsap.from(".insideHeroLink", {
       opacity: 0,
       duration: 0.8,
       delay: 1,
       ease: "expo.out",
-    })
+    });
 
     // Features cards animation
     featureRefs.current.forEach((el, i) => {
@@ -108,44 +108,41 @@ export default function LandingPage() {
           trigger: el,
           start: "top 65%",
           toggleActions: "play  none reverse none ",
-
         },
         opacity: 0,
         y: 80,
         duration: 0.8,
-        ease:"sine.inOut",
+        ease: "sine.inOut",
       });
     });
 
     // Testimonials animation
     testimonialRefs.current.forEach((el, i) => {
-       gsap.from(el, {
+      gsap.from(el, {
         scrollTrigger: {
           trigger: el,
           start: "top 65%",
           toggleActions: "play  none reverse none ",
-   
         },
         opacity: 0,
         y: 80,
         duration: 0.8,
-        ease:"sine.inOut",
+        ease: "sine.inOut",
       });
     });
 
     // Pricing cards animation
     pricingRefs.current.forEach((el, i) => {
-       gsap.from(el, {
+      gsap.from(el, {
         scrollTrigger: {
           trigger: el,
           start: "top 65%",
           toggleActions: "play  none reverse none ",
-         
         },
         opacity: 0,
         y: 80,
         duration: 0.8,
-        ease:"sine.inOut",
+        ease: "sine.inOut",
       });
     });
 
@@ -170,7 +167,6 @@ export default function LandingPage() {
         ref={heroRef}
         className="relative p-5 md:text-center py-28 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white overflow-hidden"
       >
-      
         <h1 className="insideHero text-3xl md:text-7xl font-extrabold mb-4">
           Automate Attendance Seamlessly
         </h1>
@@ -189,7 +185,7 @@ export default function LandingPage() {
       {/* Features Section */}
       <section className="py-24 px-6 max-w-7xl mx-auto">
         <h2 className="text-4xl font-bold text-center mb-16">
-          Why Choose AutoAttend?
+          Why Choose OptiRoll?
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {features.map((feature, index) => (
@@ -263,7 +259,7 @@ export default function LandingPage() {
       >
         <h2 className="text-4xl font-bold mb-4">Get Started Today</h2>
         <p className="mb-6 max-w-2xl mx-auto text-white/90">
-          Join thousands of organizations already using AutoAttend for seamless
+          Join thousands of organizations already using OptiRoll for seamless
           attendance tracking.
         </p>
         <Link
@@ -273,8 +269,6 @@ export default function LandingPage() {
           Sign Up Now
         </Link>
       </section>
-
-      
     </div>
   );
 }
