@@ -48,7 +48,7 @@ const studentSchema = new mongoose.Schema({
   section: {
     type: String,
   },
-   parentName: {
+  parentName: {
     type: String,
   },
   parentPhone: {
@@ -92,7 +92,6 @@ const studentSchema = new mongoose.Schema({
       type: Array,
       default: [],
     },
-    
   },
 });
 

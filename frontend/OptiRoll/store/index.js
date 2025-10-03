@@ -8,10 +8,10 @@ const userInfo = createSlice({
   reducers: {
     Login: (state, action) => {
       state.isLoggedIn = true;
-          state.loginType = action.payload.loginType;
+      state.loginType = action.payload.loginType;
     },
     Logout: (state) => {
-        state = { isLoggedIn: false };
+      state = { isLoggedIn: false };
     },
   },
 });

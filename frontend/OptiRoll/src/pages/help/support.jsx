@@ -56,12 +56,10 @@ export default function SupportPage() {
         ref={heroRef}
         className="text-center py-20 px-6 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white"
       >
-        <h1 className="text-5xl font-extrabold mb-6">
-          We’re Here to Help
-        </h1>
+        <h1 className="text-5xl font-extrabold mb-6">We’re Here to Help</h1>
         <p className="text-lg md:text-xl max-w-2xl mx-auto text-white/90">
-          Need assistance? Find answers in our knowledge base, connect with live chat, 
-          or submit a support request below.
+          Need assistance? Find answers in our knowledge base, connect with live
+          chat, or submit a support request below.
         </p>
       </section>
 

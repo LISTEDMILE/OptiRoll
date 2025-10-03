@@ -274,7 +274,7 @@ export default function SignUp() {
                 />
               </div>
 
-                           {/* T&C */}
+              {/* T&C */}
               <label className="mt-3 flex items-start gap-3 text-sm text-white/70">
                 <input
                   type="checkbox"

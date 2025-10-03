@@ -161,22 +161,22 @@ export default function Login() {
                   Password
                 </label>
                 <div className="relative">
-                <input
-                  type={showPwd?"text":"password"}
-                  name="password"
-                  value={form.password}
-                  onChange={onChange}
-                  placeholder="••••••••"
-                  className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/40 outline-none transition focus:border-fuchsia-400/60 focus:bg-white/10"
-                />
-                 <button
+                  <input
+                    type={showPwd ? "text" : "password"}
+                    name="password"
+                    value={form.password}
+                    onChange={onChange}
+                    placeholder="••••••••"
+                    className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/40 outline-none transition focus:border-fuchsia-400/60 focus:bg-white/10"
+                  />
+                  <button
                     type="button"
                     onClick={() => setShowPwd((s) => !s)}
                     className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-xl px-2 py-1 text-xs text-white/70 hover:text-white/90"
                   >
                     {showPwd ? "Hide" : "Show"}
                   </button>
-                  </div>
+                </div>
               </div>
 
               {/* Role */}

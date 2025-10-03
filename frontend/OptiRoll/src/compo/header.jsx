@@ -1,4 +1,4 @@
-import { useState , useRef } from "react";
+import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -61,21 +61,16 @@ export default function Header() {
     }
   };
 
-  
-
-  
-
   useGSAP(() => {
     if (showMenu) {
       gsap.from(".sidebar", {
         opacity: 0,
         duration: 0.8,
         ease: "power3.inOut",
-        x:40
-      })
+        x: 40,
+      });
     }
-   
-  },[showMenu])
+  }, [showMenu]);
 
   return (
     <header className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-lg border-b border-white/10 shadow-lg">
@@ -88,50 +83,47 @@ export default function Header() {
           </div>
         </Link>
 
-       
-
         {/* Desktop Nav */}
         <nav className="hidden md:flex gap-6 items-center text-white font-medium">
-          
-
           {!isLoggedIn && (
-            <><Link
-            to="/"
-            className="flex items-center gap-1 px-4 py-2 rounded-lg hover:bg-slate-800 transition"
-          >
-            <FaHome /> Home
-          </Link>
-          <Link
-            to="/about"
-            className="flex items-center gap-1 px-4 py-2 rounded-lg hover:bg-slate-800 transition"
-          >
-            <FaInfoCircle /> About
-          </Link>
-          <Link
-            to="/features"
-            className="flex items-center gap-1 px-4 py-2 rounded-lg hover:bg-slate-800 transition"
-          >
-            <FaQuestionCircle /> Features
-          </Link>
-          <Link
-            to="/pricing"
-            className="flex items-center gap-1 px-4 py-2 rounded-lg hover:bg-slate-800 transition"
-          >
-            <FaDollarSign /> Pricing
-          </Link>
-          <Link
-            to="/contact"
-            className="flex items-center gap-1 px-4 py-2 rounded-lg hover:bg-slate-800 transition"
-          >
-            <FaEnvelope /> Contact
-          </Link>
-            <Link
-              to="/auth/login"
-              className="px-4 py-2 rounded-lg bg-gradient-to-r from-green-400 to-emerald-500 text-black font-semibold hover:scale-105 transition"
-            >
-              Login / SignUp
+            <>
+              <Link
+                to="/"
+                className="flex items-center gap-1 px-4 py-2 rounded-lg hover:bg-slate-800 transition"
+              >
+                <FaHome /> Home
               </Link>
-              </>
+              <Link
+                to="/about"
+                className="flex items-center gap-1 px-4 py-2 rounded-lg hover:bg-slate-800 transition"
+              >
+                <FaInfoCircle /> About
+              </Link>
+              <Link
+                to="/features"
+                className="flex items-center gap-1 px-4 py-2 rounded-lg hover:bg-slate-800 transition"
+              >
+                <FaQuestionCircle /> Features
+              </Link>
+              <Link
+                to="/pricing"
+                className="flex items-center gap-1 px-4 py-2 rounded-lg hover:bg-slate-800 transition"
+              >
+                <FaDollarSign /> Pricing
+              </Link>
+              <Link
+                to="/contact"
+                className="flex items-center gap-1 px-4 py-2 rounded-lg hover:bg-slate-800 transition"
+              >
+                <FaEnvelope /> Contact
+              </Link>
+              <Link
+                to="/auth/login"
+                className="px-4 py-2 rounded-lg bg-gradient-to-r from-green-400 to-emerald-500 text-black font-semibold hover:scale-105 transition"
+              >
+                Login / SignUp
+              </Link>
+            </>
           )}
 
           {isLoggedIn && (
@@ -184,22 +176,14 @@ export default function Header() {
                   >
                     <FaChalkboardTeacher /> Class Data
                   </Link>
-                  
                 </>
               )}
-
-              
             </>
           )}
-
-         
         </nav>
 
-          {/* Hamburger */}
-        <button
-          onClick={() => setShowMenu(true)}
-          className=" text-white"
-        >
+        {/* Hamburger */}
+        <button onClick={() => setShowMenu(true)} className=" text-white">
           <MdOutlineMenu className="text-3xl" />
         </button>
       </div>
@@ -224,7 +208,6 @@ export default function Header() {
 
             {/* Sidebar Links */}
             <div className="flex flex-col gap-4 text-white text-lg font-medium">
-
               {isLoggedIn && loginType === "student" && (
                 <>
                   <Link
@@ -279,11 +262,10 @@ export default function Header() {
                   >
                     <FaChalkboardTeacher /> Class Data
                   </Link>
-                 
                 </>
               )}
 
-                {!isLoggedIn && (
+              {!isLoggedIn && (
                 <Link
                   to="/auth/login"
                   className="px-4 py-3 rounded-lg bg-gradient-to-r from-green-400 to-emerald-500 text-black font-semibold hover:scale-105 transition"
@@ -292,7 +274,6 @@ export default function Header() {
                   Login / SignUp
                 </Link>
               )}
-
 
               <Link
                 to="/"
@@ -330,25 +311,18 @@ export default function Header() {
                 <FaEnvelope /> Contact
               </Link>
 
-              
-              <div className="mt-5 mb-5 w-full h-0.5 rounded-full bg-white"/>
-            
-
-             
+              <div className="mt-5 mb-5 w-full h-0.5 rounded-full bg-white" />
 
               {isLoggedIn && loginType === "admin" && (
-                
-                 
-                  <button
-                    onClick={() => {
-                      setShowDelete(true);
-                      setShowMenu(false);
-                    }}
-                    className="flex items-center gap-2 px-4 py-3 rounded-lg bg-gradient-to-r from-red-500 to-rose-600 text-white hover:scale-105 transition"
-                  >
-                    <FaUserShield /> Delete Account
-                  </button>
-                
+                <button
+                  onClick={() => {
+                    setShowDelete(true);
+                    setShowMenu(false);
+                  }}
+                  className="flex items-center gap-2 px-4 py-3 rounded-lg bg-gradient-to-r from-red-500 to-rose-600 text-white hover:scale-105 transition"
+                >
+                  <FaUserShield /> Delete Account
+                </button>
               )}
 
               {isLoggedIn && (

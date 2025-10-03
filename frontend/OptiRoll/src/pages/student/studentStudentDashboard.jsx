@@ -68,7 +68,9 @@ export default function StudentStudentDashboard() {
 
       for (const key in student) {
         if (Array.isArray(student[key])) {
-          student[key].forEach((item) => { if (item) formData.append(key, item) });
+          student[key].forEach((item) => {
+            if (item) formData.append(key, item);
+          });
         } else if (typeof student[key] === "object" && student[key] !== null) {
           for (const nestedKey in student[key]) {
             formData.append(`${key}[${nestedKey}]`, student[key][nestedKey]);
@@ -106,15 +108,15 @@ export default function StudentStudentDashboard() {
   };
 
   if (loading)
-    return   <div className="flex flex-col gap-16 justify-center items-center fixed inset-0 h-screen w-screen bg-black/60 z-60">
-          <div className="relative w-24 h-24">
-      <div className="absolute inset-0 rounded-full border-4 border-t-transparent border-cyan-400 animate-spin"></div>
-      <div className="absolute inset-4 rounded-full border-4 border-t-transparent border-fuchsia-500 animate-spin-slow"></div>
-    </div>
-          <p className="text-white text-xl text-center animate-pulse">Loading…</p>
-           
-          </div>
-    
+    return (
+      <div className="flex flex-col gap-16 justify-center items-center fixed inset-0 h-screen w-screen bg-black/60 z-60">
+        <div className="relative w-24 h-24">
+          <div className="absolute inset-0 rounded-full border-4 border-t-transparent border-cyan-400 animate-spin"></div>
+          <div className="absolute inset-4 rounded-full border-4 border-t-transparent border-fuchsia-500 animate-spin-slow"></div>
+        </div>
+        <p className="text-white text-xl text-center animate-pulse">Loading…</p>
+      </div>
+    );
 
   if (errors.length > 0)
     return (
@@ -159,30 +161,121 @@ export default function StudentStudentDashboard() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Basic Info */}
-          <InputField label="Name" name="name" value={student.name} onChange={handleChange} />
-          <InputField label="Roll Number" name="rollNumber" value={student.rollNumber} onChange={handleChange} />
-          <InputField type="date" label="Date of Birth" name="dateOfBirth" value={student.dateOfBirth?.slice(0, 10)} onChange={handleChange} />
-          <InputField label="Gender" name="gender" value={student.gender} onChange={handleChange} />
-          <InputField label="Course" name="course" value={student.course} onChange={handleChange} />
-          <InputField label="Year" name="year" value={student.year} onChange={handleChange} />
-          <InputField label="Section" name="section" value={student.section} onChange={handleChange} />
+          <InputField
+            label="Name"
+            name="name"
+            value={student.name}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Roll Number"
+            name="rollNumber"
+            value={student.rollNumber}
+            onChange={handleChange}
+          />
+          <InputField
+            type="date"
+            label="Date of Birth"
+            name="dateOfBirth"
+            value={student.dateOfBirth?.slice(0, 10)}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Gender"
+            name="gender"
+            value={student.gender}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Course"
+            name="course"
+            value={student.course}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Year"
+            name="year"
+            value={student.year}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Section"
+            name="section"
+            value={student.section}
+            onChange={handleChange}
+          />
 
           {/* Address */}
-          <InputField label="Street" name="address.street" value={student.address?.street} onChange={handleChange} />
-          <InputField label="City" name="address.city" value={student.address?.city} onChange={handleChange} />
-          <InputField label="State" name="address.state" value={student.address?.state} onChange={handleChange} />
-          <InputField label="ZIP" name="address.zip" value={student.address?.zip} onChange={handleChange} />
-          <InputField label="Country" name="address.country" value={student.address?.country} onChange={handleChange} />
+          <InputField
+            label="Street"
+            name="address.street"
+            value={student.address?.street}
+            onChange={handleChange}
+          />
+          <InputField
+            label="City"
+            name="address.city"
+            value={student.address?.city}
+            onChange={handleChange}
+          />
+          <InputField
+            label="State"
+            name="address.state"
+            value={student.address?.state}
+            onChange={handleChange}
+          />
+          <InputField
+            label="ZIP"
+            name="address.zip"
+            value={student.address?.zip}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Country"
+            name="address.country"
+            value={student.address?.country}
+            onChange={handleChange}
+          />
 
           {/* Parent Info */}
-          <InputField label="Parent Name" name="parentName" value={student.parentName} onChange={handleChange} />
-          <InputField label="Parent Phone" name="parentPhone" value={student.parentPhone} onChange={handleChange} />
-          <InputField label="Parent Email" name="parentEmail" value={student.parentEmail} onChange={handleChange} />
+          <InputField
+            label="Parent Name"
+            name="parentName"
+            value={student.parentName}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Parent Phone"
+            name="parentPhone"
+            value={student.parentPhone}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Parent Email"
+            name="parentEmail"
+            value={student.parentEmail}
+            onChange={handleChange}
+          />
 
           {/* Emergency Contact */}
-          <InputField label="Emergency Contact Name" name="emergencyContact.name" value={student.emergencyContact?.name} onChange={handleChange} />
-          <InputField label="Relation" name="emergencyContact.relation" value={student.emergencyContact?.relation} onChange={handleChange} />
-          <InputField label="Emergency Phone" name="emergencyContact.phone" value={student.emergencyContact?.phone} onChange={handleChange} />
+          <InputField
+            label="Emergency Contact Name"
+            name="emergencyContact.name"
+            value={student.emergencyContact?.name}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Relation"
+            name="emergencyContact.relation"
+            value={student.emergencyContact?.relation}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Emergency Phone"
+            name="emergencyContact.phone"
+            value={student.emergencyContact?.phone}
+            onChange={handleChange}
+          />
 
           {/* Dynamic Array Fields */}
           <DynamicArrayInput
@@ -190,7 +283,12 @@ export default function StudentStudentDashboard() {
             values={student.hobbies || []}
             setValues={(arr) => setStudent({ ...student, hobbies: arr })}
           />
-          <InputField label="Bio" name="bio" value={student.bio} onChange={handleChange} />
+          <InputField
+            label="Bio"
+            name="bio"
+            value={student.bio}
+            onChange={handleChange}
+          />
           <DynamicArrayInput
             label="Skills"
             values={student.skills || []}
@@ -203,7 +301,12 @@ export default function StudentStudentDashboard() {
           />
 
           {/* Contact Info */}
-          <InputField label="Phone" name="phone" value={student.phone} onChange={handleChange} />
+          <InputField
+            label="Phone"
+            name="phone"
+            value={student.phone}
+            onChange={handleChange}
+          />
           <InputField label="Email" value={student.email} disabled />
 
           {/* Errors & Submit */}
@@ -214,10 +317,17 @@ export default function StudentStudentDashboard() {
               ))}
             </div>
           )}
-          <button type="submit" className="w-full py-3 rounded-2xl bg-gradient-to-r from-cyan-400 to-fuchsia-500 text-slate-950 font-semibold text-lg shadow-lg hover:shadow-xl transition active:scale-[0.98]">
+          <button
+            type="submit"
+            className="w-full py-3 rounded-2xl bg-gradient-to-r from-cyan-400 to-fuchsia-500 text-slate-950 font-semibold text-lg shadow-lg hover:shadow-xl transition active:scale-[0.98]"
+          >
             Update Profile
           </button>
-          {message && <div className="mt-3 text-green-400 font-medium text-center">{message}</div>}
+          {message && (
+            <div className="mt-3 text-green-400 font-medium text-center">
+              {message}
+            </div>
+          )}
         </form>
       </div>
     </div>

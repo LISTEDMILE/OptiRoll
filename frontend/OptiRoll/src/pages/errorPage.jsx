@@ -11,7 +11,14 @@ export default function ErrorPage() {
     gsap.fromTo(
       doodleRef.current,
       { y: -50, rotate: -10 },
-      { y: 0, rotate: 10, duration: 1.2, ease: "bounce.out", repeat: -1, yoyo: true }
+      {
+        y: 0,
+        rotate: 10,
+        duration: 1.2,
+        ease: "bounce.out",
+        repeat: -1,
+        yoyo: true,
+      }
     );
 
     // Animate text fade-in
@@ -39,7 +46,8 @@ export default function ErrorPage() {
         Oops! You are lost.
       </h1>
       <p className="text-gray-700 mb-8 text-lg md:text-xl max-w-xl">
-        Looks like this page doesn’t exist… maybe the internet ate it, or a frog stole it 🐸.
+        Looks like this page doesn’t exist… maybe the internet ate it, or a frog
+        stole it 🐸.
       </p>
 
       {/* Back Home Button */}

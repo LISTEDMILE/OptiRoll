@@ -11,19 +11,22 @@
 
 /* main.css */
 @keyframes spin-slow {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 .animate-spin-slow {
   animation: spin-slow 3s linear infinite;
 }
 
-
 /* Calendar container */
 .calendar-custom.react-calendar {
   width: 100%;
   max-width: 100%;
-  background:transparent;
+  background: transparent;
   border: none;
   font-family: inherit;
   color: #fff;
@@ -88,7 +91,7 @@
   transition: all 0.25s ease;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid transparent;
-  display:flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
 }

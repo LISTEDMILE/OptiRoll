@@ -128,8 +128,7 @@ export default function AdminStudentAttendance() {
     null
   );
   const worstDay = attendance.reduce(
-    (worst, d) =>
-      d.onlineTime < (worst?.onlineTime || Infinity) ? d : worst,
+    (worst, d) => (d.onlineTime < (worst?.onlineTime || Infinity) ? d : worst),
     null
   );
 
@@ -184,20 +183,19 @@ export default function AdminStudentAttendance() {
           Attendance <span className="text-cyan-400">Analytics</span>
         </h1>
 
-        
-       {/* Loading */}
+        {/* Loading */}
         {loading && (
-        <div className="flex flex-col gap-16 justify-center items-center fixed inset-0 h-screen w-screen bg-black/60 z-60">
-          <div className="relative w-24 h-24">
-      <div className="absolute inset-0 rounded-full border-4 border-t-transparent border-cyan-400 animate-spin"></div>
-      <div className="absolute inset-4 rounded-full border-4 border-t-transparent border-fuchsia-500 animate-spin-slow"></div>
-    </div>
-          <p className="text-white text-xl text-center animate-pulse">Loading…</p>
-           
+          <div className="flex flex-col gap-16 justify-center items-center fixed inset-0 h-screen w-screen bg-black/60 z-60">
+            <div className="relative w-24 h-24">
+              <div className="absolute inset-0 rounded-full border-4 border-t-transparent border-cyan-400 animate-spin"></div>
+              <div className="absolute inset-4 rounded-full border-4 border-t-transparent border-fuchsia-500 animate-spin-slow"></div>
+            </div>
+            <p className="text-white text-xl text-center animate-pulse">
+              Loading…
+            </p>
           </div>
         )}
 
-        
         {error && (
           <div className="rounded-xl border border-rose-400/40 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">
             {error}
@@ -207,36 +205,61 @@ export default function AdminStudentAttendance() {
         {!loading && !error && (
           <>
             {/* Overall Stats */}
-<div className="flex flex-wrap gap-6 mb-8 justify-center lg:justify-between">
-  <div className="flex-1 w-full md:w-fit min-w-[220px] md:max-w-[280px] rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 text-center">
-    <h3 className="text-lg font-semibold text-cyan-300">Total Student Hours</h3>
-    <p className="text-2xl font-bold">{totalStudentHours.toFixed(1)}h</p>
-  </div>
-  <div className="flex-1 w-full md:w-fit min-w-[220px] md:max-w-[280px] rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 text-center">
-    <h3 className="text-lg font-semibold text-cyan-300">Total Admin Hours</h3>
-    <p className="text-2xl font-bold">{totalAdminHours.toFixed(1)}h</p>
-  </div>
-  <div className="flex-1 w-full md:w-fit min-w-[220px] md:max-w-[280px] rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 text-center">
-    <h3 className="text-lg font-semibold text-cyan-300">Avg Student Hours</h3>
-    <p className="text-2xl font-bold">{avgStudentHours.toFixed(1)}h</p>
-  </div>
-  <div className="flex-1 min-w-[220px] md:max-w-[280px] rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 text-center">
-    <h3 className="text-lg font-semibold text-cyan-300">Avg Admin Hours</h3>
-    <p className="text-2xl font-bold">{avgAdminHours.toFixed(1)}h</p>
-  </div>
-  <div className="flex-1 w-full md:w-fit min-w-[220px] md:max-w-[280px] rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 text-center">
-    <h3 className="text-lg font-semibold text-cyan-300">Total Student Sessions</h3>
-    <p className="text-2xl font-bold">{totalStudentSessions}</p>
-  </div>
-  <div className="flex-1 w-full md:w-fit min-w-[220px] md:max-w-[280px] rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 text-center">
-    <h3 className="text-lg font-semibold text-cyan-300">Total Admin Sessions</h3>
-    <p className="text-2xl font-bold">{totalAdminSessions}</p>
-  </div>
-  <div className="flex-1 w-full md:w-fit min-w-[220px] md:max-w-[280px] rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 flex flex-col items-center justify-center">
-    <h3 className="text-sm mb-2 text-cyan-300">Overall Attendance %</h3>
-    <CircularProgress percentage={overallAttendancePercent} color="text-green-400" />
-  </div>
-</div>
+            <div className="flex flex-wrap gap-6 mb-8 justify-center lg:justify-between">
+              <div className="flex-1 w-full md:w-fit min-w-[220px] md:max-w-[280px] rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 text-center">
+                <h3 className="text-lg font-semibold text-cyan-300">
+                  Total Student Hours
+                </h3>
+                <p className="text-2xl font-bold">
+                  {totalStudentHours.toFixed(1)}h
+                </p>
+              </div>
+              <div className="flex-1 w-full md:w-fit min-w-[220px] md:max-w-[280px] rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 text-center">
+                <h3 className="text-lg font-semibold text-cyan-300">
+                  Total Admin Hours
+                </h3>
+                <p className="text-2xl font-bold">
+                  {totalAdminHours.toFixed(1)}h
+                </p>
+              </div>
+              <div className="flex-1 w-full md:w-fit min-w-[220px] md:max-w-[280px] rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 text-center">
+                <h3 className="text-lg font-semibold text-cyan-300">
+                  Avg Student Hours
+                </h3>
+                <p className="text-2xl font-bold">
+                  {avgStudentHours.toFixed(1)}h
+                </p>
+              </div>
+              <div className="flex-1 min-w-[220px] md:max-w-[280px] rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 text-center">
+                <h3 className="text-lg font-semibold text-cyan-300">
+                  Avg Admin Hours
+                </h3>
+                <p className="text-2xl font-bold">
+                  {avgAdminHours.toFixed(1)}h
+                </p>
+              </div>
+              <div className="flex-1 w-full md:w-fit min-w-[220px] md:max-w-[280px] rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 text-center">
+                <h3 className="text-lg font-semibold text-cyan-300">
+                  Total Student Sessions
+                </h3>
+                <p className="text-2xl font-bold">{totalStudentSessions}</p>
+              </div>
+              <div className="flex-1 w-full md:w-fit min-w-[220px] md:max-w-[280px] rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 text-center">
+                <h3 className="text-lg font-semibold text-cyan-300">
+                  Total Admin Sessions
+                </h3>
+                <p className="text-2xl font-bold">{totalAdminSessions}</p>
+              </div>
+              <div className="flex-1 w-full md:w-fit min-w-[220px] md:max-w-[280px] rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 flex flex-col items-center justify-center">
+                <h3 className="text-sm mb-2 text-cyan-300">
+                  Overall Attendance %
+                </h3>
+                <CircularProgress
+                  percentage={overallAttendancePercent}
+                  color="text-green-400"
+                />
+              </div>
+            </div>
 
             {/* Best/Worst Days */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -269,115 +292,122 @@ export default function AdminStudentAttendance() {
             </div>
 
             {/* Calendar + Day Details */}
-<div className="flex flex-col md:flex-row gap-8 h-fit">
-  {/* Calendar Section */}
-  <div className="bg-white/5 rounded-3xl border border-white/10 shadow-xl p-6 w-full md:w-[45%] flex-shrink-0">
-    <Calendar
-      onClickDay={handleDayClick}
-      tileContent={({ date, view }) =>
-        view === "month" && getDayOnlineHours(date, attendance) ? (
-          <div className="tile-hours text-xs text-cyan-300">
-            {getDayOnlineHours(date, attendance)}h
-          </div>
-        ) : null
-      }
-      className="calendar-custom"
-    />
-  </div>
+            <div className="flex flex-col md:flex-row gap-8 h-fit">
+              {/* Calendar Section */}
+              <div className="bg-white/5 rounded-3xl border border-white/10 shadow-xl p-6 w-full md:w-[45%] flex-shrink-0">
+                <Calendar
+                  onClickDay={handleDayClick}
+                  tileContent={({ date, view }) =>
+                    view === "month" && getDayOnlineHours(date, attendance) ? (
+                      <div className="tile-hours text-xs text-cyan-300">
+                        {getDayOnlineHours(date, attendance)}h
+                      </div>
+                    ) : null
+                  }
+                  className="calendar-custom"
+                />
+              </div>
 
-  {/* Day Details Section */}
-  <div className="flex-1 bg-white/5 rounded-3xl border border-white/10 shadow-xl p-6 overflow-y-auto h-full scrollbar-hide">
-    {selectedDate ? (
-      <>
-        <h2 className="text-xl font-semibold mb-4">
-          {selectedDate.toDateString()}
-        </h2>
+              {/* Day Details Section */}
+              <div className="flex-1 bg-white/5 rounded-3xl border border-white/10 shadow-xl p-6 overflow-y-auto h-full scrollbar-hide">
+                {selectedDate ? (
+                  <>
+                    <h2 className="text-xl font-semibold mb-4">
+                      {selectedDate.toDateString()}
+                    </h2>
 
-        {/* Day Stats */}
-        {selectedDetails.length > 0 && (
-          <div className="flex flex-wrap gap-4 mb-6">
-            <div className="flex-1 min-w-[100px] rounded-xl bg-white/5 border border-white/10 p-3 text-center">
-              <p className="text-sm text-white/70">Attended</p>
-              <p className="text-lg font-bold text-cyan-300">
-                {selectedDayHours.toFixed(1)}h
-              </p>
-            </div>
-            <div className="flex-1 min-w-[100px] rounded-xl bg-white/5 border border-white/10 p-3 text-center">
-              <p className="text-sm text-white/70">Admin Max</p>
-              <p className="text-lg font-bold text-fuchsia-300">
-                {(selectedAdminHours / (1000 * 60 * 60)).toFixed(1)}h
-              </p>
-            </div>
-            <div className="flex-1 min-w-[100px] rounded-xl bg-white/5 border border-white/10 p-3 text-center">
-              <p className="text-sm text-white/70">Student Sessions</p>
-              <p className="text-lg font-bold text-cyan-300">
-                {selectedDetails.length}
-              </p>
-            </div>
-            <div className="flex-1 min-w-[100px] rounded-xl bg-white/5 border border-white/10 p-3 text-center">
-              <p className="text-sm text-white/70">Admin Sessions</p>
-              <p className="text-lg font-bold text-fuchsia-300">
-                {selectedAdminSessions}
-              </p>
-            </div>
-          </div>
-        )}
+                    {/* Day Stats */}
+                    {selectedDetails.length > 0 && (
+                      <div className="flex flex-wrap gap-4 mb-6">
+                        <div className="flex-1 min-w-[100px] rounded-xl bg-white/5 border border-white/10 p-3 text-center">
+                          <p className="text-sm text-white/70">Attended</p>
+                          <p className="text-lg font-bold text-cyan-300">
+                            {selectedDayHours.toFixed(1)}h
+                          </p>
+                        </div>
+                        <div className="flex-1 min-w-[100px] rounded-xl bg-white/5 border border-white/10 p-3 text-center">
+                          <p className="text-sm text-white/70">Admin Max</p>
+                          <p className="text-lg font-bold text-fuchsia-300">
+                            {(selectedAdminHours / (1000 * 60 * 60)).toFixed(1)}
+                            h
+                          </p>
+                        </div>
+                        <div className="flex-1 min-w-[100px] rounded-xl bg-white/5 border border-white/10 p-3 text-center">
+                          <p className="text-sm text-white/70">
+                            Student Sessions
+                          </p>
+                          <p className="text-lg font-bold text-cyan-300">
+                            {selectedDetails.length}
+                          </p>
+                        </div>
+                        <div className="flex-1 min-w-[100px] rounded-xl bg-white/5 border border-white/10 p-3 text-center">
+                          <p className="text-sm text-white/70">
+                            Admin Sessions
+                          </p>
+                          <p className="text-lg font-bold text-fuchsia-300">
+                            {selectedAdminSessions}
+                          </p>
+                        </div>
+                      </div>
+                    )}
 
-        {selectedDetails.length > 0 && (
-          <div className="flex flex-wrap gap-4 mb-6">
-            <div className="flex-1 min-w-[100px] rounded-xl bg-white/5 border border-white/10 p-3 text-center">
-              <p className="text-sm text-white/70">Longest</p>
-              <p className="text-lg font-bold text-cyan-300">{longestSession}</p>
-            </div>
-            <div className="flex-1 min-w-[100px] rounded-xl bg-white/5 border border-white/10 p-3 flex justify-center items-center">
-              <CircularProgress
-                percentage={attendancePercent}
-                color="text-fuchsia-400"
-              />
-            </div>
-          </div>
-        )}
+                    {selectedDetails.length > 0 && (
+                      <div className="flex flex-wrap gap-4 mb-6">
+                        <div className="flex-1 min-w-[100px] rounded-xl bg-white/5 border border-white/10 p-3 text-center">
+                          <p className="text-sm text-white/70">Longest</p>
+                          <p className="text-lg font-bold text-cyan-300">
+                            {longestSession}
+                          </p>
+                        </div>
+                        <div className="flex-1 min-w-[100px] rounded-xl bg-white/5 border border-white/10 p-3 flex justify-center items-center">
+                          <CircularProgress
+                            percentage={attendancePercent}
+                            color="text-fuchsia-400"
+                          />
+                        </div>
+                      </div>
+                    )}
 
-        {/* Sessions List */}
-        {selectedDetails.length > 0 ? (
-          <ul className="space-y-3">
-            {selectedDetails.map((t, idx) => (
-              <li
-                key={idx}
-                className="rounded-xl bg-gradient-to-r from-cyan-400/20 to-fuchsia-500/20 px-4 py-3"
-              >
-                <p className="text-sm">
-                  Start:{" "}
-                  <span className="text-cyan-300 font-medium">
-                    {new Date(t.start).toLocaleTimeString()}
-                  </span>
-                </p>
-                <p className="text-sm">
-                  End:{" "}
-                  <span className="text-fuchsia-300 font-medium">
-                    {t.end
-                      ? new Date(t.end).toLocaleTimeString()
-                      : "Ongoing"}
-                  </span>
-                </p>
-                {t.end && (
-                  <p className="text-sm text-white/70">
-                    Session: {calculateSessionDuration(t.start, t.end)}
-                  </p>
+                    {/* Sessions List */}
+                    {selectedDetails.length > 0 ? (
+                      <ul className="space-y-3">
+                        {selectedDetails.map((t, idx) => (
+                          <li
+                            key={idx}
+                            className="rounded-xl bg-gradient-to-r from-cyan-400/20 to-fuchsia-500/20 px-4 py-3"
+                          >
+                            <p className="text-sm">
+                              Start:{" "}
+                              <span className="text-cyan-300 font-medium">
+                                {new Date(t.start).toLocaleTimeString()}
+                              </span>
+                            </p>
+                            <p className="text-sm">
+                              End:{" "}
+                              <span className="text-fuchsia-300 font-medium">
+                                {t.end
+                                  ? new Date(t.end).toLocaleTimeString()
+                                  : "Ongoing"}
+                              </span>
+                            </p>
+                            {t.end && (
+                              <p className="text-sm text-white/70">
+                                Session:{" "}
+                                {calculateSessionDuration(t.start, t.end)}
+                              </p>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-white/60">No timings recorded.</p>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-white/60">Click a date to see details</p>
                 )}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-white/60">No timings recorded.</p>
-        )}
-      </>
-    ) : (
-      <p className="text-white/60">Click a date to see details</p>
-    )}
-  </div>
-</div>
-
+              </div>
+            </div>
           </>
         )}
       </main>

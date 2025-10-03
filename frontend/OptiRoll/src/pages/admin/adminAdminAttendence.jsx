@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ApiUrl } from "../../../ApiUrl";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -9,7 +9,6 @@ export default function AdminAdminAttendence() {
   const [error, setError] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedDetails, setSelectedDetails] = useState([]);
-
 
   useEffect(() => {
     const fetchAttendance = async () => {
@@ -71,7 +70,9 @@ export default function AdminAdminAttendence() {
   const totalDayDurationMs = calculateTotalDayDuration();
   const totalDayDurationHrs = totalDayDurationMs / (1000 * 60 * 60);
 
-  const totalHours = attendance.reduce((sum, d) => sum + (d.onlineTime || 0), 0) / (1000 * 60 * 60);
+  const totalHours =
+    attendance.reduce((sum, d) => sum + (d.onlineTime || 0), 0) /
+    (1000 * 60 * 60);
   const totalDays = attendance.length;
   const avgHours = totalDays > 0 ? totalHours / totalDays : 0;
 
@@ -87,16 +88,16 @@ export default function AdminAdminAttendence() {
 
         {/* Loading */}
         {loading && (
-        <div className="flex flex-col gap-16 justify-center items-center fixed inset-0 h-screen w-screen bg-black/60 z-60">
-          <div className="relative w-24 h-24">
-      <div className="absolute inset-0 rounded-full border-4 border-t-transparent border-cyan-400 animate-spin"></div>
-      <div className="absolute inset-4 rounded-full border-4 border-t-transparent border-fuchsia-500 animate-spin-slow"></div>
-    </div>
-          <p className="text-white text-xl text-center animate-pulse">Loading…</p>
-           
+          <div className="flex flex-col gap-16 justify-center items-center fixed inset-0 h-screen w-screen bg-black/60 z-60">
+            <div className="relative w-24 h-24">
+              <div className="absolute inset-0 rounded-full border-4 border-t-transparent border-cyan-400 animate-spin"></div>
+              <div className="absolute inset-4 rounded-full border-4 border-t-transparent border-fuchsia-500 animate-spin-slow"></div>
+            </div>
+            <p className="text-white text-xl text-center animate-pulse">
+              Loading…
+            </p>
           </div>
         )}
-
 
         {error && (
           <div className="rounded-xl border border-rose-400/40 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">
@@ -108,15 +109,21 @@ export default function AdminAdminAttendence() {
           <>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 backdrop-blur-xl text-center">
-                <h3 className="text-lg font-semibold text-cyan-300">Total Hours</h3>
+                <h3 className="text-lg font-semibold text-cyan-300">
+                  Total Hours
+                </h3>
                 <p className="text-2xl font-bold">{totalHours.toFixed(1)}h</p>
               </div>
               <div className="rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 backdrop-blur-xl text-center">
-                <h3 className="text-lg font-semibold text-cyan-300">Total Days</h3>
+                <h3 className="text-lg font-semibold text-cyan-300">
+                  Total Days
+                </h3>
                 <p className="text-2xl font-bold">{totalDays}</p>
               </div>
               <div className="rounded-2xl bg-white/5 border border-white/10 shadow-lg p-6 backdrop-blur-xl text-center">
-                <h3 className="text-lg font-semibold text-cyan-300">Avg Hours/Day</h3>
+                <h3 className="text-lg font-semibold text-cyan-300">
+                  Avg Hours/Day
+                </h3>
                 <p className="text-2xl font-bold">{avgHours.toFixed(1)}h</p>
               </div>
             </div>
@@ -126,11 +133,12 @@ export default function AdminAdminAttendence() {
                 <Calendar
                   onClickDay={handleDayClick}
                   tileContent={({ date, view }) =>
-  view === "month" && getDayOnlineHours(date) ? (
-    <div className="tile-hours">{getDayOnlineHours(date)}h</div>
-  ) : null
-}
-
+                    view === "month" && getDayOnlineHours(date) ? (
+                      <div className="tile-hours">
+                        {getDayOnlineHours(date)}h
+                      </div>
+                    ) : null
+                  }
                   className="calendar-custom"
                 />
               </div>
@@ -154,13 +162,24 @@ export default function AdminAdminAttendence() {
                             className="rounded-xl bg-gradient-to-r from-cyan-400/20 to-fuchsia-500/20 px-4 py-3"
                           >
                             <p className="text-sm">
-                              Start: <span className="text-cyan-300 font-medium">{new Date(t.start).toLocaleTimeString()}</span>
+                              Start:{" "}
+                              <span className="text-cyan-300 font-medium">
+                                {new Date(t.start).toLocaleTimeString()}
+                              </span>
                             </p>
                             <p className="text-sm">
-                              End: <span className="text-fuchsia-300 font-medium">{t.end ? new Date(t.end).toLocaleTimeString() : "Ongoing"}</span>
+                              End:{" "}
+                              <span className="text-fuchsia-300 font-medium">
+                                {t.end
+                                  ? new Date(t.end).toLocaleTimeString()
+                                  : "Ongoing"}
+                              </span>
                             </p>
                             {t.end && (
-                              <p className="text-sm text-white/70">Session: {calculateSessionDuration(t.start, t.end)}</p>
+                              <p className="text-sm text-white/70">
+                                Session:{" "}
+                                {calculateSessionDuration(t.start, t.end)}
+                              </p>
                             )}
                           </li>
                         ))}

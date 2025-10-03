@@ -33,13 +33,12 @@ function Layout() {
     <>
       <Header />
       <Outlet />
-      <Footer/>
+      <Footer />
     </>
   );
 }
 
 function App() {
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -56,10 +55,9 @@ function App() {
         if (data.isLoggedIn) {
           dispatch(
             userActions.Login({
-              loginType:data.loginType
+              loginType: data.loginType,
             })
           );
-        
         }
       } catch (err) {
         console.error("Error fetching session:", err);
@@ -68,7 +66,6 @@ function App() {
 
     fetchAboutLogin();
   }, []);
-
 
   const route = createBrowserRouter([
     {
@@ -88,8 +85,14 @@ function App() {
           element: <StudentStudentDashboard />,
         },
         { path: "/teacher/markAttendence", element: <TeacherMarkAttendance /> },
-        { path: "/admin/studentAttendence/:sid", element: <AdminStudentAttendance /> },
-        { path: "/student/studentAttendence", element: <StudentStudentAttendence /> },
+        {
+          path: "/admin/studentAttendence/:sid",
+          element: <AdminStudentAttendance />,
+        },
+        {
+          path: "/student/studentAttendence",
+          element: <StudentStudentAttendence />,
+        },
         { path: "/teacher/toggleMarking", element: <TeacherToggleMarking /> },
         { path: "/admin/adminAttendence", element: <AdminAdminAttendence /> },
         { path: "/features", element: <Features /> },
@@ -100,7 +103,7 @@ function App() {
         { path: "/faq", element: <FAQPage /> },
         { path: "support", element: <SupportPage /> },
         { path: "privacyPolicy", element: <PrivacyPolicy /> },
-      {path:"*",element:<ErrorPage/>}
+        { path: "*", element: <ErrorPage /> },
       ],
     },
   ]);

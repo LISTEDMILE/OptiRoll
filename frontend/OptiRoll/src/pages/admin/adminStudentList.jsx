@@ -54,9 +54,13 @@ export default function AdminStudentList() {
       case "name-desc":
         return b.name.localeCompare(a.name);
       case "roll-asc":
-        return (a.rollNumber || "").toString().localeCompare((b.rollNumber || "").toString());
+        return (a.rollNumber || "")
+          .toString()
+          .localeCompare((b.rollNumber || "").toString());
       case "roll-desc":
-        return (b.rollNumber || "").toString().localeCompare((a.rollNumber || "").toString());
+        return (b.rollNumber || "")
+          .toString()
+          .localeCompare((a.rollNumber || "").toString());
       default:
         return 0;
     }
@@ -110,7 +114,9 @@ export default function AdminStudentList() {
               <div className="absolute inset-0 rounded-full border-4 border-t-transparent border-cyan-400 animate-spin"></div>
               <div className="absolute inset-4 rounded-full border-4 border-t-transparent border-fuchsia-500 animate-spin-slow"></div>
             </div>
-            <p className="text-white text-xl text-center animate-pulse">Loading…</p>
+            <p className="text-white text-xl text-center animate-pulse">
+              Loading…
+            </p>
           </div>
         )}
 
@@ -147,7 +153,9 @@ export default function AdminStudentList() {
                 {/* Info */}
                 <div className="flex-1">
                   <h2 className="text-lg font-bold text-white">{s.name}</h2>
-                  <p className="text-sm text-cyan-300">Roll No: {s.rollNumber}</p>
+                  <p className="text-sm text-cyan-300">
+                    Roll No: {s.rollNumber}
+                  </p>
                   <p className="text-xs text-white/70">{s.email}</p>
                 </div>
               </div>

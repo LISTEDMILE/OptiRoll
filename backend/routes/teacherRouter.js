@@ -7,7 +7,11 @@ const teacherRouter = express.Router();
 // Use memory storage for Multer
 const upload = multer({ storage: multer.memoryStorage() }).single("faceImage"); // single image from webcam
 
-teacherRouter.post("/markAttendance", upload, teacherController.teacherMarkAttendence);
+teacherRouter.post(
+  "/markAttendance",
+  upload,
+  teacherController.teacherMarkAttendence
+);
 teacherRouter.post("/statusMarking", teacherController.statusMarking);
 teacherRouter.post("/startMarking", teacherController.startMarking);
 

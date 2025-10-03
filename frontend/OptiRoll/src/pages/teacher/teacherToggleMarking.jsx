@@ -62,15 +62,15 @@ export default function TeacherToggleMarking() {
   }, []);
 
   if (loading) {
-    return  <div className="flex flex-col gap-16 justify-center items-center fixed inset-0 h-screen w-screen bg-black/60 z-60">
-          <div className="relative w-24 h-24">
-      <div className="absolute inset-0 rounded-full border-4 border-t-transparent border-cyan-400 animate-spin"></div>
-      <div className="absolute inset-4 rounded-full border-4 border-t-transparent border-fuchsia-500 animate-spin-slow"></div>
-    </div>
-          <p className="text-white text-xl text-center animate-pulse">Loading…</p>
-           
-          </div>
-    
+    return (
+      <div className="flex flex-col gap-16 justify-center items-center fixed inset-0 h-screen w-screen bg-black/60 z-60">
+        <div className="relative w-24 h-24">
+          <div className="absolute inset-0 rounded-full border-4 border-t-transparent border-cyan-400 animate-spin"></div>
+          <div className="absolute inset-4 rounded-full border-4 border-t-transparent border-fuchsia-500 animate-spin-slow"></div>
+        </div>
+        <p className="text-white text-xl text-center animate-pulse">Loading…</p>
+      </div>
+    );
   }
 
   return (
@@ -135,7 +135,8 @@ export default function TeacherToggleMarking() {
               ❌
             </button>
             <h2 className="text-xl font-semibold mb-4 text-center">
-              {status === "start" ? "Start Marking" : "End Marking"} Confirmation
+              {status === "start" ? "Start Marking" : "End Marking"}{" "}
+              Confirmation
             </h2>
             <p className="text-sm text-white/70 mb-4 text-center">
               Enter your password to proceed.
