@@ -212,12 +212,29 @@ exports.teacherMarkAttendence = async (req, res, next) => {
       studentUser.attendence.whatNext = "end";
       studentUser.markModified("attendence.data");
       await studentUser.save();
+      const transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 465, // SSL
+            secure: true, // true for 465
+            auth: {
+              user: process.env.EMAIL,
+              pass: process.env.EMAIL_PASS,
+            },
+          });
+      
+          await transporter.sendMail({
+            from: process.env.EMAIL,
+            to: studentUser.email,
+            subject: "Punch-In (OptiRoll)",
+            text: `Name-${studentUser.name}, markedAt-${testDate}, status:start`,
+          });
       return res.status(200).json({
         student: { name: studentUser.name, email: studentUser.email },
         markedAt: testDate,
         status: "start",
       });
-    } else if (studentUser.attendence.whatNext == "end") {
+    }
+    else if (studentUser.attendence.whatNext == "end") {
       const startTime = new Date(studentUser.attendence.startTime);
       const endTime = testDate;
 
@@ -251,6 +268,22 @@ exports.teacherMarkAttendence = async (req, res, next) => {
       studentUser.attendence.whatNext = "start";
       studentUser.markModified("attendence.data");
       await studentUser.save();
+      const transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 465, // SSL
+            secure: true, // true for 465
+            auth: {
+              user: process.env.EMAIL,
+              pass: process.env.EMAIL_PASS,
+            },
+          });
+      
+          await transporter.sendMail({
+            from: process.env.EMAIL,
+            to: studentUser.email,
+            subject: "Punch-Out (OptiRoll)",
+            text: `Name-${studentUser.name}, markedAt-${testDate}, status:End`,
+          });
       return res.status(200).json({
         student: { name: studentUser.name, email: studentUser.email },
         markedAt: testDate,
