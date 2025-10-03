@@ -3,6 +3,7 @@ const authController = require("../controllers/authController");
 const authRouter = express.Router();
 
 authRouter.post("/login", authController.getLogin);
+authRouter.post("/sendOtp", authController.postSendOtp);
 authRouter.post("/signUp", authController.postSignUp);
 authRouter.post("/logout", authController.postLogOut);
 authRouter.post("/deleteAccount", authController.postDeleteAccount);

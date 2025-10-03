@@ -2,8 +2,9 @@ const { check, validationResult } = require("express-validator");
 const AdminUser = require("../models/adminModel");
 const StudentUser = require("../models/studentModel");
 const bcrypt = require("bcryptjs");
-const path = require("path");
-const fs = require("fs");
+const nodemailer = require("nodemailer");
+const Otp = require("../models/otpModel");
+require("dotenv").config();
 
 exports.getLogin = async (req, res, next) => {
   const { email, password, loginType } = req.body;
@@ -21,7 +22,7 @@ exports.getLogin = async (req, res, next) => {
         });
       }
 
-      const isMatch = (password === studentUser.password);
+      const isMatch = password === studentUser.password;
       if (!isMatch) {
         return res.status(401).json({
           errors: ["Invalid Credentials."],
@@ -34,28 +35,22 @@ exports.getLogin = async (req, res, next) => {
       }
 
       req.session.regenerate((err) => {
-  if (err) {
+        if (err) {
           console.error("Session save error : ", err);
           return res.status(500).json({
             errors: ["An error occured."],
           });
         }
 
-req.session.isLoggedIn = true;
-      req.session.StudentUser = studentUser;
+        req.session.isLoggedIn = true;
+        req.session.StudentUser = studentUser;
         req.session.loginType = loginType;
-        
 
-         res.status(200).json({
-      message: "Login Successful",
-    });
-
-});
-
-    
-    }
-    
-    else {
+        res.status(200).json({
+          message: "Login Successful",
+        });
+      });
+    } else {
       const adminUser = await AdminUser.findOne({ email: email });
       if (!adminUser) {
         return res.status(401).json({
@@ -79,26 +74,24 @@ req.session.isLoggedIn = true;
           },
         });
       }
-      
+
       req.session.regenerate((err) => {
-  if (err) {
+        if (err) {
           console.error("Session save error : ", err);
           return res.status(500).json({
             errors: ["An error occured."],
           });
         }
 
-req.session.isLoggedIn = true;
-      req.session.AdminUser = adminUser;
+        req.session.isLoggedIn = true;
+        req.session.AdminUser = adminUser;
         req.session.loginType = loginType;
-        
-         res.status(200).json({
-      message: "Login Successful",
-    });
-});
-    }
 
-   
+        res.status(200).json({
+          message: "Login Successful",
+        });
+      });
+    }
   } catch (err) {
     console.error("Error finding User:", err);
     res.status(500).json({
@@ -111,6 +104,45 @@ req.session.isLoggedIn = true;
     });
   }
 };
+
+exports.postSendOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email)
+      return res
+        .status(400)
+        .json({ success: false, message: "Email is required" });
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+     await Otp.deleteMany({ email });
+
+    // Save OTP in Otp collection
+    await Otp.create({ email, otp });
+
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465, // SSL
+      secure: true, // true for 465
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    await transporter.sendMail({
+      from: process.env.EMAIL,
+      to: email,
+      subject: "Your OTP Code for signUp in OPTIROLL",
+      text: `Your OTP is: ${otp}. It will expire in 5 minutes.`,
+    });
+
+    res.status(200).json({ success: true, message: "OTP sent successfully" });
+  } catch (err) {
+    console.error("Error sending OTP:", err);
+    res.status(500).json({ success: false, message: "Failed to send OTP" });
+  }
+};
+
 exports.postSignUp = [
   check("name")
     .trim()
@@ -142,62 +174,84 @@ exports.postSignUp = [
     .matches(/[@$!%*?&]/)
     .withMessage("Password must contain at least one special character")
     .trim(),
-  (req, res, next) => {
-    const { name, email, password } = req.body;
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        errors: errors.array().map((err) => err.msg),
-        oldInputs: {
+  async (req, res, next) => {
+    try {
+      const { name, email, password, otp } = req.body;
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          errors: errors.array().map((err) => err.msg),
+          oldInputs: {
+            name: name,
+            email: email,
+            password: password,
+          },
+        });
+      }
+      if (!otp || otp == "" || otp == null) {
+        return res.status(400).json({
+          errors: ["Enter OTP"],
+        });
+      }
+
+      const otpRecord = await Otp.findOne({ email }).sort({ createdAt: -1 }); // get latest
+      if (!otpRecord) {
+        return res.status(400).json({ errors: ["OTP not found or expired"] });
+      }
+      if (otpRecord.otp !== otp) {
+        return res.status(400).json({ errors: ["Invalid OTP"] });
+      }
+
+      await Otp.deleteMany({ email });
+
+      bcrypt.hash(password, 12).then((hashedPassword) => {
+        const adminUser = new AdminUser({
           name: name,
           email: email,
-          password: password,
-        },
-      });
-    }
-    bcrypt.hash(password, 12).then((hashedPassword) => {
-      const adminUser = new AdminUser({
-        name: name,
-        email: email,
-        password: hashedPassword,
-      });
+          password: hashedPassword,
+        });
 
-      adminUser
-        .save()
-        .then((adminUser) => {
-          req.session.regenerate((err) => {
-            if (err) {
-              console.error("Session save error : ", err);
-              return res.status(500).json({
-                errors: ["An error occured."],
+        adminUser
+          .save()
+          .then((adminUser) => {
+            req.session.regenerate((err) => {
+              if (err) {
+                console.error("Session save error : ", err);
+                return res.status(500).json({
+                  errors: ["An error occured."],
+                });
+              }
+
+              req.session.isLoggedIn = true;
+              req.session.AdminUser = adminUser;
+              req.session.loginType = "admin";
+
+              res.status(200).json({
+                message: "SignUp Successful",
               });
-            }
-
-            req.session.isLoggedIn = true;
-            req.session.AdminUser = adminUser;
-            req.session.loginType = "admin";
-      
-
-            res.status(200).json({
-              message: "SignUp Successful",
+            });
+          })
+          .catch((err) => {
+            console.error("Error Signing In:", err);
+            res.status(500).json({
+              errors: ["An error Occured:"],
+              oldInputs: {
+                name: name,
+                email: email,
+                password: password,
+              },
             });
           });
-        
-        })
-        .catch((err) => {
-          console.error("Error Signing In:", err);
-          res.status(500).json({
-            errors: ["An error Occured:"],
-            oldInputs: {
-              name: name,
-              email: email,
-              password: password,
-            },
-          });
-        });
-    });
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        errors: ["Server not responding"],
+      });
+    }
   },
 ];
+
 exports.postDeleteAccount = async (req, res, next) => {
   try {
     if (!req.session?.AdminUser?._id) {
@@ -268,17 +322,15 @@ exports.postLogOut = (req, res, next) => {
   });
 };
 
-
 exports.postMe = (req, res, next) => {
   if (req.session.isLoggedIn && req.session.loginType) {
     return res.json({
       isLoggedIn: true,
       loginType: req.session.loginType,
     });
-  }
-  else {
+  } else {
     return res.json({
-      isLoggedIn:false,
-    })
+      isLoggedIn: false,
+    });
   }
 };
