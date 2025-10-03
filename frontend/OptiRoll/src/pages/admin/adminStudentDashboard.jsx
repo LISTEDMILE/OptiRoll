@@ -40,7 +40,7 @@ export default function AdminStudentDashboard() {
 
   const handleChange = (e) => {
     setMessage("");
-      setErrorsInside([]);
+    setErrorsInside([]);
     const { name, value } = e.target;
 
     if (name.includes(".")) {
@@ -71,6 +71,7 @@ export default function AdminStudentDashboard() {
     e.preventDefault();
     setErrors([]);
     setMessage("");
+    setLoading(true);
 
     try {
       const formData = new FormData();
@@ -120,9 +121,11 @@ export default function AdminStudentDashboard() {
       console.error(err.message);
       setErrors(["Something went wrong"]);
     }
+    setLoading(false);
   };
 
   const deleteStudent = async () => {
+    setLoading(true);
     try {
       const res = await fetch(`${ApiUrl}/admin/deleteStudent/${sid}`, {
         method: "POST",
@@ -140,6 +143,7 @@ export default function AdminStudentDashboard() {
       console.error(err.message);
       setErrors(["Something went wrong"]);
     }
+    setLoading(false);
   };
 
   if (loading)

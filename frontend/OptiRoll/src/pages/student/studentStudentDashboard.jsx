@@ -66,6 +66,7 @@ export default function StudentStudentDashboard() {
     e.preventDefault();
     setErrorsInside([]);
     setMessage("");
+    setLoading(true);
 
     try {
       const formData = new FormData();
@@ -109,6 +110,7 @@ export default function StudentStudentDashboard() {
       console.error(err.message);
       setErrorsInside(["Something went wrong"]);
     }
+    setLoading(false);
   };
 
   if (loading)
