@@ -157,12 +157,9 @@ exports.addStudentPost = [
     .isMobilePhone()
     .withMessage("Invalid parent phone"),
 
-  check("parentEmail")
-    .optional()
-    .isEmail()
-    .withMessage("Invalid parent email"),
+  check("parentEmail").optional().isEmail().withMessage("Invalid parent email"),
 
-check("emergencyContact.name")
+  check("emergencyContact.name")
     .optional({ checkFalsy: true })
     .isString()
     .withMessage("Emergency contact name must be a string"),
@@ -194,7 +191,8 @@ check("emergencyContact.name")
   check("achievements")
     .optional()
     .custom((value) => {
-      if (!Array.isArray(value)) throw new Error("Achievements must be an array");
+      if (!Array.isArray(value))
+        throw new Error("Achievements must be an array");
       return true;
     }),
 
@@ -557,8 +555,6 @@ exports.editStudentDashboard = [
     .matches(/^[A-Za-z ]+$/)
     .withMessage("Name should contain letters"),
 
- 
-
   check("rollNumber")
     .trim()
     .notEmpty()
@@ -640,12 +636,9 @@ exports.editStudentDashboard = [
     .isMobilePhone()
     .withMessage("Invalid parent phone"),
 
-  check("parentEmail")
-    .optional()
-    .isEmail()
-    .withMessage("Invalid parent email"),
+  check("parentEmail").optional().isEmail().withMessage("Invalid parent email"),
 
-check("emergencyContact.name")
+  check("emergencyContact.name")
     .optional({ checkFalsy: true })
     .isString()
     .withMessage("Emergency contact name must be a string"),
@@ -677,7 +670,8 @@ check("emergencyContact.name")
   check("achievements")
     .optional()
     .custom((value) => {
-      if (!Array.isArray(value)) throw new Error("Achievements must be an array");
+      if (!Array.isArray(value))
+        throw new Error("Achievements must be an array");
       return true;
     }),
 
@@ -685,43 +679,55 @@ check("emergencyContact.name")
     .optional()
     .isLength({ max: 300 })
     .withMessage("Bio must be under 300 characters"),
-  
-  
- async (req, res) => {
-   try {
-      
-     if (
-      !req.session ||
-      req.session.loginType !== "admin" ||
-      req.session.isLoggedIn !== true
-    ) {
-      return res.status(401).json({
-        errors: ["Unauthorized Access"],
-      });
-    }
-const { sid } = req.params;
-    const adminUser = await AdminUser.findById(req.session.AdminUser._id);
-    if (!adminUser.students.includes(sid)) {
-      return res.status(401).json({
-        errors: ["Unauthorized Access"],
-      });
-    }
+
+  async (req, res) => {
+    try {
+      if (
+        !req.session ||
+        req.session.loginType !== "admin" ||
+        req.session.isLoggedIn !== true
+      ) {
+        return res.status(401).json({
+          errors: ["Unauthorized Access"],
+        });
+      }
+      const { sid } = req.params;
+      const adminUser = await AdminUser.findById(req.session.AdminUser._id);
+      if (!adminUser.students.includes(sid)) {
+        return res.status(401).json({
+          errors: ["Unauthorized Access"],
+        });
+      }
 
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array().map((e) => e.msg) });
+        return res
+          .status(400)
+          .json({ errors: errors.array().map((e) => e.msg) });
       }
 
-      
       const student = await StudentUser.findById(sid);
-      if (!student) return res.status(404).json({ errors: ["Student not found"] });
+      if (!student)
+        return res.status(404).json({ errors: ["Student not found"] });
 
       // Update basic fields
       const fields = [
-        "name", "rollNumber", "dateOfBirth", "gender", "course", "year", "section",
-        "parentName", "parentPhone", "parentEmail", "phone", "bio"
+        "name",
+        "rollNumber",
+        "dateOfBirth",
+        "gender",
+        "course",
+        "year",
+        "section",
+        "parentName",
+        "parentPhone",
+        "parentEmail",
+        "phone",
+        "bio",
       ];
-      fields.forEach((f) => { if (req.body[f] !== undefined) student[f] = req.body[f]; });
+      fields.forEach((f) => {
+        if (req.body[f] !== undefined) student[f] = req.body[f];
+      });
 
       // Address
       if (req.body.address) {
@@ -737,9 +743,13 @@ const { sid } = req.params;
       // Emergency contact
       if (req.body.emergencyContact) {
         student.emergencyContact = {
-          name: req.body.emergencyContact.name || student.emergencyContact?.name,
-          relation: req.body.emergencyContact.relation || student.emergencyContact?.relation,
-          phone: req.body.emergencyContact.phone || student.emergencyContact?.phone,
+          name:
+            req.body.emergencyContact.name || student.emergencyContact?.name,
+          relation:
+            req.body.emergencyContact.relation ||
+            student.emergencyContact?.relation,
+          phone:
+            req.body.emergencyContact.phone || student.emergencyContact?.phone,
         };
       }
 
@@ -749,20 +759,32 @@ const { sid } = req.params;
       });
 
       // Profile picture (multer)
-      if (req.files && req.files.profilePicture && req.files.profilePicture.length > 0) {
+      if (
+        req.files &&
+        req.files.profilePicture &&
+        req.files.profilePicture.length > 0
+      ) {
         const file = req.files.profilePicture[0];
 
         // Delete old picture
         if (student.profilePicture) {
-          const publicId = student.profilePicture.split("/").pop().split(".")[0];
-          try { await cloudinary.uploader.destroy(`Optiroll/profilePictures/${publicId}`); } 
-          catch (err) { console.log("Error deleting old profile picture:", err.message); }
+          const publicId = student.profilePicture
+            .split("/")
+            .pop()
+            .split(".")[0];
+          try {
+            await cloudinary.uploader.destroy(
+              `Optiroll/profilePictures/${publicId}`
+            );
+          } catch (err) {
+            console.log("Error deleting old profile picture:", err.message);
+          }
         }
 
         const uploadResult = await new Promise((resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream(
             { folder: "Optiroll/profilePictures" },
-            (error, result) => error ? reject(error) : resolve(result)
+            (error, result) => (error ? reject(error) : resolve(result))
           );
           stream.end(file.buffer);
         });
@@ -770,12 +792,14 @@ const { sid } = req.params;
       }
 
       await student.save();
-      return res.status(200).json({ message: "Student updated successfully", student });
+      return res
+        .status(200)
+        .json({ message: "Student updated successfully", student });
     } catch (err) {
       console.error("Error editing dashboard:", err);
       return res.status(500).json({ errors: ["Error editing dashboard"] });
     }
-  }
+  },
 ];
 
 exports.deleteStudent = async (req, res, next) => {
