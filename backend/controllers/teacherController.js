@@ -341,7 +341,6 @@ exports.startMarking = async (req, res, next) => {
       req.session.isLoggedIn !== true ||
       req.session.loginType !== "teacher"
     ) {
-      console.log(req.session);
       return res.status(401).json({
         errors: ["Unauthorized Access "],
       });
@@ -441,7 +440,6 @@ exports.statusMarking = async (req, res, next) => {
       req.session.isLoggedIn !== true ||
       req.session.loginType !== "teacher"
     ) {
-      console.log(req.session);
       return res.status(401).json({
         errors: ["Unauthorized Access "],
       });
