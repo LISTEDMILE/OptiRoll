@@ -23,7 +23,7 @@ adminRouter.post(
 );
 adminRouter.post("/deleteStudent/:sid", adminController.deleteStudent);
 adminRouter.post(
-  "/studentAttendence/:sid",
+  "/studentAttendence/:sid", 
   adminController.adminStudentAttencence
 );
 adminRouter.post("/adminAttendence", adminController.adminAdminAttencence);

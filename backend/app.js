@@ -10,6 +10,8 @@ const cors = require("cors");
 const DB_path = process.env.MONGO_URL;
 const port = process.env.PORT;
 
+require("../backend/face/faceEncod")
+
 const authRouter = require("../backend/routes/authRouter");
 const teacherRouter = require("./routes/teacherRouter");
 const adminRouter = require("../backend/routes/adminRouter");

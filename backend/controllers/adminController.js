@@ -1,37 +1,43 @@
 const { check, validationResult } = require("express-validator");
 const AdminUser = require("../models/adminModel");
 const StudentUser = require("../models/studentModel");
-const { spawn } = require("child_process");
 const tmp = require("tmp");
 const fs = require("fs");
 const path = require("path");
 const cloudinary = require("../utils/cloudinary");
 require("dotenv").config();
+const { getFaceEncoding } = require("../face/faceEncod");
 
-function getFaceEncoding(imagePath) {
-  return new Promise((resolve, reject) => {
-    const py = spawn(
-      process.env.NODE_ENV === "production" ? "./venv/bin/python" : "py",
-      ["./face/encode_face.py", imagePath]
-    );
 
-    let data = "";
-    py.stdout.on("data", (chunk) => (data += chunk.toString()));
-    py.stderr.on("data", (err) =>
-      console.error("Python error:", err.toString())
-    );
 
-    py.on("close", () => {
-      try {
-        const result = JSON.parse(data);
-        if (result.error) reject(result.error);
-        else resolve(result.embedding);
-      } catch (e) {
-        reject(e);
-      }
-    });
-  });
-}
+
+
+// function getFaceEncoding(imagePath) {
+//   return new Promise((resolve, reject) => {
+//     const py = spawn(
+//       process.env.NODE_ENV === "production" ? "./venv/bin/python" : "py",
+//       ["./face/encode_face.py", imagePath]
+//     );
+
+//     let data = "";
+//     py.stdout.on("data", (chunk) => (data += chunk.toString()));
+//     py.stderr.on("data", (err) =>
+//       console.error("Python error:", err.toString())
+//     );
+
+//     py.on("close", () => {
+//       try {
+//         const result = JSON.parse(data);
+//         if (result.error) reject(result.error);
+//         else resolve(result.embedding);
+//       } catch (e) {
+//         reject(e);
+//       }
+//     });
+//   });
+// }
+
+
 
 exports.addStudentPost = [
   // First middleware → Parse JSON strings before validation

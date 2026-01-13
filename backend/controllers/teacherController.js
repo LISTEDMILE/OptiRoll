@@ -1,10 +1,15 @@
 const AdminUser = require("../models/adminModel");
 const StudentUser = require("../models/studentModel");
 const bcrypt = require("bcryptjs");
-const { spawn } = require("child_process");
 const tmp = require("tmp");
 require("dotenv").config();
 const nodemailer = require("nodemailer");
+const { getFaceEncoding } = require("../face/faceEncod");
+const fs = require("fs");
+
+const path = require("path");
+
+
 
 // helper
 const formatDate = (d) => d.toISOString().split("T")[0];
@@ -127,6 +132,11 @@ function getFaceEncodingFromBuffer(buffer, ext = ".jpg") {
         reject(e);
       }
     });
+
+
+
+  
+  
   });
 }
 
@@ -162,17 +172,84 @@ exports.teacherMarkAttendence = async (req, res, next) => {
     // ====================
     // Get face embedding from uploaded buffer
     // ====================
-    let uploadedEmbedding;
+
+
+    // let uploadedEmbedding;
+    // try {
+    //   uploadedEmbedding = await getFaceEncodingFromBuffer(
+    //     req.file.buffer,
+    //     ".jpg"
+    //   );
+    // } catch (err) {
+    //   return res
+    //     .status(400)
+    //     .json({ errors: ["Could not detect a face in the image"] });
+    // }
+
+
+
+let uploadedEmbedding;
+
+if (!req.file) {
+  return res.status(400).json({
+    errors: ["No image uploaded"],
+  });
+}
+
+const file = req.file;
+
+const tmpFile = tmp.fileSync({
+  postfix: path.extname(file.originalname),
+});
+
     try {
-      uploadedEmbedding = await getFaceEncodingFromBuffer(
-        req.file.buffer,
-        ".jpg"
-      );
-    } catch (err) {
-      return res
-        .status(400)
-        .json({ errors: ["Could not detect a face in the image"] });
-    }
+  fs.writeFileSync(tmpFile.name, file.buffer);
+
+      uploadedEmbedding = await getFaceEncoding(tmpFile.name);
+      
+
+} catch (err) {
+  console.error("Face encoding error:", err);
+
+  return res.status(400).json({
+    errors: ["Could not detect a valid face in the uploaded image"],
+  });
+
+} finally {
+  tmpFile.removeCallback();
+}
+
+
+
+
+   // ====================
+// Get face embedding from uploaded buffer
+// ====================
+// let uploadedEmbedding;
+// let tmpFile;
+
+// try {
+//   tmpFile = tmp.fileSync({
+//     keep:true,
+//     postfix: ".jpg",
+//     discardDescriptor: true,
+//   });
+
+//   fs.writeFileSync(tmpFile.name, req.file.buffer);
+
+//   uploadedEmbedding = await getFaceEncoding(tmpFile.name);
+//   console.log("yes")
+
+// } catch (err) {
+//   console.error(err)
+//   return res.status(400).json({
+//     errors: ["Could not detect a face in the image"],
+//   });
+
+// } finally {
+//   if (tmpFile) tmpFile.removeCallback();
+// }
+
 
     // ====================
     // Matching logic
@@ -333,6 +410,9 @@ exports.teacherMarkAttendence = async (req, res, next) => {
     return res.status(500).json({ errors: ["Error Marking Attendence"] });
   }
 };
+
+
+
 
 exports.startMarking = async (req, res, next) => {
   try {

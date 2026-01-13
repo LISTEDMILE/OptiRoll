@@ -9,52 +9,117 @@ export default function TeacherMarkAttendance() {
   const [success, setSuccess] = useState(null);
   const [preview, setPreview] = useState(null); // <-- new state
 
-  const handleSubmit = useCallback(async () => {
-    setErrors([]);
-    setSuccess(null);
+  // const handleSubmit = useCallback(async () => {
+  //   setErrors([]);
+  //   setSuccess(null);
 
-    const imageSrc = webcamRef.current.getScreenshot();
-    if (!imageSrc) {
-      setErrors(["Could not capture image."]);
+  //   const imageSrc = webcamRef.current.getScreenshot();
+  //   if (!imageSrc) {
+  //     setErrors(["Could not capture image."]);
+  //     return;
+  //   }
+
+  //   setPreview(imageSrc); // <-- show preview
+  //   setLoading(true);
+  //   try {
+  //     const res = await fetch(imageSrc);
+  //     const blob = await res.blob();
+
+  //     const formData = new FormData();
+  //     formData.append("faceImage", blob, "face.jpg");
+
+  //     const response = await fetch(`${ApiUrl}/teacher/markAttendance`, {
+  //       method: "POST",
+  //       body: formData,
+  //       credentials: "include",
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (data.errors) {
+  //       setErrors(data.errors || ["Failed to mark attendance."]);
+  //       return;
+  //     }
+
+  //     setSuccess({
+  //       name: data.student.name,
+  //       email: data.student.email,
+  //       time: data.markedAt,
+  //       status: data.status,
+  //     });
+  //   } catch (err) {
+  //     console.error(err);
+  //     setErrors(["Network error. Try again."]);
+  //   } finally {
+  //     setLoading(false);
+  //     setPreview(null); // <-- hide preview after result
+  //   }
+  // }, []);
+
+
+  const handleSubmit = useCallback(async () => {
+  setErrors([]);
+  setSuccess(null);
+
+  if (!webcamRef.current) {
+    setErrors(["Camera not ready"]);
+    return;
+  }
+
+  const imageSrc = webcamRef.current.getScreenshot();
+  if (!imageSrc) {
+    setErrors(["Could not capture image"]);
+    return;
+  }
+
+  setPreview(imageSrc);
+  setLoading(true);
+
+  try {
+    // ✅ convert base64 → blob safely
+    const byteString = atob(imageSrc.split(",")[1]);
+    const mimeString = imageSrc.split(",")[0].split(":")[1].split(";")[0];
+
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+
+    const blob = new Blob([ab], { type: mimeString });
+
+    // ✅ matches multer.single("faceImage")
+    const formData = new FormData();
+    formData.append("faceImage", blob, "face.jpg");
+
+    const response = await fetch(`${ApiUrl}/teacher/markAttendance`, {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || data.errors) {
+      setErrors(data.errors || ["Failed to mark attendance"]);
       return;
     }
 
-    setPreview(imageSrc); // <-- show preview
-    setLoading(true);
-    try {
-      const res = await fetch(imageSrc);
-      const blob = await res.blob();
+    setSuccess({
+      name: data.student.name,
+      email: data.student.email,
+      time: data.markedAt,
+      status: data.status,
+    });
 
-      const formData = new FormData();
-      formData.append("faceImage", blob, "face.jpg");
-
-      const response = await fetch(`${ApiUrl}/teacher/markAttendance`, {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
-
-      const data = await response.json();
-
-      if (data.errors) {
-        setErrors(data.errors || ["Failed to mark attendance."]);
-        return;
-      }
-
-      setSuccess({
-        name: data.student.name,
-        email: data.student.email,
-        time: data.markedAt,
-        status: data.status,
-      });
-    } catch (err) {
-      console.error(err);
-      setErrors(["Network error. Try again."]);
-    } finally {
-      setLoading(false);
-      setPreview(null); // <-- hide preview after result
-    }
-  }, []);
+  } catch (err) {
+    console.error(err);
+    setErrors(["Network error. Try again."]);
+  } finally {
+    setLoading(false);
+    setPreview(null);
+  }
+}, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-6">
@@ -94,12 +159,20 @@ export default function TeacherMarkAttendance() {
                 className="w-full rounded-2xl border border-white/16"
               />
             ) : (
-              <Webcam
-                audio={false}
-                ref={webcamRef}
-                screenshotFormat="image/jpeg"
-                className="w-full rounded-2xl border border-white/16"
-              />
+             <Webcam
+  audio={false}
+  ref={webcamRef}
+  screenshotFormat="image/jpg"
+  screenshotQuality={1}   // 🔥 MAX quality (default is low)
+  mirrored={true}
+  videoConstraints={{
+    width: 1280,          // 🔥 higher resolution
+    height: 720,
+    facingMode: "user",
+  }}
+  className="w-full rounded-2xl border border-white/16"
+/>
+
             )}
             <div className="absolute right-3 top-3 text-white/60 select-none">
               📸
