@@ -3,16 +3,11 @@ let modelReady = false;
 
 const { spawn } = require("child_process");
 
-
-
 const pythonCmd =
-  process.env.NODE_ENV === "production"
-    ? "./venv/bin/python"
-    : "py";
+  process.env.NODE_ENV === "production" ? "./venv/bin/python" : "py";
 
 // 🔥 START PYTHON ONCE
 const py = spawn(pythonCmd, ["./face/encode_face.py"]);
-
 
 let buffer = "";
 
@@ -20,22 +15,14 @@ py.stdout.on("data", (data) => {
   const text = data.toString();
   buffer += text;
 
-
-
   if (text.includes('"status": "model loaded"')) {
     modelReady = true;
     console.log("✅ Face model loaded and ready");
   }
 });
 
-// py.stderr.on("data", (err) => {
-//   console.error("Python error:", err.toString());
-// });
-
-
 function getFaceEncoding(imagePath) {
   return new Promise((resolve, reject) => {
-
     if (!modelReady) {
       return reject("Face model is starting, please try again");
     }

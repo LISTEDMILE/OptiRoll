@@ -8,37 +8,6 @@ const cloudinary = require("../utils/cloudinary");
 require("dotenv").config();
 const { getFaceEncoding } = require("../face/faceEncod");
 
-
-
-
-
-// function getFaceEncoding(imagePath) {
-//   return new Promise((resolve, reject) => {
-//     const py = spawn(
-//       process.env.NODE_ENV === "production" ? "./venv/bin/python" : "py",
-//       ["./face/encode_face.py", imagePath]
-//     );
-
-//     let data = "";
-//     py.stdout.on("data", (chunk) => (data += chunk.toString()));
-//     py.stderr.on("data", (err) =>
-//       console.error("Python error:", err.toString())
-//     );
-
-//     py.on("close", () => {
-//       try {
-//         const result = JSON.parse(data);
-//         if (result.error) reject(result.error);
-//         else resolve(result.embedding);
-//       } catch (e) {
-//         reject(e);
-//       }
-//     });
-//   });
-// }
-
-
-
 exports.addStudentPost = [
   // First middleware → Parse JSON strings before validation
   (req, res, next) => {
@@ -294,7 +263,7 @@ exports.addStudentPost = [
 
       // generate random 10-digit password
       let pass = Array.from({ length: 10 }, () =>
-        Math.floor(Math.random() * 10)
+        Math.floor(Math.random() * 10),
       ).join("");
 
       // Handle profile picture upload via Cloudinary
@@ -315,7 +284,7 @@ exports.addStudentPost = [
                   profilePicUrl = result.secure_url;
                   resolve(result);
                 }
-              }
+              },
             );
             stream.end(file.buffer);
           });
@@ -539,33 +508,32 @@ exports.editStudentDashboard = [
       }
 
       // Normalize array fields directly
-["hobbies", "skills", "achievements"].forEach((field) => {
-  if (req.body[field]) {
-    try {
-      let val = req.body[field];
+      ["hobbies", "skills", "achievements"].forEach((field) => {
+        if (req.body[field]) {
+          try {
+            let val = req.body[field];
 
-      // If client sent string like '["a","b"]', parse it
-      if (typeof val === "string") {
-        try {
-          val = JSON.parse(val);
-        } catch {
-          // not JSON, treat it as single string value
-          val = [val];
+            // If client sent string like '["a","b"]', parse it
+            if (typeof val === "string") {
+              try {
+                val = JSON.parse(val);
+              } catch {
+                // not JSON, treat it as single string value
+                val = [val];
+              }
+            }
+
+            // Ensure array
+            if (!Array.isArray(val)) val = [val];
+            req.body[field] = val;
+          } catch (err) {
+            console.error(`Error normalizing ${field}:`, err.message);
+            return res.status(400).json({
+              errors: [`Invalid value for ${field}`],
+            });
+          }
         }
-      }
-
-      // Ensure array
-      if (!Array.isArray(val)) val = [val];
-      req.body[field] = val;
-    } catch (err) {
-      console.error(`Error normalizing ${field}:`, err.message);
-      return res.status(400).json({
-        errors: [`Invalid value for ${field}`],
       });
-    }
-  }
-});
-
     } catch (err) {
       console.error("JSON parse error:", err.message);
       return res.status(400).json({
@@ -782,13 +750,12 @@ exports.editStudentDashboard = [
       }
 
       ["hobbies", "skills", "achievements"].forEach((arr) => {
-  if (req.body[arr]) {
-    student[arr] = Array.isArray(req.body[arr])
-      ? req.body[arr]
-      : [req.body[arr]];
-  }
-});
-
+        if (req.body[arr]) {
+          student[arr] = Array.isArray(req.body[arr])
+            ? req.body[arr]
+            : [req.body[arr]];
+        }
+      });
 
       // Profile picture (multer)
       if (
@@ -806,7 +773,7 @@ exports.editStudentDashboard = [
             .split(".")[0];
           try {
             await cloudinary.uploader.destroy(
-              `Optiroll/profilePictures/${publicId}`
+              `Optiroll/profilePictures/${publicId}`,
             );
           } catch (err) {
             console.log("Error deleting old profile picture:", err.message);
@@ -816,7 +783,7 @@ exports.editStudentDashboard = [
         const uploadResult = await new Promise((resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream(
             { folder: "Optiroll/profilePictures" },
-            (error, result) => (error ? reject(error) : resolve(result))
+            (error, result) => (error ? reject(error) : resolve(result)),
           );
           stream.end(file.buffer);
         });
@@ -855,9 +822,8 @@ exports.deleteStudent = async (req, res, next) => {
     }
 
     try {
-      const studentProfileUrl = await StudentUser.findById(sid).select(
-        "profilePicture"
-      );
+      const studentProfileUrl =
+        await StudentUser.findById(sid).select("profilePicture");
       if (studentProfileUrl && studentProfileUrl.profilePicture) {
         const publicId = studentProfileUrl.profilePicture
           .split("/")
@@ -865,7 +831,7 @@ exports.deleteStudent = async (req, res, next) => {
           .split(".")[0];
         try {
           await cloudinary.uploader.destroy(
-            `Optiroll/profilePictures/${publicId}`
+            `Optiroll/profilePictures/${publicId}`,
           );
         } catch (err) {
           console.log("Error deleting old profile picture:", err.message);

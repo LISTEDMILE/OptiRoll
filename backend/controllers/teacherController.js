@@ -9,8 +9,6 @@ const fs = require("fs");
 
 const path = require("path");
 
-
-
 // helper
 const formatDate = (d) => d.toISOString().split("T")[0];
 
@@ -24,7 +22,7 @@ function handleAttendanceSplit(user, startTime, endTime) {
 
     const onlineTime = midnight - current;
     const existing = user.attendence.data.find(
-      (atten) => formatDate(new Date(atten.Date)) === formatDate(current)
+      (atten) => formatDate(new Date(atten.Date)) === formatDate(current),
     );
 
     if (existing) {
@@ -55,7 +53,7 @@ function handleAttendanceSplit(user, startTime, endTime) {
   // final chunk
   const onlineTime = endTime - current;
   const existing = user.attendence.data.find(
-    (atten) => formatDate(new Date(atten.Date)) === formatDate(endTime)
+    (atten) => formatDate(new Date(atten.Date)) === formatDate(endTime),
   );
 
   if (existing) {
@@ -113,13 +111,13 @@ function getFaceEncodingFromBuffer(buffer, ext = ".jpg") {
 
     const py = spawn(
       process.env.NODE_ENV === "production" ? "./venv/bin/python" : "py",
-      ["./face/encode_face.py", tmpFile.name]
+      ["./face/encode_face.py", tmpFile.name],
     );
 
     let data = "";
     py.stdout.on("data", (chunk) => (data += chunk.toString()));
     py.stderr.on("data", (err) =>
-      console.error("Python error:", err.toString())
+      console.error("Python error:", err.toString()),
     );
 
     py.on("close", () => {
@@ -132,11 +130,6 @@ function getFaceEncodingFromBuffer(buffer, ext = ".jpg") {
         reject(e);
       }
     });
-
-
-
-  
-  
   });
 }
 
@@ -155,13 +148,13 @@ exports.teacherMarkAttendence = async (req, res, next) => {
     }
 
     const adminUserStudents = await AdminUser.findById(
-      req.session.AdminUser._id
+      req.session.AdminUser._id,
     ).select("students");
     if (!adminUserStudents)
       return res.status(404).json({ errors: ["Admin not found"] });
 
     const adminUserStatus = await AdminUser.findById(
-      req.session.AdminUser._id
+      req.session.AdminUser._id,
     ).select("attendence.whatNext");
     if (adminUserStatus.attendence.whatNext !== "end")
       return res.status(201).json({ errors: ["Attendence not marking"] });
@@ -172,7 +165,6 @@ exports.teacherMarkAttendence = async (req, res, next) => {
     // ====================
     // Get face embedding from uploaded buffer
     // ====================
-
 
     // let uploadedEmbedding;
     // try {
@@ -186,70 +178,33 @@ exports.teacherMarkAttendence = async (req, res, next) => {
     //     .json({ errors: ["Could not detect a face in the image"] });
     // }
 
+    let uploadedEmbedding;
 
+    if (!req.file) {
+      return res.status(400).json({
+        errors: ["No image uploaded"],
+      });
+    }
 
-let uploadedEmbedding;
+    const file = req.file;
 
-if (!req.file) {
-  return res.status(400).json({
-    errors: ["No image uploaded"],
-  });
-}
-
-const file = req.file;
-
-const tmpFile = tmp.fileSync({
-  postfix: path.extname(file.originalname),
-});
+    const tmpFile = tmp.fileSync({
+      postfix: path.extname(file.originalname),
+    });
 
     try {
-  fs.writeFileSync(tmpFile.name, file.buffer);
+      fs.writeFileSync(tmpFile.name, file.buffer);
 
       uploadedEmbedding = await getFaceEncoding(tmpFile.name);
-      
+    } catch (err) {
+      console.error("Face encoding error:", err);
 
-} catch (err) {
-  console.error("Face encoding error:", err);
-
-  return res.status(400).json({
-    errors: ["Could not detect a valid face in the uploaded image"],
-  });
-
-} finally {
-  tmpFile.removeCallback();
-}
-
-
-
-
-   // ====================
-// Get face embedding from uploaded buffer
-// ====================
-// let uploadedEmbedding;
-// let tmpFile;
-
-// try {
-//   tmpFile = tmp.fileSync({
-//     keep:true,
-//     postfix: ".jpg",
-//     discardDescriptor: true,
-//   });
-
-//   fs.writeFileSync(tmpFile.name, req.file.buffer);
-
-//   uploadedEmbedding = await getFaceEncoding(tmpFile.name);
-//   console.log("yes")
-
-// } catch (err) {
-//   console.error(err)
-//   return res.status(400).json({
-//     errors: ["Could not detect a face in the image"],
-//   });
-
-// } finally {
-//   if (tmpFile) tmpFile.removeCallback();
-// }
-
+      return res.status(400).json({
+        errors: ["Could not detect a valid face in the uploaded image"],
+      });
+    } finally {
+      tmpFile.removeCallback();
+    }
 
     // ====================
     // Matching logic
@@ -336,7 +291,7 @@ const tmpFile = tmp.fileSync({
 
       if (formatDate(startTime) === formatDate(endTime)) {
         const existing = studentUser.attendence.data.find(
-          (atten) => formatDate(new Date(atten.Date)) === formatDate(startTime)
+          (atten) => formatDate(new Date(atten.Date)) === formatDate(startTime),
         );
 
         if (existing) {
@@ -411,9 +366,6 @@ const tmpFile = tmp.fileSync({
   }
 };
 
-
-
-
 exports.startMarking = async (req, res, next) => {
   try {
     if (
@@ -429,7 +381,7 @@ exports.startMarking = async (req, res, next) => {
     const { password } = req.body;
 
     const pass = await AdminUser.findById(req.session.AdminUser._id).select(
-      "password"
+      "password",
     );
     const isMatch = await bcrypt.compare(password, pass.password);
 
@@ -440,7 +392,7 @@ exports.startMarking = async (req, res, next) => {
     }
 
     const teacherUser = await AdminUser.findById(
-      req.session.AdminUser._id
+      req.session.AdminUser._id,
     ).select("attendence");
     const testDate = new Date();
 
@@ -456,7 +408,7 @@ exports.startMarking = async (req, res, next) => {
     } else if (teacherUser.attendence.whatNext == "end") {
       await StudentUser.updateMany(
         { "attendence.whatNext": "end" },
-        { $set: { "attendence.whatNext": "start" } }
+        { $set: { "attendence.whatNext": "start" } },
       );
 
       const startTime = new Date(teacherUser.attendence.startTime);
@@ -465,7 +417,7 @@ exports.startMarking = async (req, res, next) => {
       if (formatDate(startTime) === formatDate(endTime)) {
         // same day logic
         const existing = teacherUser.attendence.data.find(
-          (atten) => formatDate(new Date(atten.Date)) === formatDate(startTime)
+          (atten) => formatDate(new Date(atten.Date)) === formatDate(startTime),
         );
 
         if (existing) {
@@ -525,7 +477,7 @@ exports.statusMarking = async (req, res, next) => {
       });
     }
     const statusMarking = await AdminUser.findById(
-      req.session.AdminUser._id
+      req.session.AdminUser._id,
     ).select("attendence.whatNext");
     return res.status(200).json({
       whatNext: statusMarking,
