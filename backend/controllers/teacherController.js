@@ -103,6 +103,14 @@ exports.teacherMarkAttendence = async (req, res) => {
       return res.status(401).json({ errors: ["Unauthorized Access"] });
     }
 
+const adminUserStudents = await AdminUser.findById(
+      req.session.AdminUser._id,
+    ).select("students attendence.whatNext");
+
+    if (adminUserStudents.attendence.whatNext === "start") {
+      return res.status(401).json({ errors: ["Marking Closed"] });
+    }
+
     if (!req.file || !req.file.buffer) {
       return res.status(400).json({ errors: ["No face image uploaded"] });
     }
@@ -125,9 +133,7 @@ exports.teacherMarkAttendence = async (req, res) => {
     let minDistance = Infinity;
     const THRESHOLD = 0.35;
 
-    const adminUserStudents = await AdminUser.findById(
-      req.session.AdminUser._id,
-    ).select("students");
+    
 
     for (const studentId of adminUserStudents.students) {
       const student = await StudentUser.findById(studentId);

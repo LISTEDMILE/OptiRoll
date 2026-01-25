@@ -10,7 +10,7 @@ exports.getLogin = async (req, res, next) => {
   const { email, password, loginType } = req.body;
   try {
     if (loginType === "student") {
-      const studentUser = await StudentUser.findOne({ email: email });
+      const studentUser = await StudentUser.findOne({ email: email }).select("_id");
       if (!studentUser) {
         return res.status(401).json({
           errors: ["Invalid Credentials."],
@@ -51,7 +51,7 @@ exports.getLogin = async (req, res, next) => {
         });
       });
     } else {
-      const adminUser = await AdminUser.findOne({ email: email });
+      const adminUser = await AdminUser.findOne({ email: email }).select("_id");
       if (!adminUser) {
         return res.status(401).json({
           errors: ["Invalid Credentials."],
@@ -223,7 +223,7 @@ exports.postSignUp = [
               }
 
               req.session.isLoggedIn = true;
-              req.session.AdminUser = adminUser;
+              req.session.AdminUser = { _id:adminUser._id };
               req.session.loginType = "admin";
 
               res.status(200).json({
@@ -260,9 +260,7 @@ exports.postDeleteAccount = async (req, res, next) => {
       });
     }
     const { password } = req.body;
-    const adminUser = await AdminUser.findOne({
-      email: req.session.AdminUser.email,
-    });
+    const adminUser = await AdminUser.findById(req.session.AdminUser._id);
 
     if (!adminUser) {
       return res.status(404).json({

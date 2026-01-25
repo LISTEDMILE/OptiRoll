@@ -442,10 +442,10 @@ export default function AdminAddStudent() {
                   onChange={onChange}
                   className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white outline-none"
                 >
-                  <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
+                  <option className="text-black" value="">Select Gender</option>
+                  <option className="text-black" value="Male">Male</option>
+                  <option className="text-black" value="Female">Female</option>
+                  <option className="text-black" value="Other">Other</option>
                 </select>
               </div>
               <div>
