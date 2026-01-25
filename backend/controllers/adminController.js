@@ -317,18 +317,16 @@ exports.addStudentPost = [
 
       // Handle webcam images → face embeddings
       let encodings = [];
-     if (req.files && req.files.images && req.files.images.length > 0) {
-for (const file of req.files.images) {
-try {
-// ✅ send raw image buffer directly to ML
-const encoding = await getFaceEncodingFromBuffer(file.buffer);
-encodings.push(encoding);
-} catch (err) {
-console.error("Face encoding error:", err);
-return res.status(400).json({
-errors: [
-"There is a connection error",
-],
+      if (req.files && req.files.images && req.files.images.length > 0) {
+        for (const file of req.files.images) {
+          try {
+            // ✅ send raw image buffer directly to ML
+            const encoding = await getFaceEncodingFromBuffer(file.buffer);
+            encodings.push(encoding);
+          } catch (err) {
+            console.error("Face encoding error:", err);
+            return res.status(400).json({
+              errors: ["There is a connection error"],
               oldInputs: {
                 name,
                 email,
@@ -350,7 +348,7 @@ errors: [
                 achievements,
               },
             });
-          } 
+          }
         }
 
         // Average embeddings if multiple
@@ -832,6 +830,8 @@ exports.deleteStudent = async (req, res, next) => {
       }
 
       await StudentUser.findByIdAndDelete(sid);
+      adminUser.students.pull(sid);
+      await adminUser.save();
 
       return res.status(200).json({
         message: "Student Deleted successfully",
