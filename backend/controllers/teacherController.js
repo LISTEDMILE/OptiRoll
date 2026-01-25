@@ -466,15 +466,15 @@ return res.status(404).json({ errors: ["Student not recognized"] });
       studentUser.attendence.whatNext = "start";
       studentUser.markModified("attendence.data");
       await studentUser.save();
-      const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 465, // SSL
-        secure: true, // true for 465
-        auth: {
-          user: process.env.EMAIL,
-          pass: process.env.EMAIL_PASS,
-        },
-      });
+      // const transporter = nodemailer.createTransport({
+      //   host: "smtp.gmail.com",
+      //   port: 465, // SSL
+      //   secure: true, // true for 465
+      //   auth: {
+      //     user: process.env.EMAIL,
+      //     pass: process.env.EMAIL_PASS,
+      //   },
+      // });
 
   //     await transporter.sendMail({
   //       from: process.env.EMAIL,
