@@ -14,17 +14,17 @@ adminRouter.post("/addStudent", upload, adminController.addStudentPost);
 adminRouter.post("/studentsList", adminController.adminStudentList);
 adminRouter.post(
   "/studentDashboard/:sid",
-  adminController.adminStudentDashboard
+  adminController.adminStudentDashboard,
 );
 adminRouter.post(
   "/editStudentDashboard/:sid",
   upload,
-  adminController.editStudentDashboard
+  adminController.editStudentDashboard,
 );
 adminRouter.post("/deleteStudent/:sid", adminController.deleteStudent);
 adminRouter.post(
-  "/studentAttendence/:sid", 
-  adminController.adminStudentAttencence
+  "/studentAttendence/:sid",
+  adminController.adminStudentAttencence,
 );
 adminRouter.post("/adminAttendence", adminController.adminAdminAttencence);
 

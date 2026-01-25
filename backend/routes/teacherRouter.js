@@ -10,7 +10,7 @@ const upload = multer({ storage: multer.memoryStorage() }).single("faceImage"); 
 teacherRouter.post(
   "/markAttendance",
   upload,
-  teacherController.teacherMarkAttendence
+  teacherController.teacherMarkAttendence,
 );
 teacherRouter.post("/statusMarking", teacherController.statusMarking);
 teacherRouter.post("/startMarking", teacherController.startMarking);

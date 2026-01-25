@@ -9,16 +9,16 @@ const upload = multer({ storage: multer.memoryStorage() }).fields([
 
 studentRouter.post(
   "/studentDashboard",
-  studentController.studentStudentDashboard
+  studentController.studentStudentDashboard,
 );
 studentRouter.post(
   "/editStudentDashboard",
   upload,
-  studentController.editStudentDashboard
+  studentController.editStudentDashboard,
 );
 studentRouter.post(
   "/studentAttendence",
-  studentController.studentStudentAttencence
+  studentController.studentStudentAttencence,
 );
 
 module.exports = studentRouter;

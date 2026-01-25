@@ -106,7 +106,7 @@ studentSchema.pre("findOneAndDelete", async function (next) {
     {
       students: studentId,
     },
-    { $pull: { students: studentId } }
+    { $pull: { students: studentId } },
   );
   next();
 });

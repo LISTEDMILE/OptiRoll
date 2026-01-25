@@ -43,33 +43,32 @@ exports.editStudentDashboard = [
       }
 
       // Normalize array fields directly
-["hobbies", "skills", "achievements"].forEach((field) => {
-  if (req.body[field]) {
-    try {
-      let val = req.body[field];
+      ["hobbies", "skills", "achievements"].forEach((field) => {
+        if (req.body[field]) {
+          try {
+            let val = req.body[field];
 
-      // If client sent string like '["a","b"]', parse it
-      if (typeof val === "string") {
-        try {
-          val = JSON.parse(val);
-        } catch {
-          // not JSON, treat it as single string value
-          val = [val];
+            // If client sent string like '["a","b"]', parse it
+            if (typeof val === "string") {
+              try {
+                val = JSON.parse(val);
+              } catch {
+                // not JSON, treat it as single string value
+                val = [val];
+              }
+            }
+
+            // Ensure array
+            if (!Array.isArray(val)) val = [val];
+            req.body[field] = val;
+          } catch (err) {
+            console.error(`Error normalizing ${field}:`, err.message);
+            return res.status(400).json({
+              errors: [`Invalid value for ${field}`],
+            });
+          }
         }
-      }
-
-      // Ensure array
-      if (!Array.isArray(val)) val = [val];
-      req.body[field] = val;
-    } catch (err) {
-      console.error(`Error normalizing ${field}:`, err.message);
-      return res.status(400).json({
-        errors: [`Invalid value for ${field}`],
       });
-    }
-  }
-});
-
     } catch (err) {
       console.error("JSON parse error:", err.message);
       return res.status(400).json({
@@ -280,12 +279,12 @@ exports.editStudentDashboard = [
         }
 
         ["hobbies", "skills", "achievements"].forEach((arr) => {
-  if (req.body[arr]) {
-    student[arr] = Array.isArray(req.body[arr])
-      ? req.body[arr]
-      : [req.body[arr]];
-  }
-});
+          if (req.body[arr]) {
+            student[arr] = Array.isArray(req.body[arr])
+              ? req.body[arr]
+              : [req.body[arr]];
+          }
+        });
 
         // Profile picture (multer)
         if (
@@ -303,7 +302,7 @@ exports.editStudentDashboard = [
               .split(".")[0];
             try {
               await cloudinary.uploader.destroy(
-                `Optiroll/profilePictures/${publicId}`
+                `Optiroll/profilePictures/${publicId}`,
               );
             } catch (err) {
               console.log("Error deleting old profile picture:", err.message);
@@ -313,7 +312,7 @@ exports.editStudentDashboard = [
           const uploadResult = await new Promise((resolve, reject) => {
             const stream = cloudinary.uploader.upload_stream(
               { folder: "Optiroll/profilePictures" },
-              (error, result) => (error ? reject(error) : resolve(result))
+              (error, result) => (error ? reject(error) : resolve(result)),
             );
             stream.end(file.buffer);
           });
@@ -361,7 +360,7 @@ exports.studentStudentAttencence = async (req, res, next) => {
         });
       }
       const adminAttendence = await AdminUser.findById(student.admin).select(
-        "attendence"
+        "attendence",
       );
       if (!adminAttendence) {
         return res.status(404).json({

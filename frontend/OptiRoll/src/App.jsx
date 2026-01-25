@@ -56,7 +56,7 @@ function App() {
           dispatch(
             userActions.Login({
               loginType: data.loginType,
-            })
+            }),
           );
         }
       } catch (err) {

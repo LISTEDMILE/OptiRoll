@@ -97,43 +97,6 @@ function cosineDistance(vecA, vecB) {
 }
 
 // ====================
-// Python face encoding
-// ====================
-function getFaceEncodingFromBuffer(buffer, ext = ".jpg") {
-  return new Promise((resolve, reject) => {
-    // Create an in-memory temp file
-    const tmpFile = tmp.fileSync({
-      postfix: ext,
-      keep: true,
-      discardDescriptor: true,
-    });
-    require("fs").writeFileSync(tmpFile.name, buffer);
-
-    const py = spawn(
-      process.env.NODE_ENV === "production" ? "./venv/bin/python" : "py",
-      ["./face/encode_face.py", tmpFile.name],
-    );
-
-    let data = "";
-    py.stdout.on("data", (chunk) => (data += chunk.toString()));
-    py.stderr.on("data", (err) =>
-      console.error("Python error:", err.toString()),
-    );
-
-    py.on("close", () => {
-      tmpFile.removeCallback(); // cleanup
-      try {
-        const result = JSON.parse(data);
-        if (result.error) reject(result.error);
-        else resolve(result.embedding);
-      } catch (e) {
-        reject(e);
-      }
-    });
-  });
-}
-
-// ====================
 // Main attendance function
 // ====================
 exports.teacherMarkAttendence = async (req, res, next) => {
@@ -161,22 +124,6 @@ exports.teacherMarkAttendence = async (req, res, next) => {
 
     if (!req.file || !req.file.buffer)
       return res.status(400).json({ errors: ["No face image uploaded"] });
-
-    // ====================
-    // Get face embedding from uploaded buffer
-    // ====================
-
-    // let uploadedEmbedding;
-    // try {
-    //   uploadedEmbedding = await getFaceEncodingFromBuffer(
-    //     req.file.buffer,
-    //     ".jpg"
-    //   );
-    // } catch (err) {
-    //   return res
-    //     .status(400)
-    //     .json({ errors: ["Could not detect a face in the image"] });
-    // }
 
     let uploadedEmbedding;
 

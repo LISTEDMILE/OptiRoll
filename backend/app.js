@@ -24,7 +24,7 @@ app.use(
   cors({
     origin: process.env.FRONTEND_URL,
     credentials: true,
-  })
+  }),
 );
 // Explicitly handle preflight requests for all routes
 app.options(
@@ -32,7 +32,7 @@ app.options(
   cors({
     origin: process.env.FRONTEND_URL,
     credentials: true,
-  })
+  }),
 );
 
 // Session store
@@ -61,7 +61,7 @@ app.use(
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 1000 * 60 * 60 * 24,
     },
-  })
+  }),
 );
 
 // Attach session info to req
