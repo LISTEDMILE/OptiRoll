@@ -47,7 +47,7 @@ def predict(
     api_secret: str = Header(None)
 ):
     # 🔐 API KEY CHECK
-    if API_SECRET != API_KEY:
+    if api_secret != API_KEY:
         raise HTTPException(status_code=403, detail="Unauthorized")
 
     if not req.imagePath:
