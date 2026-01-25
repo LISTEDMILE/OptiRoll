@@ -63,12 +63,12 @@
 
 // Hugging Face ML API endpoint
 const ML_URL = `${process.env.ML_BASE_URL}/predict`;
-
 async function getFaceEncoding(imagePath) {
   const res = await fetch(ML_URL, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+"api-secret": process.env.API_SECRET
     },
     body: JSON.stringify({ imagePath })
   });
