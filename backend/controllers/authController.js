@@ -10,7 +10,7 @@ exports.getLogin = async (req, res, next) => {
   const { email, password, loginType } = req.body;
   try {
     if (loginType === "student") {
-      const studentUser = await StudentUser.findOne({ email: email }).select("_id");
+      const studentUser = await StudentUser.findOne({ email: email }).select("_id password");
       if (!studentUser) {
         return res.status(401).json({
           errors: ["Invalid Credentials."],
@@ -43,7 +43,7 @@ exports.getLogin = async (req, res, next) => {
         }
 
         req.session.isLoggedIn = true;
-        req.session.StudentUser = studentUser;
+        req.session.StudentUser = { _id: studentUser._id };
         req.session.loginType = loginType;
 
         res.status(200).json({
@@ -51,7 +51,7 @@ exports.getLogin = async (req, res, next) => {
         });
       });
     } else {
-      const adminUser = await AdminUser.findOne({ email: email }).select("_id");
+      const adminUser = await AdminUser.findOne({ email: email }).select("_id password");
       if (!adminUser) {
         return res.status(401).json({
           errors: ["Invalid Credentials."],
@@ -84,7 +84,7 @@ exports.getLogin = async (req, res, next) => {
         }
 
         req.session.isLoggedIn = true;
-        req.session.AdminUser = adminUser;
+        req.session.AdminUser = { _id: adminUser._id };
         req.session.loginType = loginType;
 
         res.status(200).json({
