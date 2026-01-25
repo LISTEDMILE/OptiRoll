@@ -2,7 +2,7 @@ const AdminUser = require("../models/adminModel");
 const StudentUser = require("../models/studentModel");
 const bcrypt = require("bcryptjs");
 require("dotenv").config();
-const nodemailer = require("nodemailer");
+// const nodemailer = require("nodemailer");
 // const { getFaceEncoding } = require("../face/faceEncod");
 const { getFaceEncodingFromBuffer } = require("../face/faceEncod");
 
@@ -392,41 +392,41 @@ return res.status(404).json({ errors: ["Student not recognized"] });
       studentUser.attendence.whatNext = "end";
       studentUser.markModified("attendence.data");
       await studentUser.save();
-      const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 465, // SSL
-        secure: true, // true for 465
-        auth: {
-          user: process.env.EMAIL,
-          pass: process.env.EMAIL_PASS,
-        },
-      });
+  //     const transporter = nodemailer.createTransport({
+  //       host: "smtp.gmail.com",
+  //       port: 465, // SSL
+  //       secure: true, // true for 465
+  //       auth: {
+  //         user: process.env.EMAIL,
+  //         pass: process.env.EMAIL_PASS,
+  //       },
+  //     });
 
-      await transporter.sendMail({
-        from: process.env.EMAIL,
-        to: studentUser.email,
-        subject: "Punch-In/Out (OptiRoll)",
-        html: `
-    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-      <h2 style="color: #4CAF50; text-align: center;">Attendance Marked Successfully ✅</h2>
-      <p>Hi <strong>${studentUser.name}</strong>,</p>
-      <p>Your attendance has been recorded with the following details:</p>
-      <ul style="list-style: none; padding: 0;">
-        <li><strong>Date & Time:</strong> ${testDate.toLocaleString()}</li>
-        <li><strong>Status:</strong> "Start"</li>
-      </ul>
-      <p style="text-align: center; margin: 30px 0;">
-        <a href="${
-          process.env.FRONTEND_URL
-        }/student/studentDashboard" target="_blank"
-           style="text-decoration: none; background-color: #4CAF50; color: white; padding: 12px 25px; border-radius: 5px; font-weight: bold;">
-          View Dashboard
-        </a>
-      </p>
-      <p style="font-size: 0.9em; color: #666;">This is an automated message from OptiRoll. Please do not reply to this email.</p>
-    </div>
-  `,
-      });
+  //     await transporter.sendMail({
+  //       from: process.env.EMAIL,
+  //       to: studentUser.email,
+  //       subject: "Punch-In/Out (OptiRoll)",
+  //       html: `
+  //   <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+  //     <h2 style="color: #4CAF50; text-align: center;">Attendance Marked Successfully ✅</h2>
+  //     <p>Hi <strong>${studentUser.name}</strong>,</p>
+  //     <p>Your attendance has been recorded with the following details:</p>
+  //     <ul style="list-style: none; padding: 0;">
+  //       <li><strong>Date & Time:</strong> ${testDate.toLocaleString()}</li>
+  //       <li><strong>Status:</strong> "Start"</li>
+  //     </ul>
+  //     <p style="text-align: center; margin: 30px 0;">
+  //       <a href="${
+  //         process.env.FRONTEND_URL
+  //       }/student/studentDashboard" target="_blank"
+  //          style="text-decoration: none; background-color: #4CAF50; color: white; padding: 12px 25px; border-radius: 5px; font-weight: bold;">
+  //         View Dashboard
+  //       </a>
+  //     </p>
+  //     <p style="font-size: 0.9em; color: #666;">This is an automated message from OptiRoll. Please do not reply to this email.</p>
+  //   </div>
+  // `,
+  //     });
       return res.status(200).json({
         student: { name: studentUser.name, email: studentUser.email },
         markedAt: testDate,
@@ -476,31 +476,31 @@ return res.status(404).json({ errors: ["Student not recognized"] });
         },
       });
 
-      await transporter.sendMail({
-        from: process.env.EMAIL,
-        to: studentUser.email,
-        subject: "Punch-In/Out (OptiRoll)",
-        html: `
-    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-      <h2 style="color: #4CAF50; text-align: center;">Attendance Marked Successfully ✅</h2>
-      <p>Hi <strong>${studentUser.name}</strong>,</p>
-      <p>Your attendance has been recorded with the following details:</p>
-      <ul style="list-style: none; padding: 0;">
-        <li><strong>Date & Time:</strong> ${testDate.toLocaleString()}</li>
-        <li><strong>Status:</strong> "End"</li>
-      </ul>
-      <p style="text-align: center; margin: 30px 0;">
-        <a href="${
-          process.env.FRONTEND_URL
-        }/student/studentDashboard" target="_blank"
-           style="text-decoration: none; background-color: #4CAF50; color: white; padding: 12px 25px; border-radius: 5px; font-weight: bold;">
-          View Dashboard
-        </a>
-      </p>
-      <p style="font-size: 0.9em; color: #666;">This is an automated message from OptiRoll. Please do not reply to this email.</p>
-    </div>
-  `,
-      });
+  //     await transporter.sendMail({
+  //       from: process.env.EMAIL,
+  //       to: studentUser.email,
+  //       subject: "Punch-In/Out (OptiRoll)",
+  //       html: `
+  //   <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+  //     <h2 style="color: #4CAF50; text-align: center;">Attendance Marked Successfully ✅</h2>
+  //     <p>Hi <strong>${studentUser.name}</strong>,</p>
+  //     <p>Your attendance has been recorded with the following details:</p>
+  //     <ul style="list-style: none; padding: 0;">
+  //       <li><strong>Date & Time:</strong> ${testDate.toLocaleString()}</li>
+  //       <li><strong>Status:</strong> "End"</li>
+  //     </ul>
+  //     <p style="text-align: center; margin: 30px 0;">
+  //       <a href="${
+  //         process.env.FRONTEND_URL
+  //       }/student/studentDashboard" target="_blank"
+  //          style="text-decoration: none; background-color: #4CAF50; color: white; padding: 12px 25px; border-radius: 5px; font-weight: bold;">
+  //         View Dashboard
+  //       </a>
+  //     </p>
+  //     <p style="font-size: 0.9em; color: #666;">This is an automated message from OptiRoll. Please do not reply to this email.</p>
+  //   </div>
+  // `,
+  //     });
       return res.status(200).json({
         student: { name: studentUser.name, email: studentUser.email },
         markedAt: testDate,
