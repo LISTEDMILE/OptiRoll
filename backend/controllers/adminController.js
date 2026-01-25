@@ -1,9 +1,8 @@
 const { check, validationResult } = require("express-validator");
 const AdminUser = require("../models/adminModel");
 const StudentUser = require("../models/studentModel");
-const tmp = require("tmp");
-const fs = require("fs");
-const path = require("path");
+const { getFaceEncodingFromBuffer } = require("../face/faceEncod");
+
 const cloudinary = require("../utils/cloudinary");
 require("dotenv").config();
 const { getFaceEncoding } = require("../face/faceEncod");
@@ -318,22 +317,18 @@ exports.addStudentPost = [
 
       // Handle webcam images → face embeddings
       let encodings = [];
-      if (req.files && req.files.images && req.files.images.length > 0) {
-        for (const file of req.files.images) {
-          const tmpFile = tmp.fileSync({
-            postfix: path.extname(file.originalname),
-          });
-          fs.writeFileSync(tmpFile.name, file.buffer);
-
-          try {
-            const encoding = await getFaceEncoding(tmpFile.name);
-            encodings.push(encoding);
-          } catch (err) {
-            console.error("Face encoding error:", err);
-            return res.status(400).json({
-              errors: [
-                "Could not detect a valid face in one of the uploaded images",
-              ],
+     if (req.files && req.files.images && req.files.images.length > 0) {
+for (const file of req.files.images) {
+try {
+// ✅ send raw image buffer directly to ML
+const encoding = await getFaceEncodingFromBuffer(file.buffer);
+encodings.push(encoding);
+} catch (err) {
+console.error("Face encoding error:", err);
+return res.status(400).json({
+errors: [
+"There is a connection error",
+],
               oldInputs: {
                 name,
                 email,
@@ -355,9 +350,7 @@ exports.addStudentPost = [
                 achievements,
               },
             });
-          } finally {
-            tmpFile.removeCallback();
-          }
+          } 
         }
 
         // Average embeddings if multiple
