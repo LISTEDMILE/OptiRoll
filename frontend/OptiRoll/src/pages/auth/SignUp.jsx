@@ -217,19 +217,19 @@ export default function SignUp() {
                     placeholder="you@domain.com"
                     className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/40 outline-none transition focus:border-cyan-400/60 focus:bg-white/10"
                   />
-                  <button
+                  {/* <button
                     type="button"
                     onClick={sendOtp}
                     disabled={otpLoading}
                     className="rounded-2xl text-nowrap  bg-cyan-400 px-4 py-2 text-slate-950 font-semibold hover:bg-cyan-500 disabled:opacity-70"
                   >
                     {otpLoading ? "Sending..." : "Send OTP"}
-                  </button>
+                  </button>  */}
                 </div>
               </div>
 
               {/* OTP */}
-              {otpSent && (
+              {/* {otpSent && (
                 <div>
                   <label className="mb-1 block text-sm text-white/80">
                     Enter OTP
@@ -242,7 +242,7 @@ export default function SignUp() {
                     className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/40 outline-none transition focus:border-fuchsia-400/60 focus:bg-white/10"
                   />
                 </div>
-              )}
+              )} */}
 
               {/* Password */}
               <div>

@@ -188,21 +188,21 @@ exports.postSignUp = [
           },
         });
       }
-      if (!otp || otp == "" || otp == null) {
-        return res.status(400).json({
-          errors: ["Enter OTP"],
-        });
-      }
+      // if (!otp || otp == "" || otp == null) {
+      //   return res.status(400).json({
+      //     errors: ["Enter OTP"],
+      //   });
+      // }
 
-      const otpRecord = await Otp.findOne({ email }).sort({ createdAt: -1 }); // get latest
-      if (!otpRecord) {
-        return res.status(400).json({ errors: ["OTP not found or expired"] });
-      }
-      if (otpRecord.otp !== otp) {
-        return res.status(400).json({ errors: ["Invalid OTP"] });
-      }
+      // const otpRecord = await Otp.findOne({ email }).sort({ createdAt: -1 }); // get latest
+      // if (!otpRecord) {
+      //   return res.status(400).json({ errors: ["OTP not found or expired"] });
+      // }
+      // if (otpRecord.otp !== otp) {
+      //   return res.status(400).json({ errors: ["Invalid OTP"] });
+      // }
 
-      await Otp.deleteMany({ email });
+      // await Otp.deleteMany({ email });
 
       bcrypt.hash(password, 12).then((hashedPassword) => {
         const adminUser = new AdminUser({
