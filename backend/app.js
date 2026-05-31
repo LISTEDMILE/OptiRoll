@@ -5,7 +5,7 @@ const session = require("express-session");
 require("dotenv").config();
 const MongoDBStore = require("connect-mongodb-session")(session);
 const { default: mongoose } = require("mongoose");
-const cors = require("cors");
+const cors = require("cors"); 
 
 const DB_path = process.env.MONGO_URL;
 const port = process.env.PORT;

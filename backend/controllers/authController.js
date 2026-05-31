@@ -4,6 +4,7 @@ const StudentUser = require("../models/studentModel");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const Otp = require("../models/otpModel");
+const { resend } = require("../utils/Resend");
 require("dotenv").config();
 
 exports.getLogin = async (req, res, next) => {
@@ -119,22 +120,45 @@ exports.postSendOtp = async (req, res) => {
     // Save OTP in Otp collection
     await Otp.create({ email, otp });
 
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465, // SSL
-      secure: true, // true for 465
-      auth: {
-        user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
 
-    await transporter.sendMail({
-      from: process.env.EMAIL,
+    // node mailer ............
+
+    // const transporter = nodemailer.createTransport({
+    //   host: "smtp.gmail.com",
+    //   port: 465, // SSL
+    //   secure: true, // true for 465
+    //   auth: {
+    //     user: process.env.EMAIL,
+    //     pass: process.env.EMAIL_PASS,
+    //   },
+    // });
+
+    // await transporter.sendMail({
+    //   from: process.env.EMAIL,
+    //   to: email,
+    //   subject: "Your OTP Code for signUp in OPTIROLL",
+    //   text: `Your OTP is: ${otp}. It will expire in 5 minutes.`,
+    // });
+
+
+    // resend......................
+
+    const r = await resend.emails.send({
+      from: "onboarding@resend.dev", // temporary testing address
       to: email,
       subject: "Your OTP Code for signUp in OPTIROLL",
-      text: `Your OTP is: ${otp}. It will expire in 5 minutes.`,
+      html: `
+    <h2>OPTIROLL Verification</h2>
+    <p>Your OTP is: <strong>${otp}</strong></p>
+    <p>It will expire in 5 minutes.</p>
+  `,
     });
+    
+    if (r.error !== null || r.error) {
+     console.error("Error sending OTP:", r.error);
+    res.status(500).json({ success: false, message: "Failed to send OTP" });
+    }
+
 
     res.status(200).json({ success: true, message: "OTP sent successfully" });
   } catch (err) {
@@ -202,7 +226,7 @@ exports.postSignUp = [
       //   return res.status(400).json({ errors: ["Invalid OTP"] });
       // }
 
-      // await Otp.deleteMany({ email });
+      await Otp.deleteMany({ email });
 
       bcrypt.hash(password, 12).then((hashedPassword) => {
         const adminUser = new AdminUser({
