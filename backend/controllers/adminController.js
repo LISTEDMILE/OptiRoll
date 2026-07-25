@@ -871,13 +871,12 @@ exports.deleteStudent = async (req, res, next) => {
                     console.log(
                         "Error deleting old profile picture:",
                         err.message,
-                    );
+                  );
+                  return res.status(500).json({ errors: ["Error deleting profile picture."] });
                 }
             }
 
             await StudentUser.findByIdAndDelete(sid);
-            adminUser.students.pull(sid);
-            await adminUser.save();
 
             return res.status(200).json({
                 message: "Student Deleted successfully",
