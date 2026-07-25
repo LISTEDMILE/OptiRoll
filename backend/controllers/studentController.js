@@ -16,7 +16,8 @@ exports.studentStudentDashboard = async (req, res, next) => {
       });
     }
 
-    const studentUser = await StudentUser.findById(req.session.StudentUser._id);
+    const studentUser = await StudentUser.findById(req.session.StudentUser._id).select("address emergencyContact _id name email rollNumber dateOfBirth gender phone profilePicture course year section parentName parentPhone parentEmail hobbies bio skills achievements");
+    
     if (!studentUser) {
       return res.status(401).json({
         errors: ["Student not found"],
@@ -232,7 +233,8 @@ exports.editStudentDashboard = [
             .json({ errors: errors.array().map((e) => e.msg) });
         }
 
-        const student = await StudentUser.findById(req.session.StudentUser._id);
+        const student = await StudentUser.findById(req.session.StudentUser._id).select("address emergencyContact name rollNumber dateOfBirth gender phone profilePicture email course year section parentName parentPhone parentEmail hobbies bio skills achievements");
+        
 
         // Update basic fields
         const fields = [
@@ -353,7 +355,7 @@ exports.studentStudentAttencence = async (req, res, next) => {
     const sid = req.session.StudentUser._id;
 
     try {
-      const student = await StudentUser.findById(sid);
+      const student = await StudentUser.findById(sid).select("admin attendence");
       if (!student) {
         return res.status(404).json({
           errors: ["Error finding student"],
