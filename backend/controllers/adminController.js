@@ -326,7 +326,7 @@ exports.addStudentPost = [
           } catch (err) {
             console.error("Face encoding error:", err);
             return res.status(400).json({
-              errors: ["There is a connection error"],
+              errors: [err],
               oldInputs: {
                 name,
                 email,
