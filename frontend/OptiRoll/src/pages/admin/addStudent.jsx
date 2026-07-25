@@ -685,9 +685,9 @@ export default function AdminAddStudent() {
                       }
                       className="rounded-lg bg-white/5 px-3 py-2 text-sm text-white/80 outline-none"
                     >
-                      <option value="">Default (use facing mode)</option>
+                      <option className="text-black hover:text-white/80" value="">Default (use facing mode)</option>
                       {videoDevices.map((d) => (
-                        <option key={d.deviceId} value={d.deviceId}>
+                        <option className="text-black hover:text-white/80"  key={d.deviceId} value={d.deviceId}>
                           {d.label || `Camera ${d.deviceId}`}
                         </option>
                       ))}
