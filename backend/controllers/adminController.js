@@ -326,7 +326,7 @@ exports.addStudentPost = [
           } catch (err) {
             console.error("Face encoding error:", err);
             return res.status(400).json({
-              errors: [err],
+              errors: ["No face detected in any of image"],
               oldInputs: {
                 name,
                 email,
